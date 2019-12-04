@@ -93,8 +93,8 @@ update `expcat` set `child_nums`=child_nums+1,`child_ids`="concat(child_ids, ",1
 
 #exp文章表
 #expnew
-#id,post_date,标题,所属exp分类id,所属exp分类名称,内容,标签,所属exp分类id父级关系,所属exp分类名称父级关系
-#id,post_date,title,expcat__id,expcat__name,content,tags,crumbs_expcat_ids,crumbs_expcat_names
+#id,post_date,标题,所属exp分类id,所属exp分类名称,内容,标签,所属exp分类id父级关系,所属exp分类名称父级关系,是否删除
+#id,post_date,title,expcat__id,expcat__name,content,tags,crumbs_expcat_ids,crumbs_expcat_names,is_del
 
 CREATE TABLE `expnew` ( `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 ALTER TABLE `expnew` ADD `post_date` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0'; ALTER TABLE `` ADD INDEX ( `post_date` );
@@ -105,6 +105,7 @@ ALTER TABLE `expnew` ADD `content` TEXT NOT NULL COMMENT '内容';
 ALTER TABLE `expnew` ADD `tags` VARCHAR( 255 )  NOT NULL DEFAULT '' COMMENT '标签';
 ALTER TABLE `expnew` ADD `crumbs_expcat_ids` VARCHAR( 50 )  NOT NULL DEFAULT '' COMMENT '所属exp分类id父级关系';
 ALTER TABLE `expnew` ADD `crumbs_expcat_names` VARCHAR( 255 )  NOT NULL DEFAULT '' COMMENT '所属exp分类名称父级关系';
+ALTER TABLE `expnew` ADD `is_del` TINYINT( 1 )  UNSIGNED DEFAULT '0' COMMENT '是否删除';
 
 
 #随机点餐表
@@ -143,15 +144,18 @@ ALTER TABLE `vimshortcut` ADD `second_key` VARCHAR( 30 )  NOT NULL DEFAULT '' CO
 
 #工程信息记录表                                                                                                                   
 #prorecord
-#id,post_date,所属工程,标题,内容,
-#id,post_date,belong_pro,title,content
+#id,post_date,所属工程,标题,内容,是否删除
+#id,post_date,belong_pro,title,content,is_del
 
 belong_pro = [0=>'exp']
+is_del = [0=>'未删除', 1=>'已删除']
 
 CREATE TABLE `prorecord` ( `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 ALTER TABLE `prorecord` ADD `post_date` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0'; ALTER TABLE `` ADD INDEX ( `post_date` );
 ALTER TABLE `prorecord` ADD `belong_pro` TINYINT( 1 )  UNSIGNED DEFAULT '0' COMMENT '所属工程';
 ALTER TABLE `prorecord` ADD `title` VARCHAR( 100 )  NOT NULL DEFAULT '' COMMENT '标题';
 ALTER TABLE `prorecord` ADD `content` TEXT NOT NULL COMMENT '内容';
+ALTER TABLE `prorecord` ADD `is_del` TINYINT( 1 )  UNSIGNED DEFAULT '0' COMMENT '是否删除';
+
 
 

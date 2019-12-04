@@ -1,16 +1,3 @@
-<script type="text/javascript">
-var imgup = '{$url.editorImgUp}';
-var imgdel = '{$url.editorImgDel}';
-var imgload = '{$url.editorImgLoad}';
-var tk = '{$tk}';
-var act = '{$smarty.const.ACT}';
-
-/*编辑器editormd*/
-//设置编辑器录入的内容
-var setEditorMdCon = function (co){
-	$('#content').val(co);
-}
-</script>
 <div class="pageContent">
 	<form method="post" action="{$url.adh}" class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
 		<div class="pageFormContent" layoutH="57">
@@ -44,7 +31,7 @@ var setEditorMdCon = function (co){
 					<a class="btnLook" href="{$url.catLookup}" lookupGroup="expcat">查找带回</a>
 				</dd>
 			</dl>
-			<input name="content" id="content" value="" type="hidden"/>
+			<input name="content_ad" id="con_ad" value="" type="hidden"/>
 			<div class="formBar">
 				<ul>
 					<li><div class="buttonActive"><div class="buttonContent"><button type="submit">添加exp</button></div></div></li>
@@ -53,6 +40,13 @@ var setEditorMdCon = function (co){
 			</div>
 
 			<div class="divider"></div>
+<script type="text/javascript">
+/*编辑器editormd*/
+//设置编辑器录入的内容
+var setEditorMdConad = function (co){
+	$('#con_ad').val(co);
+}
+</script>
 			<div>
 				<iframe src="{$url.editormd}" frameborder="0" width="100%" height="1100"><iframe>
 			</div>

@@ -48,7 +48,7 @@ class ProrecordController extends Controller {
     public function index(){ 
 
         //查询数据
-        $sql = 'select id, belong_pro, title from prorecord where 1';
+        $sql = 'select id, belong_pro, title from prorecord where is_del=0';
         $prorecords = M()->getRows($sql);
 
 
@@ -154,6 +154,23 @@ class ProrecordController extends Controller {
 
         #返回结果
         echo json_encode($re); 
+        exit;
+    }
+
+    public function del(){
+
+        $con = ['id'=>$_GET['id']];
+
+        //将需要删除的数据 is_del字段设置为1
+        if( M()->setData('prorecord', ['is_del'=>1], 2, $con) ){
+            $re = AJAXre();
+            $re->navTabId = $this->_navTab.'_index';
+            $re->message = '删除成功！';
+        }else{
+            $re = AJAXre(1);
+        }
+
+        echo json_encode($re);
         exit;
     }
 

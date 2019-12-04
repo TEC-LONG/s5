@@ -27,8 +27,8 @@ class ExpController extends Controller {
             case 'ad':
                 $this->_url = [
                     'adh' => L(PLAT, MOD, 'adh'),
-                    'editormdImgUp' => L(PLAT, MOD, 'imgupmd'),
-                    'editormd' => L(PLAT, MOD, 'editormd'),
+                    'editormdImgUp' => L(PLAT, 'editor', 'imgupmd'),
+                    'editormd' => L(PLAT, 'editor', 'editormd'),
                     'editorImgUp' => L(PLAT, MOD, 'imgup'),
                     'editorImgDel' => L(PLAT, MOD, 'imgdel'),
                     'editorImgLoad' => L(PLAT, MOD, 'imgload'),
@@ -46,7 +46,7 @@ class ExpController extends Controller {
     public function index(){ 
 
         //查询数据
-        $sql = 'select id, title, tags, crumbs_expcat_names, post_date from expnew where 1 limit 10';
+        $sql = 'select id, title, tags, crumbs_expcat_names, post_date from expnew where 1';
         $exps = M()->getRows($sql);
 
         //分配模板变量&渲染模板
@@ -74,7 +74,7 @@ class ExpController extends Controller {
         $this->display('Exp/info.tpl');
     }
 
-    public function ad(){ 
+    /* public function ad(){ 
 
         $editor = isset($_GET['editor']) ? $_GET['editor'] : 'coding';//coding表示使用带markdown的editor;normal表示使用普通editor
         $token = isset($_COOKIE['tk']) ? $_COOKIE['tk'] : uniqid('bjq_') . mt_rand(0, 1000);
@@ -101,6 +101,15 @@ class ExpController extends Controller {
 
         if($editor=='coding') $this->display('Exp/ad1.tpl');
         elseif($editor=='normal') $this->display('Exp/ad.tpl');
+    } */
+
+    public function ad(){
+
+        $this->assign([
+            'url'=>$this->_url
+        ]);
+
+        $this->display('Exp/ad1.tpl');
     }
 
     public function adh(){ 
@@ -109,7 +118,7 @@ class ExpController extends Controller {
         $datas['title'] = $_POST['title'];
         $datas['tags'] = $_POST['tags'];
         $datas['post_date'] = time();
-        $datas['content'] = htmlspecialchars($_POST['content']);
+        $datas['content'] = htmlspecialchars($_POST['content_ad']);
         $datas['expcat__id'] = $_POST['expcat_cat1id'];
         $datas['expcat__name'] = $_POST['expcat_cat1name'];
         $datas['crumbs_expcat_ids'] = $_POST['expcat_cat1id'] . '|' . $_POST['expcat_cat2id'] . '|' . $_POST['expcat_cat3id'];
