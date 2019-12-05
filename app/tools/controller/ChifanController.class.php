@@ -10,8 +10,8 @@ class ChifanController extends Controller {
     private $_navTab;
 
     ##非标准预定义属性
-    private $_type = [0=>'午餐晚餐', 1=>'早餐'];
-    private $_food_type = [0=>'主食', 1=>'配菜', 2=>'营养补充', 3=>'主菜', 4=>'饮品'];
+    private $_type = [0=>'午餐晚餐', 1=>'早餐', 2=>'通用'];
+    private $_food_type = [0=>'主食', 1=>'配菜', 2=>'营养补充', 3=>'主菜', 4=>'饮品', 5=>'汤'];
 
 
     public function __construct(){

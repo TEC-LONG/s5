@@ -1,12 +1,16 @@
-{literal}
-<form id="pagerForm" method="post" action="demo_page1.html">
+<form id="pagerForm" method="post" action="{$url.index}">
+	<input type="hidden" name="pageNum" value="1" />
+	<input type="hidden" name="numPerPage" value="{$page.numPerPage}" />
+</form>
+{* {literal}
+<form id="pagerForm" method="post" action="{$url.index}}">
 	<input type="hidden" name="status" value="${param.status}">
 	<input type="hidden" name="keywords" value="${param.keywords}" />
 	<input type="hidden" name="pageNum" value="1" />
 	<input type="hidden" name="numPerPage" value="${model.numPerPage}" />
 	<input type="hidden" name="orderField" value="${param.orderField}" />
 </form>
-{/literal}
+{/literal} *}
 
 <div class="pageHeader">
 	<form onsubmit="return navTabSearch(this);" action="demo_page1.html" method="post" onreset="$(this).find('select.combox').comboxReset()">
@@ -76,22 +80,20 @@
 		</tbody>
 	</table>
 	<div class="panelBar">
-		{literal}
 		<div class="pages">
 			<span>显示</span>
-			<select class="combox" name="numPerPage" onchange="navTabPageBreak({numPerPage:this.value})">
-				<option value="20">20</option>
-				<option value="50">50</option>
-				<option value="100">100</option>
-				<option value="150">150</option>
-				<option value="200">200</option>
-				<option value="250">250</option>
+			<select class="combox" name="numPerPage" {literal}onchange="navTabPageBreak({numPerPage:this.value})"{/literal}>
+				<option value="{$page.numPerPage}">{$page.numPerPage}</option>
+				{foreach $page.numPerPageList as $thisNumPerPage}
+					{if $thisNumPerPage!=$page.numPerPage}
+				<option value="{$thisNumPerPage}">{$thisNumPerPage}</option>
+					{/if}
+				{/foreach}
 			</select>
-			<span>条，共xxx条</span>
+			<span>条，总共{$page.totalNum}条记录，合计{$page.totalPageNum}页</span>
 		</div>
-		{/literal}
 
-		<div class="pagination" targetType="navTab" totalCount="200" numPerPage="20" pageNumShown="10" currentPage="1"></div>
+		<div class="pagination" targetType="navTab" totalCount="{$page.totalNum}" numPerPage="{$page.numPerPage}" pageNumShown="10" currentPage="{$page.pageNum}"></div>
 
 	</div>
 </div>
