@@ -59,6 +59,24 @@ class Controller extends \Smarty{
         exit;
     }
 
-    
+    /**
+     * 方法名: _page
+     * 方法作用: 构建分页参数
+     * 参数
+     * $tb    string    需要统计总的记录条数的表其表名
+     * $condition    array    统计总记录条数的条件，如: ['is_del'=>0]
+     */
+    protected function _page($tb, $condition){
+        #分页参数
+        $page = [];
+        $page['numPerPageList'] = [20, 30, 40, 60, 80, 100, 120, 160, 200];
+        $page['pageNum'] = $pageNum = isset($_POST['pageNum']) ? intval($_POST['pageNum']) : 1;
+        $page['numPerPage'] = $numPerPage = isset($_POST['numPerPage']) ? intval($_POST['numPerPage']) : 10;
+        $page['totalNum'] = $totalNum = M()->GN($tb, $condition);
+        $page['totalPageNum'] = $totalPageNum = intval(ceil(($totalNum/$numPerPage)));
+        $page['limitM'] = $limitM = ($pageNum-1)*$numPerPage;
+
+        return $page;
+    } 
 
 }

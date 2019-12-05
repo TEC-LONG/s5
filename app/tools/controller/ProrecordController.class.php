@@ -23,6 +23,7 @@ class ProrecordController extends Controller {
             case 'index':
                 $this->_url = [
                     'info' => L(PLAT, MOD, 'info'),
+                    'index' => L(PLAT, MOD, 'index'),
                     'ad' => ['url'=>L(PLAT, MOD, 'ad'), 'rel'=>$this->_navTab.'_ad'],
                     'upd' => ['url'=>L(PLAT, MOD, 'upd'), 'rel'=>$this->_navTab.'_upd'],
                     'del' => L(PLAT, MOD, 'del')
@@ -47,8 +48,11 @@ class ProrecordController extends Controller {
 
     public function index(){ 
 
+        #分页参数
+        $page = $this->_page('prorecord', ['is_del'=>0]);
+        
         //查询数据
-        $sql = 'select id, belong_pro, title from prorecord where is_del=0';
+        $sql = 'select id, belong_pro, title from prorecord where is_del=0 limit ' . $page['limitM'] . ',' . $page['numPerPage'];
         $prorecords = M()->getRows($sql);
 
 
@@ -56,6 +60,7 @@ class ProrecordController extends Controller {
         $this->assign([
             'prorecords'=>$prorecords,
             'belong_pro'=>$this->_belong_pro,
+            'page'=>$page,
             'url'=>$this->_url
         ]);
         $this->display('Prorecord/index.tpl');

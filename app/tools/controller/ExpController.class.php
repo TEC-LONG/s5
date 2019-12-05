@@ -58,16 +58,10 @@ class ExpController extends Controller {
         //     var_dump($_POST);
         // }
         #分页参数
-        $page = [];
-        $page['numPerPageList'] = [20, 30, 40, 60, 80, 100, 120, 160, 200];
-        $page['pageNum'] = $pageNum = isset($_POST['pageNum']) ? intval($_POST['pageNum']) : 1;
-        $page['numPerPage'] = $numPerPage = isset($_POST['numPerPage']) ? intval($_POST['numPerPage']) : 2;
-        $page['totalNum'] = $totalNum = M()->GN('expnew', ['is_del'=>0]);
-        $page['totalPageNum'] = $totalPageNum = intval(ceil(($totalNum/$numPerPage)));
-        $limitM = ($pageNum-1)*$numPerPage;
+        $page = $this->_page('expnew', ['is_del'=>0]);
         
         //查询数据
-        $sql = 'select id, title, tags, crumbs_expcat_names, post_date from expnew where is_del=0 limit ' . $limitM . ',' . $numPerPage;
+        $sql = 'select id, title, tags, crumbs_expcat_names, post_date from expnew where is_del=0 limit ' . $page['limitM'] . ',' . $page['numPerPage'];
         $exps = M()->getRows($sql);
 
         //分配模板变量&渲染模板
