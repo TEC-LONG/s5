@@ -134,7 +134,6 @@ class ProrecordController extends Controller {
 
     public function updh(){ 
         //接收数据
-        //接收参数
         $con = ['id'=>$_GET['id']];
 
         $datas = [
@@ -143,7 +142,7 @@ class ProrecordController extends Controller {
             'content' => htmlspecialchars($_POST['content_upd'])
         ];
 
-        //执行新增
+        //执行更新操作
         if( M()->setData('prorecord', $datas, 2, $con) ){
             $re = AJAXre();
             $re->navTabId = $this->_navTab.'_upd';

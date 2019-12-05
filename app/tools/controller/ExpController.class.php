@@ -19,19 +19,33 @@ class ExpController extends Controller {
                 $this->_url = [
                     'info' => L(PLAT, MOD, 'info'),
                     'ad' => ['url'=>L(PLAT, MOD, 'ad'), 'rel'=>$this->_navTab.'_ad'],
-                    'edit' => L(PLAT, MOD, 'edit'),
+                    'upd' => ['url'=>L(PLAT, MOD, 'upd'), 'rel'=>$this->_navTab.'_upd'],
                     'del' => L(PLAT, MOD, 'del'),
                     'catLookup' => L(PLAT, 'expcat', 'catLookup')
                 ];
             break;
             case 'ad':
+                // $this->_url = [
+                //     'adh' => L(PLAT, MOD, 'adh'),
+                //     'editormdImgUp' => L(PLAT, 'editor', 'imgupmd'),
+                //     'editormd' => L(PLAT, 'editor', 'editormd'),
+                //     'editorImgUp' => L(PLAT, MOD, 'imgup'),
+                //     'editorImgDel' => L(PLAT, MOD, 'imgdel'),
+                //     'editorImgLoad' => L(PLAT, MOD, 'imgload'),
+                //     'catLookup' => L(PLAT, 'expcat', 'catLookup')
+                // ];
                 $this->_url = [
                     'adh' => L(PLAT, MOD, 'adh'),
                     'editormdImgUp' => L(PLAT, 'editor', 'imgupmd'),
                     'editormd' => L(PLAT, 'editor', 'editormd'),
-                    'editorImgUp' => L(PLAT, MOD, 'imgup'),
-                    'editorImgDel' => L(PLAT, MOD, 'imgdel'),
-                    'editorImgLoad' => L(PLAT, MOD, 'imgload'),
+                    'catLookup' => L(PLAT, 'expcat', 'catLookup')
+                ];
+            break;
+            case 'upd':
+                $this->_url = [
+                    'updh' => L(PLAT, MOD, 'updh'),
+                    'editormdImgUp' => L(PLAT, 'editor', 'imgupmd'),
+                    'editormd' => L(PLAT, 'editor', 'editormdupd'),
                     'catLookup' => L(PLAT, 'expcat', 'catLookup')
                 ];
             break;
@@ -46,7 +60,7 @@ class ExpController extends Controller {
     public function index(){ 
 
         //查询数据
-        $sql = 'select id, title, tags, crumbs_expcat_names, post_date from expnew where 1';
+        $sql = 'select id, title, tags, crumbs_expcat_names, post_date from expnew where is_del=0';
         $exps = M()->getRows($sql);
 
         //分配模板变量&渲染模板
@@ -138,12 +152,51 @@ class ExpController extends Controller {
         exit;
     }
 
+    public function upd(){
+        //接收参数
+        $id = $_GET['id'];
 
-    public function edit(){ 
+        //查询数据
+        $sql = 'select id, title, tags, crumbs_expcat_ids, crumbs_expcat_names from expnew where id=' . $id;
         
+        if( $exp = M()->getRow($sql) ){
+            $exp['crumbs_expcat_ids'] = explode('|', $exp['crumbs_expcat_ids']);
+            $exp['crumbs_expcat_names'] = explode('|', $exp['crumbs_expcat_names']);
+        }
+        $this->assign([
+            'url'=>$this->_url,
+            'exp'=>$exp
+        ]);
+
+        $this->display('Exp/upd.tpl');
     }
-    public function edith(){ 
+    public function updh(){ 
+        #接收数据
+        //条件
+        $con = ['id'=>$_GET['id']];
+        //数据
+        $datas = [];
+        $datas['title'] = $_POST['title'];
+        $datas['tags'] = $_POST['tags'];
+        $datas['post_date'] = time();
+        if(!empty($_POST['content_upd'])) $datas['content']=htmlspecialchars($_POST['content_upd']);;
+        $datas['expcat__id'] = $_POST['expcat_cat1id'];
+        $datas['expcat__name'] = $_POST['expcat_cat1name'];
+        $datas['crumbs_expcat_ids'] = $_POST['expcat_cat1id'] . '|' . $_POST['expcat_cat2id'] . '|' . $_POST['expcat_cat3id'];
+        $datas['crumbs_expcat_names'] = $_POST['expcat_cat1name'] . '|' . $_POST['expcat_cat2name'] . '|' . $_POST['expcat_cat3name'];
+
+        //执行更新操作
+        if( M()->setData('expnew', $datas, 2, $con) ){
+            $re = AJAXre();
+            $re->navTabId = $this->_navTab.'_upd';
+            $re->message = '更新成功！';
+        }else{
+            $re = AJAXre(1);
+        }
         
+        #返回结果
+        echo json_encode($re); 
+        exit;
     }
 
     public function del(){ 
