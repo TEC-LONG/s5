@@ -202,16 +202,15 @@ class ExpController extends Controller {
     public function del(){ 
         
         #接收数据
-        $con = [];
-        $con['id'] = $_GET['id'];
+        $con = ['id'=>$_GET['id']];
 
-        #执行删除操作
-        if( M()->setData('expnew', $con, 3) ){
+        //将需要删除的数据 is_del字段设置为1
+        if( M()->setData('expnew', ['is_del'=>1], 2, $con) ){
             $re = AJAXre();
             $re->navTabId = $this->_navTab.'_index';
             $re->message = '删除成功！';
         }else{
-            $re = AJAXre();
+            $re = AJAXre(1);
         }
 
         echo json_encode($re);
