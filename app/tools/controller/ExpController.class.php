@@ -4,61 +4,54 @@ use \core\controller;
 
 class ExpController extends Controller {
 
+    ##标准预定义属性
     private $_datas = [];
     private $_url = [];
     private $_navTab;
 
+    ##非标准预定义属性
+
+    ##实现初始化各动作需要的不同数据
     public function __construct(){
 
         parent::__construct();
 
+        #当前模块的导航标识前缀，用于拼接各页面完整的导航标识
         $this->_navTab = 'exp';
         
+        #执行各动作的初始化方法
         switch ( ACT ){
             case 'index':
-                $this->_url = [
-                    'info' => L(PLAT, MOD, 'info'),
-                    'ad' => ['url'=>L(PLAT, MOD, 'ad'), 'rel'=>$this->_navTab.'_ad'],
-                    'upd' => ['url'=>L(PLAT, MOD, 'upd'), 'rel'=>$this->_navTab.'_upd'],
-                    'del' => L(PLAT, MOD, 'del'),
-                    'catLookup' => L(PLAT, 'expcat', 'catLookup')
-                ];
+                $this->_index();
             break;
             case 'ad':
-                // $this->_url = [
-                //     'adh' => L(PLAT, MOD, 'adh'),
-                //     'editormdImgUp' => L(PLAT, 'editor', 'imgupmd'),
-                //     'editormd' => L(PLAT, 'editor', 'editormd'),
-                //     'editorImgUp' => L(PLAT, MOD, 'imgup'),
-                //     'editorImgDel' => L(PLAT, MOD, 'imgdel'),
-                //     'editorImgLoad' => L(PLAT, MOD, 'imgload'),
-                //     'catLookup' => L(PLAT, 'expcat', 'catLookup')
-                // ];
-                $this->_url = [
-                    'adh' => L(PLAT, MOD, 'adh'),
-                    'editormdImgUp' => L(PLAT, 'editor', 'imgupmd'),
-                    'editormd' => L(PLAT, 'editor', 'editormd'),
-                    'catLookup' => L(PLAT, 'expcat', 'catLookup')
-                ];
+                $this->_ad();
             break;
             case 'upd':
-                $this->_url = [
-                    'updh' => L(PLAT, MOD, 'updh'),
-                    'editormdImgUp' => L(PLAT, 'editor', 'imgupmd'),
-                    'editormd' => L(PLAT, 'editor', 'editormdupd'),
-                    'catLookup' => L(PLAT, 'expcat', 'catLookup')
-                ];
+                $this->_upd();
             break;
-            case 'editormd':
+            case 'editormd'://这个部分待优化，需要分离老的非markdown的富文本编辑器部分
                 $this->_url = [
                     'editormdImgUp' => L(PLAT, MOD, 'imgupmd')
                 ];
+                // $this->_editormd();
             break;
         }
     }
 
-    public function index(){ 
+    ###index综合  包括: _index(),index()
+    ##_index初始化方法，只服务于index
+    private function _index(){
+        $this->_url = [
+            'info' => L(PLAT, MOD, 'info'),
+            'ad' => ['url'=>L(PLAT, MOD, 'ad'), 'rel'=>$this->_navTab.'_ad'],
+            'upd' => ['url'=>L(PLAT, MOD, 'upd'), 'rel'=>$this->_navTab.'_upd'],
+            'del' => L(PLAT, MOD, 'del'),
+            'catLookup' => L(PLAT, 'expcat', 'catLookup')
+        ];
+    }
 
+    public function index(){ 
         //查询数据
         $sql = 'select id, title, tags, crumbs_expcat_names, post_date from expnew where is_del=0';
         $exps = M()->getRows($sql);
@@ -71,8 +64,8 @@ class ExpController extends Controller {
         $this->display('Exp/index.tpl');
     }
 
+    ###info综合  包括: info()
     public function info(){ 
-
         #接收数据
         $id = $_GET['id'];
         
@@ -88,6 +81,25 @@ class ExpController extends Controller {
         $this->display('Exp/info.tpl');
     }
 
+    ###ad综合  包括: _ad(),ad(),adh()
+    ##_ad初始化方法，只服务于ad
+    private function _ad(){
+        // $this->_url = [
+        //     'adh' => L(PLAT, MOD, 'adh'),
+        //     'editormdImgUp' => L(PLAT, 'editor', 'imgupmd'),
+        //     'editormd' => L(PLAT, 'editor', 'editormd'),
+        //     'editorImgUp' => L(PLAT, MOD, 'imgup'),
+        //     'editorImgDel' => L(PLAT, MOD, 'imgdel'),
+        //     'editorImgLoad' => L(PLAT, MOD, 'imgload'),
+        //     'catLookup' => L(PLAT, 'expcat', 'catLookup')
+        // ];
+        $this->_url = [
+            'adh' => L(PLAT, MOD, 'adh'),
+            'editormdImgUp' => L(PLAT, 'editor', 'imgupmd'),
+            'editormd' => L(PLAT, 'editor', 'editormd'),
+            'catLookup' => L(PLAT, 'expcat', 'catLookup')
+        ];
+    }
     /* public function ad(){ 
 
         $editor = isset($_GET['editor']) ? $_GET['editor'] : 'coding';//coding表示使用带markdown的editor;normal表示使用普通editor
@@ -152,6 +164,17 @@ class ExpController extends Controller {
         exit;
     }
 
+    ###ad综合  包括: _upd(),upd(),updh()
+    ##_upd初始化方法，只服务于upd
+    public function _upd(){
+        $this->_url = [
+            'updh' => L(PLAT, MOD, 'updh'),
+            'editormdImgUp' => L(PLAT, 'editor', 'imgupmd'),
+            'editormd' => L(PLAT, 'editor', 'editormdupd'),
+            'catLookup' => L(PLAT, 'expcat', 'catLookup')
+        ];
+    }
+
     public function upd(){
         //接收参数
         $id = $_GET['id'];
@@ -170,6 +193,7 @@ class ExpController extends Controller {
 
         $this->display('Exp/upd.tpl');
     }
+
     public function updh(){ 
         #接收数据
         //条件
@@ -199,6 +223,7 @@ class ExpController extends Controller {
         exit;
     }
 
+    ###del综合  包括: del()
     public function del(){ 
         
         #接收数据
@@ -216,6 +241,9 @@ class ExpController extends Controller {
         echo json_encode($re);
         exit;
     }
+
+
+
 
     public function test(){ 
         
