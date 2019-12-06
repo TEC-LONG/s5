@@ -13,12 +13,12 @@
 {/literal} *}
 
 <div class="pageHeader">
-	<form onsubmit="return navTabSearch(this);" action="demo_page1.html" method="post" onreset="$(this).find('select.combox').comboxReset()">
+	<form onsubmit="return navTabSearch(this);" action="{$page.index}" method="post" onreset="$(this).find('select.combox').comboxReset()">
 	<div class="searchBar">
 		<table class="searchContent">
 			<tr>
 				<td>
-					exp标题：<input type="text" name="keyword" />
+					exp标题：<input type="text" name="title" />
 				</td>
 				<td>
 					所属exp分类：
