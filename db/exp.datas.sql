@@ -11,7 +11,7 @@
  Target Server Version : 50524
  File Encoding         : 65001
 
- Date: 09/12/2019 18:01:45
+ Date: 10/12/2019 18:24:24
 */
 
 SET NAMES utf8mb4;
@@ -389,7 +389,7 @@ CREATE TABLE `prorecord`  (
   `content` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `is_del` tinyint(1) UNSIGNED NULL DEFAULT 0 COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of prorecord
@@ -399,6 +399,7 @@ INSERT INTO `prorecord` VALUES (2, 1575273044, 1, '20181204-禅道Bug提交规�
 INSERT INTO `prorecord` VALUES (3, 1575274984, 1, '【玖富】我的信息管理', '## 密码管理\r\n1. F&amp;amp;&amp;amp;&amp;amp;1$$\r\n2. f&amp;amp;&amp;amp;&amp;amp;1$$\r\n3. Xm&amp;amp;&amp;amp;1$$0$$\r\n\r\n## 企业邮箱\r\nwangxin@jiufuwangluo.com    &amp;amp;1\r\n\r\n## GitLab\r\nhttp://git.jiufuwangluo.com:8006/users/wangxin/contributed\r\nhttp://git.jiufuwangluo.com:8006\r\nwangxin@jiufuwangluo.com  &amp;amp;3\r\n\r\n## 先迈&amp;amp;玖富api文档\r\nhttp://192.168.1.230:4999/web/#/item/index\r\n\r\nwangxin@jiufuwangluo.com    &amp;amp;1\r\n\r\n## 禅道\r\nhttps://pm.jiufuwangluo.com/user-login-L215Lmh0bWw=.html\r\nwangxin  &amp;amp;3\r\n\r\n## 其它\r\n桌面：&amp;amp;2\r\n本地数据库: 123abc\r\n\r\n## 后台账号\r\nhttps://dev.xianmai88.com/manage\r\nhttp://local.xianmai.com/manage/login\r\ndev\r\nadmin/Xm123123\r\n\r\nhttps://xm.xianmai88.com/manage/login\r\n测试\r\nPGtester/pg1qaz', 0);
 INSERT INTO `prorecord` VALUES (4, 1575338148, 2, '公共信息管理', '## pwd\r\n```shell\r\n1. f&amp;amp;&amp;amp;&amp;amp;5$$\r\n2. t&amp;amp;&amp;amp;&amp;amp;o&amp;amp;&amp;amp;5$$\r\n```\r\n\r\n\r\n## 代理\r\nhttps://justmysocks1.net/members/clientarea.php?action=productdetails&amp;amp;id=107355\r\n&amp;amp;1\r\n\r\n\r\n## 综合\r\nf&amp;amp;&amp;amp;&amp;amp;&amp;amp;.&amp;amp;&amp;amp;&amp;amp;g@qq.com    &amp;amp;2\r\ngu&amp;amp;&amp;amp;&amp;amp;&amp;amp;2$$4@gmail.com', 0);
 INSERT INTO `prorecord` VALUES (5, 1575458147, 0, '测试删除', 'adfasdfas', 1);
+INSERT INTO `prorecord` VALUES (6, 1575939058, 1, '【先迈】开发笔记', '### 第一次部署\r\n1. 拉取代码；\r\n2. 注意.gitignore中忽略的目录，没有的创建出来，特别注意storage/framework/sessions这个目录，将会影响到session的写入；\r\n\r\n### 寻找(加载)模板\r\n框架中的模板使用了laravel-theme，所以寻的模板的方式不同于laravel中的view方法，举例说明：\r\n```php\r\n#XX:xxxwebappModulesManageHttpControllersAuthAuthController.php\r\npublic function getLogin()\r\n{\r\n	if (ManagerModel::getManager()){\r\n	    return redirect($this-&amp;gt;redirectPath);\r\n	}\r\n\r\n	$this-&amp;gt;initTheme(\'managelogin\');\r\n	$this-&amp;gt;theme-&amp;gt;setTitle(\'后台登录\');\r\n	###\r\n	# 通过scope方法寻的的是：xxx/web/public/themes/default/views/manage/login.blade.php\r\n	###\r\n	return $this-&amp;gt;theme-&amp;gt;scope(\'manage.login\')-&amp;gt;render();\r\n}\r\n```\r\n\r\nlaravel-theme的github地址：https://github.com/teepluss/laravel-theme\r\n\r\n### 数据操作\r\n\r\n### 参数传递', 0);
 
 -- ----------------------------
 -- Table structure for vimshortcut
