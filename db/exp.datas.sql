@@ -11,7 +11,7 @@
  Target Server Version : 50524
  File Encoding         : 65001
 
- Date: 13/12/2019 18:18:16
+ Date: 19/12/2019 18:48:40
 */
 
 SET NAMES utf8mb4;
@@ -256,7 +256,7 @@ CREATE TABLE `expcat`  (
   `child_nums` smallint(2) UNSIGNED NULL DEFAULT 0 COMMENT '直属子节点总个数',
   `child_ids` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '直属子节点id集合',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 36 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 39 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of expcat
@@ -296,6 +296,9 @@ INSERT INTO `expcat` VALUES (32, 1575536062, 'windows', 0, 0, 1, 1, '33');
 INSERT INTO `expcat` VALUES (33, 1575536073, '开发环境', 32, 0, 2, 2, '34,35');
 INSERT INTO `expcat` VALUES (34, 1575536082, 'wamp', 33, 0, 3, 0, '');
 INSERT INTO `expcat` VALUES (35, 1575609547, 'laravel', 33, 0, 3, 0, '');
+INSERT INTO `expcat` VALUES (36, 1576495942, '日常总结', 0, 0, 1, 1, '37');
+INSERT INTO `expcat` VALUES (37, 1576495949, '日常总结', 36, 0, 2, 1, '38');
+INSERT INTO `expcat` VALUES (38, 1576495959, '日常总结', 37, 0, 3, 0, '');
 
 -- ----------------------------
 -- Table structure for expchifan
@@ -327,7 +330,7 @@ CREATE TABLE `expnew`  (
   `crumbs_expcat_names` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '所属exp分类名称父级关系',
   `is_del` tinyint(1) UNSIGNED NULL DEFAULT 0 COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 15 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 16 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of expnew
@@ -343,6 +346,7 @@ INSERT INTO `expnew` VALUES (11, 1575512967, '测试EXP', 'adfasdfasdf\r\n![](/p
 INSERT INTO `expnew` VALUES (12, 1575536227, 'PHP本地打开页面很慢原因解析', 'php.ini中关闭xdebug', 'PHP网站（Drupal7）响应过慢之“Wating(TTFB)时间过长”', 32, 'windows', '32|33|34', 'windows|开发环境|wamp', 0);
 INSERT INTO `expnew` VALUES (13, 1575609658, '怎样查看laravel版本', '![](/public/tools/editormdimg/201912/editormd_5de9e50406baa20191206132004.92.jpg)\r\n\r\n输入：php artisan --version\r\n或：php artisan\r\n都可以。', '', 32, 'windows', '32|33|35', 'windows|开发环境|laravel', 0);
 INSERT INTO `expnew` VALUES (14, 1575612921, 'laravel操作使用笔记', '### 创建控制器\r\n```shell\r\n php .artisan make:controller Test1Controller\r\n```\r\n![](/public/tools/editormdimg/201912/editormd_5de9f1cfaa75e20191206141439.93.jpg)\r\n', '', 32, 'windows', '32|33|35', 'windows|开发环境|laravel', 0);
+INSERT INTO `expnew` VALUES (15, 1576496436, '上周末（191214-191215）时间安排总结', '\r\n### 购买物料\r\n周天上午10：30-12：15去超市购买了日用品；\r\n周天下午4：00-5：30从4s店回家买了菜；\r\n\r\n总结：以上购买日用品和食材的事情应该在周六就安排时间办好。\r\n\r\n周五晚12：30睡觉；\r\n周六早晨8:20才起床做早餐；\r\n\r\n总结：不要晚睡早起，周五应该在9点左右睡觉，周六可以正常6点起床，做一个惬意早餐给家人和自己，多美妙。\r\n\r\n周天准备第二周包点的时间全都放在了晚上进行，做到12：00才能睡觉；\r\n\r\n总结：可以准备包点的事情安排在周六进行，这样会更从容，腾出周天的时间来学习。', '', 36, '日常总结', '36|37|38', '日常总结|日常总结|日常总结', 0);
 
 -- ----------------------------
 -- Table structure for froala_edit_img
@@ -390,7 +394,7 @@ CREATE TABLE `prorecord`  (
   `content` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `is_del` tinyint(1) UNSIGNED NULL DEFAULT 0 COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of prorecord
@@ -400,8 +404,9 @@ INSERT INTO `prorecord` VALUES (2, 1575273044, 1, '20181204-禅道Bug提交规�
 INSERT INTO `prorecord` VALUES (3, 1575274984, 1, '【玖富】我的信息管理', '## 密码管理\r\n1. F&amp;amp;&amp;amp;&amp;amp;1$$\r\n2. f&amp;amp;&amp;amp;&amp;amp;1$$\r\n3. Xm&amp;amp;&amp;amp;1$$0$$\r\n\r\n## 企业邮箱\r\nwangxin@jiufuwangluo.com    &amp;amp;1\r\n\r\n## GitLab\r\nhttp://git.jiufuwangluo.com:8006/users/wangxin/contributed\r\nhttp://git.jiufuwangluo.com:8006\r\nwangxin@jiufuwangluo.com  &amp;amp;3\r\n\r\n## 先迈&amp;amp;玖富api文档\r\nhttp://192.168.1.230:4999/web/#/item/index\r\n\r\nwangxin@jiufuwangluo.com    &amp;amp;1\r\n\r\n## 禅道\r\nhttps://pm.jiufuwangluo.com/user-login-L215Lmh0bWw=.html\r\nwangxin  &amp;amp;3\r\n\r\n## 其它\r\n桌面：&amp;amp;2\r\n本地数据库: 123abc\r\n\r\n## 后台账号\r\nhttps://dev.xianmai88.com/manage\r\nhttp://local.xianmai.com/manage/login\r\ndev\r\nadmin/Xm123123\r\n\r\nhttps://xm.xianmai88.com/manage/login\r\n测试\r\nPGtester/pg1qaz', 0);
 INSERT INTO `prorecord` VALUES (4, 1575338148, 2, '公共信息管理', '## pwd\r\n```shell\r\n1. f&amp;amp;&amp;amp;&amp;amp;5$$\r\n2. t&amp;amp;&amp;amp;&amp;amp;o&amp;amp;&amp;amp;5$$\r\n```\r\n\r\n\r\n## 代理\r\nhttps://justmysocks1.net/members/clientarea.php?action=productdetails&amp;amp;id=107355\r\n&amp;amp;1\r\n\r\n\r\n## 综合\r\nf&amp;amp;&amp;amp;&amp;amp;&amp;amp;.&amp;amp;&amp;amp;&amp;amp;g@qq.com    &amp;amp;2\r\ngu&amp;amp;&amp;amp;&amp;amp;&amp;amp;2$$4@gmail.com', 0);
 INSERT INTO `prorecord` VALUES (5, 1575458147, 0, '测试删除', 'adfasdfas', 1);
-INSERT INTO `prorecord` VALUES (6, 1575939058, 1, '【先迈】开发笔记', '### 第一次部署\r\n1. 拉取代码；\r\n2. 注意.gitignore中忽略的目录，没有的创建出来，特别注意storage/framework/sessions这个目录，将会影响到session的写入；\r\n\r\n### 寻找(加载)模板\r\n框架中的模板使用了laravel-theme，所以寻的模板的方式不同于laravel中的view方法，举例说明：\r\n```php\r\n#XX:xxxwebappModulesManageHttpControllersAuthAuthController.php\r\npublic function getLogin()\r\n{\r\n	if (ManagerModel::getManager()){\r\n	    return redirect($this-&amp;gt;redirectPath);\r\n	}\r\n\r\n	$this-&amp;gt;initTheme(\'managelogin\');\r\n	$this-&amp;gt;theme-&amp;gt;setTitle(\'后台登录\');\r\n	###\r\n	# 通过scope方法寻的的是：xxx/web/public/themes/default/views/manage/login.blade.php\r\n	###\r\n	return $this-&amp;gt;theme-&amp;gt;scope(\'manage.login\')-&amp;gt;render();\r\n}\r\n```\r\n\r\nlaravel-theme的github地址：https://github.com/teepluss/laravel-theme\r\n\r\n### 数据操作\r\n\r\n### 参数传递\r\n\r\n### 项目结构\r\nweb/updates目录下：\r\n![](/public/tools/editormdimg/201912/editormd_5df06ad5259cf20191211120437.96.jpg)', 0);
+INSERT INTO `prorecord` VALUES (6, 1575939058, 1, '【先迈】开发笔记', '### 第一次部署\r\n1. 拉取代码；\r\n2. 注意.gitignore中忽略的目录，没有的创建出来，特别注意storage/framework/sessions这个目录，将会影响到session的写入；\r\n\r\n### 寻找(加载)模板\r\n框架中的模板使用了laravel-theme，所以寻的模板的方式不同于laravel中的view方法，举例说明：\r\n```php\r\n#XX:xxxwebappModulesManageHttpControllersAuthAuthController.php\r\npublic function getLogin()\r\n{\r\n	if (ManagerModel::getManager()){\r\n	    return redirect($this-&amp;gt;redirectPath);\r\n	}\r\n\r\n	$this-&amp;gt;initTheme(\'managelogin\');\r\n	$this-&amp;gt;theme-&amp;gt;setTitle(\'后台登录\');\r\n	###\r\n	# 通过scope方法寻的的是：xxx/web/public/themes/default/views/manage/login.blade.php\r\n	###\r\n	return $this-&amp;gt;theme-&amp;gt;scope(\'manage.login\')-&amp;gt;render();\r\n}\r\n```\r\n\r\nlaravel-theme的github地址：https://github.com/teepluss/laravel-theme\r\n\r\n### 数据操作\r\n\r\n### 参数传递\r\n\r\n### 目录或文件说明\r\nweb/updates目录下：\r\n![](/public/tools/editormdimg/201912/editormd_5df06ad5259cf20191211120437.96.jpg)\r\n\r\n### 控制器中的操作\r\n```php\r\n//获取当前路由名\r\n$routeName = \request()-&amp;gt;route()-&amp;gt;getName();\r\n//获得当前被访问页面url\r\n$this-&amp;gt;routes[\'current_url\'] = route($routeName);\r\n```', 0);
 INSERT INTO `prorecord` VALUES (7, 1576026893, 2, '周1-周5工作日程', '早：\r\n1. 企业邮箱\r\n2. QQ邮箱\r\n3. GMail邮箱\r\n3. 禅道\r\n\r\n下午：\r\n4. 周报\r\n5. exp数据库备份\r\n6. s5同步\r\n7. dev数据库备份\r\n8. vscode工作环境配置同步\r\n9. 点第二天午餐', 0);
+INSERT INTO `prorecord` VALUES (8, 1576632155, 1, '开发简略流程', '### 先迈3.9.21\r\n\r\n### 先迈4.9.3\r\n191216\r\n191227\r\n\r\n191228\r\n添加页--人工标签\r\n添加页--选择任务单--搜索\r\n添加页--选择商品--搜索\r\n编辑模块页\r\n模块组件--删除模块\r\n编辑模块--删除任务单/删除商品\r\n查看', 0);
 
 -- ----------------------------
 -- Table structure for vimshortcut
