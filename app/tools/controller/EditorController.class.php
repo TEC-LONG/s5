@@ -46,6 +46,10 @@ class EditorController extends Controller {
         $sql = 'select content from ' . $tbname . ' where id=' . $id;
         $prorecord = M()->getRow($sql);
 
+        // var_dump($prorecord['content']);
+
+        // exit;
+        
         $this->assign([
             'prorecord'=>$prorecord,
             'url'=>$this->_url

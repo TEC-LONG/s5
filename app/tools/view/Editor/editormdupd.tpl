@@ -16,7 +16,7 @@
 		<p></p>
 	</header>
 	<div id="test-editormd">
-		<textarea style="display:none;" name="content" id="content">{htmlspecialchars_decode(trim($prorecord.content))}</textarea>
+		<textarea style="display:none;" name="content" id="content">{htmlspecialchars_decode($prorecord.content)}</textarea>
 	</div>
 </div>        
 <script src="{$smarty.const.PUBLIC_TOOLS}editor_md/editormd.js"></script>

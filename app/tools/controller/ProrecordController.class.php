@@ -97,11 +97,15 @@ class ProrecordController extends Controller {
     }
 
     public function adh(){ 
+        
         //接收数据
+        $content = str_replace('\\', '\\\\', $_POST['content_ad']);
+        $content = str_replace('"', '&quot;', $content);
+
         $datas = [
             'title' => $_POST['title'],
             'belong_pro' => $_POST['belong_pro'],
-            'content' => htmlspecialchars($_POST['content_ad']),
+            'content' => $content,
             'post_date' => time()
         ];
 
@@ -140,11 +144,13 @@ class ProrecordController extends Controller {
     public function updh(){ 
         //接收数据
         $con = ['id'=>$_GET['id']];
+        $content = str_replace('\\', '\\\\', $_POST['content_upd']);
+        $content = str_replace('"', '&quot;', $content);
 
         $datas = [
             'title' => $_POST['title'],
             'belong_pro' => $_POST['belong_pro'],
-            'content' => htmlspecialchars($_POST['content_upd'])
+            'content' => $content
         ];
 
         //执行更新操作

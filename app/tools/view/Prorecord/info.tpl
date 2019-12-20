@@ -66,7 +66,7 @@
                <textarea style="display:none;" name="test-editormd-markdown-doc"></textarea>               
             </div>
             <div id="test-editormd-view2">
-                <textarea id="append-test" style="display:none;"></textarea>          
+                <textarea id="append-test" style="display:none;"></textarea>
             </div>
         </div>
         <!-- <script src="/tempaltes/editor_md/examples/js/zepto.min.js"></script>
