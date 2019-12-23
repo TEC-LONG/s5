@@ -153,7 +153,8 @@ class ExpController extends Controller {
         $datas['title'] = $_POST['title'];
         $datas['tags'] = $_POST['tags'];
         $datas['post_date'] = time();
-        $datas['content'] = htmlspecialchars($_POST['content_ad']);
+        $datas['content'] = str_replace('\\', '\\\\', $_POST['content_ad']);
+        $datas['content'] = str_replace('"', '&quot;', $datas['content']);
         $datas['expcat__id'] = $_POST['expcat_cat1id'];
         $datas['expcat__name'] = $_POST['expcat_cat1name'];
         $datas['crumbs_expcat_ids'] = $_POST['expcat_cat1id'] . '|' . $_POST['expcat_cat2id'] . '|' . $_POST['expcat_cat3id'];
@@ -212,7 +213,11 @@ class ExpController extends Controller {
         $datas['title'] = $_POST['title'];
         $datas['tags'] = $_POST['tags'];
         $datas['post_date'] = time();
-        if(!empty($_POST['content_upd'])) $datas['content']=htmlspecialchars($_POST['content_upd']);;
+        if(!empty($_POST['content_upd'])){
+
+            $datas['content'] = str_replace('\\', '\\\\', $_POST['content_upd']);
+            $datas['content'] = str_replace('"', '&quot;', $datas['content']);
+        } 
         $datas['expcat__id'] = $_POST['expcat_cat1id'];
         $datas['expcat__name'] = $_POST['expcat_cat1name'];
         $datas['crumbs_expcat_ids'] = $_POST['expcat_cat1id'] . '|' . $_POST['expcat_cat2id'] . '|' . $_POST['expcat_cat3id'];
