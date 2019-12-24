@@ -106,7 +106,7 @@ class Model{
         }
     }
     /**
-     * 方法名: getRow
+     * 方法名: GN
      * 方法作用: 根据指定条件查询记录条数（Get Number）
      * 参数
      * 
@@ -118,15 +118,20 @@ class Model{
      *
      * 注意：$type=2时，最大支持的$fieldsVals的元素总个数为5个。
      */
-    public function GN($tbname, $fieldsVals, $type=1){ 
+    public function GN($tbname, $fieldsVals=1, $type=1){ 
         
         if( $type==1 ):
 
-            $arrCon = array();
-            foreach( $fieldsVals as $k=>$v ){ 
-                $arrCon[] = $k . '="' . $v . '"';
+            if( $fieldsVals==1 ){
+                $condition = 1;
+            }else {
+                $arrCon = array();
+                foreach( $fieldsVals as $k=>$v ){ 
+                    $arrCon[] = $k . '="' . $v . '"';
+                }
+                $condition = implode(' and ', $arrCon);
             }
-            $condition = implode(' and ', $arrCon);
+            
             $sql = "select count(*) as num from {$tbname} where {$condition}";
             $row = $this->getRow($sql);
             return $row['num'];

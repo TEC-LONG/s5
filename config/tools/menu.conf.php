@@ -39,7 +39,7 @@ $configs['tools']['menu'] = array(
                 array( 'plat'=>'tools', 'module'=>'index', 'act'=>'selfmain', 'rel'=>'index_selfmain' )
             ],
             1=>[ 
-                array( 'plat'=>'tools', 'module'=>'TbStruct', 'act'=>'index', 'rel'=>'TbStruct_index' ),
+                array( 'plat'=>'tools', 'module'=>'TBRecord', 'act'=>'index', 'rel'=>'TBRecord_index' ),
                 array( 'plat'=>'tools', 'module'=>'AutoTb', 'act'=>'index', 'rel'=>'AutoTb_index' ),
                 array( 'plat'=>'Apps', 'module'=>'Goods', 'act'=>'index', 'rel'=>'Goods' )
             ],

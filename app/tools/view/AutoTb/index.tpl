@@ -53,8 +53,18 @@
 					edit：<input name="edit" value="1" type="checkbox" checked="checked" />&nbsp;&nbsp;
 					list：<input name="list" value="1" type="checkbox" checked="checked" onclick="return false;" />&nbsp;&nbsp;
 					del：<input name="del" value="1" type="checkbox" checked="checked" />&nbsp;&nbsp;
+					记录：<input name="record" value="1" type="checkbox" />&nbsp;&nbsp;
 				</dd>
 			</dl>
+
+			{* <dl class="nowrap">
+				<dt>所属项目：</dt>
+				<dd>
+					<select class="combox" name="belong_pro">
+						<option value="">exp</option>
+					</select>
+				</dd>
+			</dl> *}
 
 			<div class="divider"></div>
 

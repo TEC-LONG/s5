@@ -8,28 +8,28 @@
             <dl>
 				<dt>所属库名称：</dt>
 				<dd>
-					{T_createSelectHtml($belong_db, 'belong_db', 2)}
+					{T_createSelectHtml($datas.belong_db, 'belong_db', 2, 1)}
 				</dd>
 			</dl>
 
             <dl>
 				<dt style="color:red;">表结构：</dt>
-				<dd><textarea name="ori_struct" class="required" cols="150" rows="7"></textarea></dd>
+				<dd><textarea name="structure" class="required" cols="90" rows="7"></textarea></dd>
 			</dl>
                 
             <dl>
-				<dt>建表语句：</dt>
-				<dd><textarea name="create_sql" cols="150" rows="12"></textarea></dd>
+				<dt>重要信息：</dt>
+				<dd><textarea name="infos" cols="90" rows="7"></textarea></dd>
 			</dl>
 
             <dl>
-				<dt>特殊字段值对信息：</dt>
-				<dd><textarea name="special_fields" cols="150" rows="7"></textarea></dd>
+				<dt>建表语句：</dt>
+				<dd><textarea name="sqls" cols="90" rows="7"></textarea></dd>
 			</dl>
 
-			<dl>
-				<dt>备注信息：</dt>
-				<dd><textarea name="comm" cols="150" rows="7"></textarea></dd>
+            <dl>
+				<dt>表特性描述：</dt>
+				<dd><textarea name="des" cols="90" rows="7"></textarea></dd>
 			</dl>
                 	
 			<div class="divider"></div>

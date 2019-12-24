@@ -18,7 +18,7 @@ class AutoTbModel extends Model{
         //if(empty($params)) exit;
 
         $this->_step = $params['step'];
-        $this->_structure = $params['structure'];
+        $this->_structure = trim($params['structure']);
 
         ////不同flag表单标签不同处理
 		switch ( $this->_step ){
@@ -26,8 +26,8 @@ class AutoTbModel extends Model{
 			default:
 				$tina_n_firstExplodeStructure = explode("\r\n", $this->_structure);	//表结构第一次拆分形成的数组  array(表中文名, 表英文名, 表字段中文名, 表字段英文名);
 		
-                $this->_chTbName = $tina_n_firstExplodeStructure[0];	
-                $this->_enTbName = $tina_n_firstExplodeStructure[1];	
+                $this->_chTbName = $tina_n_firstExplodeStructure[0];
+                $this->_enTbName = $tina_n_firstExplodeStructure[1];
 
                 $this->_chColumNames = explode(',', $tina_n_firstExplodeStructure[2]);	
                 $this->_enColumNames = explode(',', $tina_n_firstExplodeStructure[3]);	
@@ -263,6 +263,28 @@ var commonSelect = function(){
         ';
         return $list;
     }
+
+    // public function record_sql($json, $belong_pro){
+        
+    //     $datas = [
+    //         'belong_pro' => $belong_pro,
+    //         'ch_name' => $this->_chTbName,
+    //         'en_name' => $this->_enTbName,
+    //         'ch_serial_fields' => serialize($this->_chColumNames),
+    //         'en_serial_fields' => serialize($this->_enColumNames),
+    //         'ori_struct' => $this->_structure,
+    //         'create_sql' => $json->sql
+    //     ];
+
+    //     //执行新增
+    //     if( M()->setData('prorecord', $datas) ){
+    //         $re = AJAXre();
+    //         $re->navTabId = $this->_navTab.'_ad';
+    //         $re->message = '添加成功！';
+    //     }else{
+    //         $re = AJAXre(1);
+    //     }
+    // }
 
     /**
      * --------------------s.WangXin2016/1/7

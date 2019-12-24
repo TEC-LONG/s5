@@ -62,7 +62,7 @@ class AutoTbController extends Controller {
         exit;
     }
 
-    private function stepTwo(){ 
+    private function stepTwo($params){ 
 
         //$this->_model = new \Admin\Model\CAutotbModel($this->_post['step'], $this->_post['structure']);
         $model = M('AutoTb', $params);
@@ -70,6 +70,12 @@ class AutoTbController extends Controller {
 
         $re = AJAXre();
         $re->exInfo = $sino_j_stepTwo;
+
+        //如果需要记录
+        // if( $_POST['record']==1 ){
+            
+        //     $model->record_sql($sino_j_stepTwo, $_POST['belong_pro']);
+        // }
 
         echo json_encode($re);
         exit;

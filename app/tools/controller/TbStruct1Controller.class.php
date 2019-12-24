@@ -34,7 +34,7 @@ class TbStructController extends Controller {
 
     
     public function ad(){ 
-
+        var_dump(123);
         $this->assign([
             'datas'=>$this->_datas,
             'url'=>$this->_url
