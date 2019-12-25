@@ -86,6 +86,10 @@ class Model{
                 }
                 $con = implode(',', $con);
                 $sql = 'update `' . $tbname . '` set ' . $strDatas . ' where ' . $con;
+
+                // var_dump($sql);
+                // exit;
+                
             break;
             case 3://删除语句
                 $sql = 'delete from `' . $tbname . '` where ' . $strDatas;

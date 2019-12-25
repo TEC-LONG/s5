@@ -57,15 +57,6 @@
 				</dd>
 			</dl>
 
-			{* <dl class="nowrap">
-				<dt>所属项目：</dt>
-				<dd>
-					<select class="combox" name="belong_pro">
-						<option value="">exp</option>
-					</select>
-				</dd>
-			</dl> *}
-
 			<div class="divider"></div>
 
 			<dl class="nowrap">

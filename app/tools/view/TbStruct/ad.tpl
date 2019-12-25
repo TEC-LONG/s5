@@ -2,7 +2,7 @@
 
 <div class="pageContent">
 	
-	<form enctype="multipart/form-data" method="post" action="{$url.adh}" class="pageForm required-validate" onsubmit="return iframeCallback(this, navTabAjaxDone)">
+	<form enctype="multipart/form-data" method="post" action="{$url.adh}" class="pageForm required-validate"  onsubmit="return validateCallback(this, navTabAjaxDone);">
 		<div class="pageFormContent nowrap" layoutH="97"  style="align:center;">
 		
             <dl>

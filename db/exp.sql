@@ -160,11 +160,12 @@ ALTER TABLE `prorecord` ADD `is_del` TINYINT( 1 )  UNSIGNED DEFAULT '0' COMMENT 
 
 #表结构记录表                                                                                                                   
 #tb_record
-#id,post_date,所属库,表中文名,表英文名,中文字段集合,英文字段集合,原始建表草稿,建表语句,是否有特殊字段,备注信息
-#id,post_date,belong_db,ch_name,en_name,ch_fields,en_fields,ori_struct,create_sql,has_special_field,comm
+#id,post_date,所属库,表中文名,表英文名,中文字段集合,英文字段集合,原始建表草稿,建表语句,是否有特殊字段,是否有关联字段,备注信息
+#id,post_date,belong_db,ch_name,en_name,ch_fields,en_fields,ori_struct,create_sql,has_special_field,has_relate_field,comm
 
 belong_db = {"0":"exp"}
 has_special_field = {"0":"否", "1":"是"}
+has_relate_field = {"0":"否", "1":"是"}
 
 CREATE TABLE `tb_record` ( `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 ALTER TABLE `tb_record` ADD `post_date` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0'; ALTER TABLE `tb_record` ADD INDEX ( `post_date` );
@@ -176,14 +177,15 @@ ALTER TABLE `tb_record` ADD `en_fields` VARCHAR( 255 )  NOT NULL DEFAULT '' COMM
 ALTER TABLE `tb_record` ADD `ori_struct` TEXT COMMENT '原始建表草稿';
 ALTER TABLE `tb_record` ADD `create_sql` TEXT COMMENT '建表语句';
 ALTER TABLE `tb_record` ADD `has_special_field` TINYINT( 1 )  UNSIGNED DEFAULT '0' COMMENT '是否有特殊字段';
+ALTER TABLE `tb_record` ADD `has_relate_field` TINYINT( 1 )  UNSIGNED DEFAULT '0' COMMENT '是否有关联字段';
 ALTER TABLE `tb_record` ADD `comm` VARCHAR( 255 )  NOT NULL DEFAULT '' COMMENT '备注信息';
 
 
 
 #表特殊字段记录表                                                                                                                   
 #tb_special_field
-#id,post_date,所属表id,英文字段名,字段特别说明,字段序列化值对,字段类型
-#id,post_date,tb_record__id,en_name,specification,serialize,field_type
+#id,post_date,所属表id,英文字段名,字段特别说明,字段序列化值对,字段类型,关联表英文名,被关联字段英文名
+#id,post_date,tb_record__id,en_name,specification,serialize,field_type,relate_tb_name,relate_field_name
 
 field_type = {"0":'普通字段', "1":'关联字段'}
 
@@ -194,6 +196,8 @@ ALTER TABLE `tb_special_field` ADD `en_name` VARCHAR( 100 )  NOT NULL DEFAULT ''
 ALTER TABLE `tb_special_field` ADD `specification` VARCHAR( 100 )  NOT NULL DEFAULT '' COMMENT '字段特别说明';
 ALTER TABLE `tb_special_field` ADD `serialize` VARCHAR( 100 )  NOT NULL DEFAULT '' COMMENT '字段序列化值对';
 ALTER TABLE `tb_special_field` ADD `field_type` TINYINT( 1 )  UNSIGNED DEFAULT '0' COMMENT '字段类型';
+ALTER TABLE `tb_special_field` ADD `relate_tb_name` VARCHAR( 100 )  NOT NULL DEFAULT '' COMMENT '关联表英文名';
+ALTER TABLE `tb_special_field` ADD `relate_field_name` VARCHAR( 100 )  NOT NULL DEFAULT '' COMMENT '被关联字段英文名';
 
 
 

@@ -31,7 +31,7 @@
 <div class="pageContent">
 	<div class="panelBar">
 		<ul class="toolBar">
-			<li><a class="add" href="{$url.ad}" target="navTab" rel="{$navTab}_ad"><span>添加</span></a></li>
+			<li><a class="add" href="{$url.ad}" target="navTab" rel="{$navTab}_add"><span>添加</span></a></li>
 			<li class="line">line</li>
 			<li><a class="icon" href="demo/common/dwz-team.xls" target="dwzExport" targetType="navTab" title="确实要导出这些记录吗?"><span>导出EXCEL</span></a></li>
 		</ul>
@@ -52,7 +52,19 @@
 			<tr target="sid_user" rel="{$row['id']}">
 				<td><input name="ids" value="xxx" type="checkbox"></td>
 				<td>{$k+1}</td>
-				{$tbhtml}
+				{foreach $mustShow as $mustShow_key=>$field}
+				{if $mustShow_key=='belong_db'}
+				<td>{$belong_db[$row[$mustShow_key]]}</td>
+				{elseif $mustShow_key=='has_special_field'}
+				<td>{$has_special_field[$row[$mustShow_key]]}</td>
+				{elseif $mustShow_key=='has_relate_field'}
+				<td>{$has_relate_field[$row[$mustShow_key]]}</td>
+				{elseif $mustShow_key=='post_date'}
+				<td>{date('Y-m-d H:i:s', $row[$mustShow_key])}</td>
+				{else}
+				<td>{$row[$mustShow_key]}</td>
+				{/if}
+				{/foreach}
 				<td>
 					<a title="确实要删除？" target="ajaxTodo" href="{$url.del}/id/{$row['id']}" class="btnDel">删除</a>
 					<a title="编辑【{$row['id']}】" target="navTab" href="{$url.edit}/id/{$row['id']}" class="btnEdit" rel="{$navTab}_edit{$row['id']}">编辑</a>
