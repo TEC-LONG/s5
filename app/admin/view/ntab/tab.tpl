@@ -31,7 +31,7 @@ function getSonTabTpl(obj){
 		obj = $(this);
 	}
 
-	var webUrl = 'http://s5.home.com/index.php?'+obj.attr('webUrl');
+	var webUrl = 'http://exp.local.com/index.php?'+obj.attr('webUrl');
 	var tplId = obj.attr('href');
 	var id = obj.attr('id');
 	var thisIndex = obj.index();

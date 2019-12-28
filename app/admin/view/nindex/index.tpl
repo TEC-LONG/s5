@@ -64,7 +64,7 @@ $(function(){
 //--------------------.b
 
 //首次加载后台首页，调用ajax展示HOME页面
-gtpl('home', 'http://s5.home.com/index.php?p=admin&m=index&a=showTab');
+gtpl('home', 'http://exp.local.com/index.php?p=admin&m=index&a=showTab');
 
 var tags = ['home'];//选择标记，如果选择过的页卡，其id将会被保存进tags中
 
@@ -97,7 +97,7 @@ $("#navbarToggleExternalContent").find("a").click(function(){
 	$('#myTab a[href="#'+stag[0]+'"]').tab('show');
 
 	//展示相应页卡模板内容
-	gtpl(stag[0], 'http://s5.home.com/index.php?p=admin&m=index&a=showTab', datas);
+	gtpl(stag[0], 'http://exp.local.com/index.php?p=admin&m=index&a=showTab', datas);
 });
 
 //--------------------.e
