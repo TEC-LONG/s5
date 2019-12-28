@@ -110,17 +110,17 @@ ALTER TABLE `expnew` ADD `is_del` TINYINT( 1 )  UNSIGNED DEFAULT '0' COMMENT '�
 
 #随机点餐表
 #chifan
-#id,post_date,菜品,描述,类型,食物类型,关联文章id集合,关联文章title集合
-#id,post_date,cai,descr,type,food_type,expnew_ids,expnew_titles
+#id,post_date,菜品,描述,适用场景,食物类型,关联文章id集合,关联文章title集合
+#id,post_date,cai,descr,types,food_type,expnew_ids,expnew_titles
 
-#type = [0=>'午餐晚餐', 1=>'早餐'];
-#food_type = [0=>'主食', 1=>'配菜', 2=>'营养补充', 3=>'主菜', 4=>'饮品'];
+#types = {"0":"午餐", "1":"早餐", "2":"晚餐"};
+#food_type = {"0":"主食", "1":"配菜", "2":"营养补充", "3":"主菜", "4":"饮品", "5":"汤", "6":"粥"};
 
 CREATE TABLE `chifan` ( `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 ALTER TABLE `chifan` ADD `post_date` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0'; ALTER TABLE `` ADD INDEX ( `post_date` );
 ALTER TABLE `chifan` ADD `cai` VARCHAR( 100 )  NOT NULL DEFAULT '' COMMENT '菜品';
 ALTER TABLE `chifan` ADD `descr` TEXT NOT NULL COMMENT '描述';
-ALTER TABLE `chifan` ADD `type` TINYINT( 1 )  UNSIGNED DEFAULT '0' COMMENT '类型';
+ALTER TABLE `chifan` change `type` `types` VARCHAR( 30 )  NOT NULL DEFAULT '' COMMENT '适用场景';
 ALTER TABLE `chifan` ADD `food_type` TINYINT( 1 )  UNSIGNED DEFAULT '0' COMMENT '食物类型';
 ALTER TABLE `chifan` ADD `expnew_ids` VARCHAR( 255 )  NOT NULL DEFAULT '' COMMENT '关联文章id集合';
 ALTER TABLE `chifan` ADD `expnew_titles` VARCHAR( 255 )  NOT NULL DEFAULT '' COMMENT '关联文章title集合';
