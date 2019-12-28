@@ -79,4 +79,66 @@ class Controller extends \Smarty{
         return $page;
     } 
 
+    protected function JD(&$arr){
+    
+        foreach( $arr as $arr_key=>$json_str){
+        
+            $arr[$arr_key] = json_decode($json_str, true);
+        }
+    }
+
+    protected function _special_fields($special_fields, $row){
+        //                                          types  arr:|
+        foreach( $special_fields as $key=>$val){
+            
+            if($row[$key]==='') continue;
+            
+            $rule=explode(':', $val);//复合规则     ['arr', '|']
+
+            if( $rule[0]=='arr' ){//需要转换为数组的
+            
+                $symbol = isset($rule[1]) ? $rule[1] : ',';
+                $row[$key] = explode($symbol, $row[$key]);
+            }
+        }
+
+        return $row;
+    }
+
+    protected function _tbhtml($mustShow, $rows, $navtab, $init){
+
+        $tbhtml = '';
+        foreach ($rows as $rows_k => $row):
+
+            $tbhtml .= '<tr target="sid_'.$navtab.'" rel="'.$row['id'].'">';
+            $tbhtml .= '<td><input name="ids" value="'.$row['id'].'" type="checkbox"></td>';
+            $tbhtml .= '<td>'.($rows_k+1).'</td>';
+            
+            foreach( $mustShow as $field=>$info ){// $field='food_type'   $info=['ch'=>'食物类型', 'width'=>100, 'is_set'=>1]
+                
+                if(isset($info['is_set']) && $info['is_set']==1){//    is_set表示是否为集合字段，如果是，则需要将集合代号转换为对应的文案值
+                    
+                    foreach( $init[$field] as $init_field_k=>$init_field_v){//$arr_set_val:3
+                        //          '1,3'           3
+                        if( strpos($row[$field], (string)$init_field_k)!==false ){//存在集合中的值，则替换为值对应的文案
+                            // row['food_type']         3                '饭'        '1,3'
+                            $row[$field] = str_replace($init_field_k, $init_field_v, $row[$field]);
+                        }
+                    }
+                }elseif ($field=='post_date') {//如果是时间字段，则转换为对应的年月日时分秒
+
+                    $row[$field] = date('Y-m-d H:i:s', $row[$field]);
+                }
+
+                $tbhtml .= '<td>'.$row[$field].'</td>';
+            }
+
+            // $tbhtml .= '<td>';
+            // $tbhtml .= '<a title="确实要删除？" target="ajaxTodo" href="'.$this->_datas['_url']['del'].'/id/'.$row['id'].'" class="btnDel">删除</a>';
+            // $tbhtml .= '<a title="编辑【'.$row['id'].'】" target="navTab" href="'.$this->_datas['_url']['upd'].'/id/'.$row['id'].'" class="btnEdit" rel="'.$navtab.'_edit'.$row['id'].'">编辑</a>';
+            // $tbhtml .= '</td>';
+        endforeach;
+
+        return $tbhtml;
+    }
 }

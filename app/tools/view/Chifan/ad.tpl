@@ -2,23 +2,19 @@
 	<form method="post" action="{$url.adh}" class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
 		<div class="pageFormContent" layoutH="57">
 			<dl class="nowrap">
-				<dt>所属类型：</dt>
+				<dt>适用场景：</dt>
 				<dd>
-					<select name="type" class="required combox">
-						{foreach $type as $type_key=>$type_val}
-						<option value="{$type_key}">{$type_val}</option>
-						{/foreach}
-					</select>
+					{foreach $types as $key=>$val}
+					<input type="checkbox" name="types[]" value="1{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+					{/foreach}
 				</dd>
 			</dl>
 			<dl class="nowrap">
-				<dt>食物性质：</dt>
+				<dt>食物类型：</dt>
 				<dd>
-					<select name="food_type" class="required combox">
-						{foreach $food_type as $food_type_key=>$food_type_val}
-						<option value="{$food_type_key}">{$food_type_val}</option>
-						{/foreach}
-					</select>
+					{foreach $food_types as $key=>$val}
+					<input type="checkbox" name="food_types[]" value="1{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+					{/foreach}
 				</dd>
 			</dl>
 			<dl class="nowrap">
@@ -27,7 +23,39 @@
 			</dl>
 			<dl class="nowrap">
 				<dt>描述：</dt>
-				<dd><textarea cols="135" rows="7" name="descr"></textarea></dd>
+				<dd><textarea cols="135" rows="12" name="descr"></textarea></dd>
+			</dl>
+			<dl class="nowrap">
+				<dt>口味：</dt>
+				<dd>
+					{foreach $taste as $key=>$val}
+					<input type="checkbox" name="taste[]" value="1{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+					{/foreach}
+				</dd>
+			</dl>
+			<dl class="nowrap">
+				<dt>口感：</dt>
+				<dd>
+					{foreach $mouthfeel as $key=>$val}
+					<input type="checkbox" name="mouthfeel[]" value="1{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+					{/foreach}
+				</dd>
+			</dl>
+			<dl class="nowrap">
+				<dt>功效：</dt>
+				<dd>
+					{foreach $effects as $key=>$val}
+					<input type="checkbox" name="effects[]" value="1{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+					{/foreach}
+				</dd>
+			</dl>
+			<dl class="nowrap">
+				<dt>功效描述：</dt>
+				<dd><textarea cols="135" rows="7" name="effects_comm"></textarea></dd>
+			</dl>
+			<dl class="nowrap">
+				<dt>副作用：</dt>
+				<dd><textarea cols="135" rows="7" name="byeffect"></textarea></dd>
 			</dl>
 			<dl class="nowrap">
 				<dt>&nbsp;</dt>

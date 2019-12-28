@@ -40,9 +40,9 @@
 <div class="pageContent">
 	<div class="panelBar">
 		<ul class="toolBar">
-			<li><a class="add" href="{$url.ad.url}" target="navTab" rel="{$url.ad.rel}"><span>添加</span></a></li>
-			<li><a class="delete" href="{$url.del}&id={ldelim}sid_user}" target="ajaxTodo" title="确定要删除吗?"><span>删除</span></a></li>
-			<li><a class="edit" href="{$url.upd.url}&id={ldelim}sid_user}" target="navTab"  rel="{$url.upd.rel}"><span>修改菜品</span></a></li>
+			<li><a class="add" href="{$url.ad.url}" target="navTab" rel="{$url.ad.rel}"><span>添加菜品</span></a></li>
+			<li><a class="delete" href="{$url.del}&id={ldelim}sid_{$navTab}}" target="ajaxTodo" title="确定要删除吗?"><span>删除</span></a></li>
+			<li><a class="edit" href="{$url.upd.url}&id={ldelim}sid_{$navTab}}" target="navTab"  rel="{$url.upd.rel}"><span>修改菜品</span></a></li>
 			<li class="line">line</li>
 			<li><a class="icon" href="demo/common/dwz-team.xls" target="dwzExport" targetType="navTab" title="实要导出这些记录吗?"><span>导出EXCEL</span></a></li>
 		</ul>
@@ -50,35 +50,15 @@
 	<table class="table" width="100%" layoutH="138">
 		<thead>
 			<tr>
-				<th width="80">#</th>
-				<th width="120">菜品</th>
-				<th width="100">菜品性质</th>
-				<th width="100">所属类型</th>
-				<th width="100">是否有详细描述</th>
-				<!-- <th width="100">关联文章</th> -->
-				<th width="150">数据ID</th>
+				<th width="30"><input type="checkbox" group="ids" class="checkboxCtrl"></th>
+				<th width="30">序号</th>
+				{foreach $mustShow as $col}
+				<th {if !empty($col.width)}width="{$col.width}"{/if}>{$col.ch}</th>
+				{/foreach}
 			</tr>
 		</thead>
 		<tbody>
-		{foreach $cais as $cais_key=>$cai}
-			<tr target="sid_user" rel="{$cai.id}">
-				<td>{$cais_key+1}</td>
-				<td>{$cai.cai}</td>
-				<td>{$type[$cai.type]}</td>
-				<td>{$food_type[$cai.food_type]}</td>
-				<td>{$cai.has_descr}</td>
-				<!-- <td>
-				{    if !empty($cai.expnew_ids)}
-				{    foreach $cai.expnew_ids as $expnew_ids_key=>$expnew_id}
-					<a href="id={    $expnew_id}">{    $cai.expnew_titles.$expnew_ids_key}</a>
-				{    /foreach}
-				{    else}
-					无
-				{    /if}
-				</td> -->
-				<td>{$cai.id}</td>
-			</tr>
-		{/foreach}
+			{$tbhtml}
 		</tbody>
 	</table>
 	<div class="panelBar">

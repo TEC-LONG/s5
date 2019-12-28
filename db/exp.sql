@@ -110,20 +110,29 @@ ALTER TABLE `expnew` ADD `is_del` TINYINT( 1 )  UNSIGNED DEFAULT '0' COMMENT '�
 
 #随机点餐表
 #chifan
-#id,post_date,菜品,描述,适用场景,食物类型,关联文章id集合,关联文章title集合
-#id,post_date,cai,descr,types,food_type,expnew_ids,expnew_titles
+#id,post_date,菜品,描述,适用场景,食物类型,关联文章id集合,关联文章title集合,口味,口感,功效,功效描述,副作用
+#id,post_date,cai,descr,types,food_types,expnew_ids,expnew_titles,taste,mouthfeel,effects,effects_comm,byeffect
 
-#types = {"0":"午餐", "1":"早餐", "2":"晚餐"};
-#food_type = {"0":"主食", "1":"配菜", "2":"营养补充", "3":"主菜", "4":"饮品", "5":"汤", "6":"粥"};
+types = {"0":"早餐", "1":"午餐", "2":"晚餐", "3":"睡前", "4":"休闲"};
+food_type = {"0":"粥", "1":"粉", "2":"面", "3":"饭", "4":"点心", "5":"汤", "6":"大菜", "7":"下饭菜", "8":"小菜", "9":"配菜"};
+taste = '{"0":"酸", "1":"甜", "2":"苦", "3":"辣", "4":"咸", "5":"香", "6":"鲜", "7":"无味", "8":"辛辣"}';
+mouthfeel = {"0":"软", "1":"硬", "2":"糯", "3":"脆", "4":"Q弹", "5":"丝滑", "6":"入口即化", "7":"嫩"}
+effects = {"0":"温补", "1":"清热", "2":"解毒", "3":"去湿", "4":"安神", "5":"镇痛"}
 
 CREATE TABLE `chifan` ( `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 ALTER TABLE `chifan` ADD `post_date` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0'; ALTER TABLE `` ADD INDEX ( `post_date` );
 ALTER TABLE `chifan` ADD `cai` VARCHAR( 100 )  NOT NULL DEFAULT '' COMMENT '菜品';
 ALTER TABLE `chifan` ADD `descr` TEXT NOT NULL COMMENT '描述';
-ALTER TABLE `chifan` change `type` `types` VARCHAR( 30 )  NOT NULL DEFAULT '' COMMENT '适用场景';
-ALTER TABLE `chifan` ADD `food_type` TINYINT( 1 )  UNSIGNED DEFAULT '0' COMMENT '食物类型';
+ALTER TABLE `chifan` change `type` `types` VARCHAR( 100 )  NOT NULL DEFAULT '' COMMENT '适用场景';
+#ALTER TABLE `chifan` ADD `food_type` TINYINT( 1 )  UNSIGNED DEFAULT '0' COMMENT '食物类型';
+ALTER TABLE `chifan` change `food_type` `food_types` VARCHAR( 100 )  NOT NULL DEFAULT '' COMMENT '食物类型';
 ALTER TABLE `chifan` ADD `expnew_ids` VARCHAR( 255 )  NOT NULL DEFAULT '' COMMENT '关联文章id集合';
 ALTER TABLE `chifan` ADD `expnew_titles` VARCHAR( 255 )  NOT NULL DEFAULT '' COMMENT '关联文章title集合';
+ALTER TABLE `chifan` ADD `taste` VARCHAR( 100 )  NOT NULL DEFAULT '' COMMENT '口味';
+ALTER TABLE `chifan` ADD `mouthfeel` VARCHAR( 100 )  NOT NULL DEFAULT '' COMMENT '口感';
+ALTER TABLE `chifan` ADD `effects` VARCHAR( 100 )  NOT NULL DEFAULT '' COMMENT '功效';
+ALTER TABLE `chifan` ADD `effects_comm` VARCHAR( 400 )  NOT NULL DEFAULT '' COMMENT '功效描述';
+ALTER TABLE `chifan` ADD `byeffect` VARCHAR( 400 )  NOT NULL DEFAULT '' COMMENT '副作用';
 
 #vim快捷键表
 #vimshortcut
@@ -160,8 +169,8 @@ ALTER TABLE `prorecord` ADD `is_del` TINYINT( 1 )  UNSIGNED DEFAULT '0' COMMENT 
 
 #表结构记录表                                                                                                                   
 #tb_record
-#id,post_date,所属库,表中文名,表英文名,中文字段集合,英文字段集合,原始建表草稿,建表语句,是否有特殊字段,是否有关联字段,备注信息
-#id,post_date,belong_db,ch_name,en_name,ch_fields,en_fields,ori_struct,create_sql,has_special_field,has_relate_field,comm
+#id,post_date,所属库,表中文名,表英文名,中文字段集合,英文字段集合,原始建表草稿,建表语句,是否有特殊字段,特殊字段原始草稿,是否有关联字段,备注信息
+#id,post_date,belong_db,ch_name,en_name,ch_fields,en_fields,ori_struct,create_sql,has_special_field,ori_special_fields,has_relate_field,comm
 
 belong_db = {"0":"exp"}
 has_special_field = {"0":"否", "1":"是"}
@@ -174,11 +183,13 @@ ALTER TABLE `tb_record` ADD `ch_name` VARCHAR( 100 )  NOT NULL DEFAULT '' COMMEN
 ALTER TABLE `tb_record` ADD `en_name` VARCHAR( 100 )  NOT NULL DEFAULT '' COMMENT '表英文名';
 ALTER TABLE `tb_record` ADD `ch_fields` VARCHAR( 255 )  NOT NULL DEFAULT '' COMMENT '中文字段集合';
 ALTER TABLE `tb_record` ADD `en_fields` VARCHAR( 255 )  NOT NULL DEFAULT '' COMMENT '英文字段集合';
-ALTER TABLE `tb_record` ADD `ori_struct` TEXT COMMENT '原始建表草稿';
-ALTER TABLE `tb_record` ADD `create_sql` TEXT COMMENT '建表语句';
+ALTER TABLE `tb_record` modify `ori_struct` VARCHAR( 3000 )  NOT NULL DEFAULT '' COMMENT '原始建表草稿';
+ALTER TABLE `tb_record` modify `create_sql` VARCHAR( 10000 )  NOT NULL DEFAULT '' COMMENT '建表语句';
 ALTER TABLE `tb_record` ADD `has_special_field` TINYINT( 1 )  UNSIGNED DEFAULT '0' COMMENT '是否有特殊字段';
+ALTER TABLE `tb_record` ADD `ori_special_fields` VARCHAR( 1500 )  NOT NULL DEFAULT '' COMMENT '特殊字段原始草稿';
 ALTER TABLE `tb_record` ADD `has_relate_field` TINYINT( 1 )  UNSIGNED DEFAULT '0' COMMENT '是否有关联字段';
 ALTER TABLE `tb_record` ADD `comm` VARCHAR( 255 )  NOT NULL DEFAULT '' COMMENT '备注信息';
+
 
 
 
