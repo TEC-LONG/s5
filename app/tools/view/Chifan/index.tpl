@@ -1,35 +1,64 @@
-<!-- {literal} -->
-<form id="pagerForm" method="post" action="demo_page1.html">
-	<input type="hidden" name="status" value="${param.status}">
-	<input type="hidden" name="keywords" value="${param.keywords}" />
+<form id="pagerForm" method="post" action="{$url.index}">
 	<input type="hidden" name="pageNum" value="1" />
-	<input type="hidden" name="numPerPage" value="${model.numPerPage}" />
-	<input type="hidden" name="orderField" value="${param.orderField}" />
+	<input type="hidden" name="numPerPage" value="{$page.numPerPage}" />
+	<input type="hidden" name="cai" value="{$search.cai}" />
+	{foreach $search.types as $val}
+	<input type="hidden" name="types[]" value="{$val}"/>
+	{/foreach}
+	{foreach $search.food_types as $val}
+	<input type="hidden" name="food_types[]" value="{$val}"/>
+	{/foreach}
 </form>
-{/literal}
 
-<div class="panel" defH="40">
-	<h1>随机点餐</h1>
-	<div>
-		<form onsubmit="return navTabSearch(this);" action="demo_page1.html" method="post" onreset="$(this).find('select.combox').comboxReset()">
-			<div class="button"><div class="buttonContent"><button type="submit">开始点餐</button></div></div>
-		</form>
-	</div>
-</div>
-<div class="divider"></div>
 <div class="pageHeader">
-	<form onsubmit="return navTabSearch(this);" action="demo_page1.html" method="post" onreset="$(this).find('select.combox').comboxReset()">
+	<form onsubmit="return navTabSearch(this);" action="{$url.index}" method="post" onreset="$(this).find('select.combox').comboxReset()">
 	<div class="searchBar">
 		<table class="searchContent">
 			<tr>
 				<td>
-					exp标题：<input type="text" name="keyword" />
+					菜品：<input type="text" name="cai" value="{$search.cai}" />
 				</td>
+				<td>
+					适用场景：
+					{foreach $types as $key=>$val}
+					<input type="checkbox" name="types[]" value="{$key}" {if in_array($key, $search.types)}checked{/if} />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+					{/foreach}
+				</td>
+				<td>
+					食物类型：
+					{foreach $food_types as $key=>$val}
+					<input type="checkbox" name="food_types[]" value="{$key}" {if in_array($key, $search.food_types)}checked{/if} />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+					{/foreach}
+				</td>
+				{* <td>
+					口味：
+					{foreach $taste as $key=>$val}
+					<input type="checkbox" name="taste[]" value="{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+					{/foreach}
+				</td>
+				<td>
+					口感：
+					{foreach $mouthfeel as $key=>$val}
+					<input type="checkbox" name="mouthfeel[]" value="{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+					{/foreach}
+				</td>
+				<td>
+					功效：
+					{foreach $effects as $key=>$val}
+					<input type="checkbox" name="effects[]" value="{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+					{/foreach}
+				</td>
+				<td class="dateRange">
+					建档日期:
+					<input name="startDate" class="date readonly" readonly="readonly" type="text" value="">
+					<span class="limit">-</span>
+					<input name="endDate" class="date readonly" readonly="readonly" type="text" value="">
+				</td> *}
 			</tr>
 		</table>
 		<div class="subBar">
 			<ul>
-				<li><div class="button"><div class="buttonContent"><button type="reset">重置1</button></div></div></li>
+				<li><div class="button"><div class="buttonContent"><button type="reset">重置</button></div></div></li>
 				<li><div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div></li>
 				<li><a class="button" href="demo_page6.html" target="dialog" mask="true" title="查询框"><span>高级检索</span></a></li>
 			</ul>
@@ -62,20 +91,20 @@
 		</tbody>
 	</table>
 	<div class="panelBar">
-		{literal}
 		<div class="pages">
 			<span>显示</span>
-			<select class="combox" name="numPerPage" onchange="navTabPageBreak({numPerPage:this.value})">
-				<option value="20">20</option>
-				<option value="50">50</option>
-				<option value="100">100</option>
-				<option value="150">150</option>
-				<option value="200">200</option>
-				<option value="250">250</option>
+			<select class="combox" name="numPerPage" {literal}onchange="navTabPageBreak({numPerPage:this.value})"{/literal}>
+				<option value="{$page.numPerPage}">{$page.numPerPage}</option>
+				{foreach $page.numPerPageList as $thisNumPerPage}
+					{if $thisNumPerPage!=$page.numPerPage}
+				<option value="{$thisNumPerPage}">{$thisNumPerPage}</option>
+					{/if}
+				{/foreach}
 			</select>
-			<span>条，共xxx条</span>
+			<span>条，总共{$page.totalNum}条记录，合计{$page.totalPageNum}页</span>
 		</div>
-		{/literal}
-		<div class="pagination" targetType="navTab" totalCount="200" numPerPage="20" pageNumShown="10" currentPage="1"></div>
+
+		<div class="pagination" targetType="navTab" totalCount="{$page.totalNum}" numPerPage="{$page.numPerPage}" pageNumShown="10" currentPage="{$page.pageNum}"></div>
+
 	</div>
 </div>

@@ -31,7 +31,7 @@
 <div class="pageContent">
 	<div class="panelBar">
 		<ul class="toolBar">
-			<li><a class="add" href="{$url.ad}" target="navTab" rel="{$navTab}_add"><span>添加</span></a></li>
+			<li><a class="add" href="{$url.ad}" target="navTab" rel="{$navTab}_add"><span>添加基础表结构</span></a></li>
 			<li class="line">line</li>
 			<li><a class="icon" href="demo/common/dwz-team.xls" target="dwzExport" targetType="navTab" title="确实要导出这些记录吗?"><span>导出EXCEL</span></a></li>
 		</ul>

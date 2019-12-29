@@ -22,10 +22,10 @@
 				<dd><textarea name="create_sql" cols="150" rows="12"></textarea></dd>
 			</dl>
 
-            <dl>
+            {* <dl>
 				<dt>特殊字段值对信息：</dt>
 				<dd><textarea name="special_fields" cols="150" rows="7"></textarea></dd>
-			</dl>
+			</dl> *}
 
 			<dl>
 				<dt>备注信息：</dt>

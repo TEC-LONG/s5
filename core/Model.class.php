@@ -115,10 +115,11 @@ class Model{
      * 参数
      * 
      * @param    string    $tbname
-     * @param    array    $fieldsVals    如：$fieldsVals=['id'=>10, 'name'=>'zhangsan'];
+     * @param    array|string    $fieldsVals    如：$fieldsVals=['id'=>10, 'name'=>'zhangsan'];
      * @param    int    $type    指定条件的类型；
                     如果$type=1，表示将$fieldsVals的所有元素作为组合条件查询，将会返回查询的记录条数
                     如果$type=2，表示将$fieldsVals的每个元素单独作为一个条件查询，也就是有多少个元素，查训多少次，第一次查出大于0的值，则将这个值作为返回值返回
+                    如果$type=3, 表示$fieldsVals为字符串条件语句
      *
      * 注意：$type=2时，最大支持的$fieldsVals的元素总个数为5个。
      */

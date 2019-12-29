@@ -19,7 +19,7 @@ class ChifanController extends Controller {
 
         //非标准预定义属性赋值与转换
         $this->_init['types'] = '{"0":"早餐", "1":"午餐", "2":"晚餐", "3":"睡前", "4":"休闲"}';
-        $this->_init['food_types'] = '{"0":"粥", "1":"粉", "2":"面", "3":"饭", "4":"点心", "5":"汤", "6":"大菜", "7":"下饭菜", "8":"小菜", "9":"配菜"}';
+        $this->_init['food_types'] = '{"0":"粥", "1":"粉", "2":"面", "3":"饭", "4":"点心", "5":"汤", "6":"大菜", "7":"下饭菜", "8":"小菜", "9":"配菜", "10":"蔬菜"}';
         $this->_init['taste'] = '{"0":"酸", "1":"甜", "2":"苦", "3":"辣", "4":"咸", "5":"香", "6":"鲜", "7":"无味", "8":"辛辣"}';
         $this->_init['mouthfeel'] = '{"0":"软", "1":"硬", "2":"糯", "3":"脆", "4":"Q弹", "5":"丝滑", "6":"入口即化", "7":"嫩"}';
         $this->_init['effects'] = '{"0":"温补", "1":"清热", "2":"解毒", "3":"去湿", "4":"安神", "5":"镇痛"}';
@@ -32,6 +32,7 @@ class ChifanController extends Controller {
         switch ( ACT ){
             case 'index':
                 $this->_datas['url'] = [
+                    'index' => L(PLAT, MOD, 'index'),
                     'ad' => ['url'=>L(PLAT, MOD, 'ad'), 'rel'=>$this->_navTab.'_ad'],
                     'upd' => ['url'=>L(PLAT, MOD, 'upd'), 'rel'=>$this->_navTab.'_upd'],
                     'del' => L(PLAT, MOD, 'del')
@@ -56,7 +57,7 @@ class ChifanController extends Controller {
             break;
             case 'adh':
             case 'updh':
-                //rule:  required  int  int:min0:max10   int:min0  int:max10   int:regex(xx)  mul-int  mul-int:min0:max10  mul-int:max10  mul-int:min0  mul-mixd   mul-mixd:regex(xx)
+                //rule:  required  int  int:min0:max10   int:min0  int:max10   int:regex@xxx  mul-int  mul-int:min0:max10  mul-int:max10  mul-int:min0  mul-mixd   mul-mixd:regex@xxx   regex@xxx
                 $this->_extra['form-elems'] = [
                     'cai' => ['ch'=>'菜品', 'rule'=>'required'], 
                     'food_types' => ['ch'=>'食物类型', 'rule'=>'required|mul-int:min0:max9', 'msg'=>[
@@ -96,10 +97,55 @@ class ChifanController extends Controller {
         $this->_datas['navTab'] = $this->_navTab;
     }
 
+    protected function _get_ori_search_datas($request, $form_elems){
+    
+        $fields = [];
+        foreach( $form_elems as $elem){
+        
+            $fields[] = $elem[0];
+        }
+
+        $ori_search_datas = [];
+        foreach( $fields as $field){
+            
+            if( isset($request[$field]) ){
+
+                $ori_search_datas[$field] = $request[$field];
+            }
+        }
+
+        return $ori_search_datas;
+    }
+
     public function index(){ 
 
+        //接收数据
+        $request = $_REQUEST;
+
+        //查询条件(融合搜索条件)
+        $con_arr = ['is_del'=>'=0'];
+
+        $form_elems = [
+            ['cai', 'like'],
+            ['types', 'mul'],//   0号下标对应的是字段名；1号下标为可选参，对应的是字段特殊处理标记，比如mul表示这个字段将会是一个包含多个值的数组
+            ['food_types', 'mul'],
+            ['taste', 'mul'],
+            ['mouthfeel', 'mul'],
+            ['effects', 'mul']
+        ];
+        $con = $this->_condition_string($request, $form_elems, $con_arr);//将条件数组数据转换为条件字符串
+        // var_dump($con);
+        // echo '<hr/>';
+
+        //将搜索的原始数据扔进模板
+        $this->_datas['search'] = $this->_get_ori_search_datas($request, $form_elems);
+
+        //分页参数
+        $this->_datas['page'] = $page = $this->_page('chifan', $con, 3);
+
         //查询数据
-        $sql = 'select * from chifan where 1 order by id desc';
+        $sql = 'select * from chifan where ' . $con . ' order by id desc limit ' . $page['limitM'] . ',' . $page['numPerPage'];
+        // var_dump($sql);
 
         if( $cais = M()->getRows($sql) ){
             foreach( $cais as &$cai ){ 
@@ -216,6 +262,32 @@ class ChifanController extends Controller {
 
         #返回结果
         echo json_encode($re); 
+        exit;
+    }
+
+    public function del(){
+    
+        //接收数据
+        $request = $_REQUEST;
+
+        //检查数据
+        // $this->_extra['form-elems']['id'] = ['ch'=>'菜品ID', 'rule'=>'required'];
+        //check($request,  $this->_extra['form-elems'])
+
+        //构建删除条件
+        $con = ['id'=>$request['id']];
+
+        //将需要删除的数据 is_del字段设置为1
+        if( M()->setData('chifan', ['is_del'=>1], 2, $con) ){
+            $re = AJAXre();
+            $re->navTabId = $this->_navTab.'_index';
+            $re->message = '删除成功！';
+        }else{
+            $re = AJAXre(1);
+        }
+
+        //返回删除结果
+        echo json_encode($re);
         exit;
     }
 

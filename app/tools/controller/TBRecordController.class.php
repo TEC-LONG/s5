@@ -50,37 +50,6 @@ class TBRecordController extends Controller {
         }
     }
 
-    private function _tbhtml($mustShow, $rows){
-
-        $tbhtml = '';
-        foreach ($rows as $rows_k => $row):
-            
-            foreach( $mustShow as $k=>$v ){
-                        
-                switch ($k) {
-                    case 'belong_db':
-                        #                  $this->_datas['belong_db'][0]
-                        $tbhtml .= "<td>".$this->_datas['belong_db'][$row[$k]]."</td>";
-                    break;
-                    case 'has_special_field':
-                        $tbhtml .= "<td>".$this->_datas['has_special_field'][$row[$k]]."</td>";
-                    break;
-                    case 'has_relate_field':
-                        $tbhtml .= "<td>".$this->_datas['has_relate_field'][$row[$k]]."</td>";
-                    break;
-                    case 'post_date':
-                        $tbhtml .= "<td>".date('Y-m-d H:i:s', $row[$k])."</td>";
-                    break;
-                    default:
-                        $tbhtml .= "<td>".$row[$k]."</td>";
-                    break;
-                }
-            }
-        endforeach;
-
-        return $tbhtml;
-    }
-
     private function _pageHtml($pagination){
 
         $pagehtml = '';
@@ -133,7 +102,6 @@ class TBRecordController extends Controller {
     
         //接收参数
         $request = $_REQUEST;
-        $has_relate_field = 0;
 
         //处理原始表结构
         $arr_struct = explode("\r\n", $request['ori_struct']);	//表结构第一次拆分形成的数组  array(表中文名, 表英文名, 表字段中文名, 表字段英文名);
@@ -153,8 +121,33 @@ class TBRecordController extends Controller {
             'post_date' => time()
         ];
 
+        //是否有关联字段
+        $arr_field = explode(',', $arr_struct[3]);
+        foreach ($arr_field as  $field) {
+
+            if( strpos(trim($field), '__') ){//关联字段
+                
+                $data['has_special_field'] = 1;
+                break;
+            }
+        }
+
         #执行新增
-        if( !$tb_record__id = M()->setData('tb_record', $data) ){//不成功，则就此中断
+        if( !M()->setData('tb_record', $data) ){//不成功，则就此中断
+            $re = AJAXre(1);
+        }else{
+
+            //成功
+            $re = AJAXre();
+            $re->navTabId = $this->_datas['navTab'].'_add';
+            $re->message = '添加成功！';
+        }
+
+        #返回结果
+        echo json_encode($re); 
+        exit;
+
+        /*if( !$tb_record__id = M()->setData('tb_record', $data) ){//不成功，则就此中断
             $re = AJAXre(1);
             echo json_encode($re); 
             exit;
@@ -201,7 +194,7 @@ class TBRecordController extends Controller {
         foreach ($arr_relate_field as  $field) {
 
             if( strpos(trim($field), '__') ){//关联字段
-                    
+                
                 $arr_relate = explode('__', trim($field));
                 //需要先查询tb_special_field是否已经存在这个关联字段的信息
                 $sql1 = 'select en_name, serialize from tb_special_field where en_name="' . trim($field) . '"';
@@ -231,6 +224,6 @@ class TBRecordController extends Controller {
         $re->message = '添加成功！';
         #返回结果
         echo json_encode($re); 
-        exit;
+        exit;*/
     }
 }      

@@ -5,7 +5,7 @@
 				<dt>适用场景：</dt>
 				<dd>
 					{foreach $types as $key=>$val}
-					<input type="checkbox" name="types[]" value="1{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+					<input type="checkbox" name="types[]" value="{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
 					{/foreach}
 				</dd>
 			</dl>
@@ -13,13 +13,13 @@
 				<dt>食物类型：</dt>
 				<dd>
 					{foreach $food_types as $key=>$val}
-					<input type="checkbox" name="food_types[]" value="1{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+					<input type="checkbox" name="food_types[]" value="{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
 					{/foreach}
 				</dd>
 			</dl>
 			<dl class="nowrap">
 				<dt>菜品：</dt>
-				<dd><input name="cai" type="text" size="30" /></dd>
+				<dd><input name="cai" type="text" size="30" class="required" /></dd>
 			</dl>
 			<dl class="nowrap">
 				<dt>描述：</dt>
@@ -29,7 +29,7 @@
 				<dt>口味：</dt>
 				<dd>
 					{foreach $taste as $key=>$val}
-					<input type="checkbox" name="taste[]" value="1{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+					<input type="checkbox" name="taste[]" value="{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
 					{/foreach}
 				</dd>
 			</dl>
@@ -37,7 +37,7 @@
 				<dt>口感：</dt>
 				<dd>
 					{foreach $mouthfeel as $key=>$val}
-					<input type="checkbox" name="mouthfeel[]" value="1{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+					<input type="checkbox" name="mouthfeel[]" value="{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
 					{/foreach}
 				</dd>
 			</dl>
@@ -45,7 +45,7 @@
 				<dt>功效：</dt>
 				<dd>
 					{foreach $effects as $key=>$val}
-					<input type="checkbox" name="effects[]" value="1{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+					<input type="checkbox" name="effects[]" value="{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
 					{/foreach}
 				</dd>
 			</dl>
