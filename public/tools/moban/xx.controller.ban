@@ -1,0 +1,53 @@
+<?php
+namespace {{$plat}}\controller;
+use \core\controller;
+
+class {{$controller_name}}Controller extends Controller {
+
+    ##标准预定义属性
+    protected $_datas = [];
+    private $_init=[];
+    private $_extra=[];
+    private $_model;
+    private $_navTab;
+
+    public function __construct(){
+
+        parent::__construct();
+
+        $this->_navTab = '{{$navtab}}';
+
+        {{$init}}
+        
+        //不同页面的个性化需求
+        switch ( ACT ){
+            case 'index':
+                {{$init_index}}
+            break;
+            case 'ad':
+                {{$init_ad}}
+            break;
+            case 'adh':
+            case 'updh':
+                {{$init_adh_and_updh}}
+            break;
+            case 'upd':
+                {{$init_upd}}
+            break;
+        }
+
+        $this->_datas['navTab'] = $this->_navTab;
+    }
+
+    {{$index}}
+
+    {{$ad}}
+
+    {{$adh}}
+
+    {{$upd}}
+
+    {{$updh}}
+
+    {{$del}}
+}      

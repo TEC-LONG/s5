@@ -152,6 +152,14 @@ class Model{
                 }
             }
             return 0;
+        elseif( $type==3 ):
+
+            $sql = "select count(*) as num from {$tbname} where {$fieldsVals}";
+            $row = $this->getRow($sql);
+            if( $row['num']>0 ){
+                return $row['num'];
+            }
+            return 0;
         endif;
     }
 	/*******************************************************************************/

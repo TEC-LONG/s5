@@ -137,7 +137,7 @@ class Controller extends \Smarty{
     }
 
     protected function _special_fields($special_fields, $row){
-        //                                          types  arr:|
+        //                          types  arr:|
         foreach( $special_fields as $key=>$val){
             
             if($row[$key]==='') continue;
@@ -152,6 +152,26 @@ class Controller extends \Smarty{
         }
 
         return $row;
+    }
+
+    protected function _get_ori_search_datas($request, $form_elems){
+    
+        $fields = [];
+        foreach( $form_elems as $elem){
+        
+            $fields[] = $elem[0];
+        }
+
+        $ori_search_datas = [];
+        foreach( $fields as $field){
+            
+            if( isset($request[$field]) ){
+
+                $ori_search_datas[$field] = $request[$field];
+            }
+        }
+
+        return $ori_search_datas;
     }
 
     protected function _tbhtml($mustShow, $rows, $navtab, $init){

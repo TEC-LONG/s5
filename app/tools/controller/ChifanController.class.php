@@ -97,26 +97,6 @@ class ChifanController extends Controller {
         $this->_datas['navTab'] = $this->_navTab;
     }
 
-    protected function _get_ori_search_datas($request, $form_elems){
-    
-        $fields = [];
-        foreach( $form_elems as $elem){
-        
-            $fields[] = $elem[0];
-        }
-
-        $ori_search_datas = [];
-        foreach( $fields as $field){
-            
-            if( isset($request[$field]) ){
-
-                $ori_search_datas[$field] = $request[$field];
-            }
-        }
-
-        return $ori_search_datas;
-    }
-
     public function index(){ 
 
         //接收数据

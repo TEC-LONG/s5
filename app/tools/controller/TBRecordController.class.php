@@ -47,6 +47,19 @@ class TBRecordController extends Controller {
             case 'ad':
                 
             break;
+            case 'upd':
+                $this->_datas['url'] = [
+                    'updh' => L(PLAT, MOD, 'updh')
+                ];
+                $this->_extra['form-elems'] = [
+                    'id' => ['ch'=>'表信息ID', 'rule'=>'required']
+                ];
+                //arr:|  以"|"将字符串炸开成数组，不指定默认以","炸开
+                $this->_extra['special_fields'] = [
+                    'ch_fields' => 'arr',
+                    'en_fields' => 'arr'
+                ];
+            break;
         }
     }
 
@@ -88,6 +101,27 @@ class TBRecordController extends Controller {
         
         $this->assign($this->_datas);
         $this->display('TbStruct/list.tpl');
+    }
+
+    public function upd(){
+
+        //接收数据
+        $request = $_REQUEST;
+
+        //检查数据
+        //check($request,  $this->_extra['form-elems'])
+
+        //查询数据
+        $sql = 'select * from tb_record where id=' . $request['id'];
+        $row = M()->getRow($sql);
+
+        //特殊字段处理
+        $this->_datas['row'] = $this->_special_fields($this->_extra['special_fields'], $row);
+
+        //分配模板变量&渲染模板
+        $this->assign($this->_datas);
+        $this->display('TbStruct/upd.tpl');
+    
     }
 
     public function ad(){
