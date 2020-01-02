@@ -66,8 +66,8 @@
 				{/if}
 				{/foreach}
 				<td>
-					<a title="确实要删除？" target="ajaxTodo" href="{$url.del}/id/{$row['id']}" class="btnDel">删除</a>
-					<a title="编辑【{$row['id']}】" target="navTab" href="{$url.edit}/id/{$row['id']}" class="btnEdit" rel="{$navTab}_edit{$row['id']}">编辑</a>
+					<a title="确实要删除？" target="ajaxTodo" href="{$url.del}&id={$row['id']}" class="btnDel">删除</a>
+					<a title="表信息编辑【{$row['id']}】" target="navTab" href="{$url.upd}&id={$row['id']}" class="btnEdit" rel="{$navTab}_upd{$row['id']}">表信息编辑</a>
 				</td>
 			</tr>
 			{/foreach}

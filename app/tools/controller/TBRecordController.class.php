@@ -5,19 +5,23 @@ use \core\controller;
 class TBRecordController extends Controller {
 
     private $_datas=[];
+    private $_extra=[];
     private $_model;
+    private $_navTab;
 
     public function __construct(){
     
         parent::__construct();
 
+        $this->_navTab = 'TBRecord';
+
         $this->_datas['belong_db'] = ['exp'];
-        $this->_datas['navTab'] = 'TBRecord';
+        $this->_datas['navTab'] = $this->_navTab;
         $this->_datas['url'] = [
             'index' => L(PLAT, MOD, 'index'),
             'ad' => L(PLAT, MOD, 'ad'),
             'adh' => L(PLAT, MOD, 'adh'),
-            'edit' => L(PLAT, MOD, 'edit'),
+            'upd' => L(PLAT, MOD, 'upd'),
             'del' => L(PLAT, MOD, 'del')
         ];
 
@@ -59,8 +63,397 @@ class TBRecordController extends Controller {
                     'ch_fields' => 'arr',
                     'en_fields' => 'arr'
                 ];
+                //tb_special_field表值对字段数据
+                $this->_datas['field_type'] = ['普通字段', '关联字段'];
             break;
         }
+    }
+
+    public function del(){
+        //接收数据
+        $request = $_REQUEST;
+
+        //检查数据
+        // $this->_extra['form-elems']['id'] = ['ch'=>'菜品ID', 'rule'=>'required'];
+        //check($request,  $this->_extra['form-elems'])
+
+        //tb_special_field删除条件
+        $con = ['tb_record__id'=>$request['id']];
+        if( !M()->setData('tb_special_field', ['is_del'=>1], 2, $con) ){
+            $re = AJAXre(1);
+            echo json_encode($re);
+            exit;
+        }
+
+        //tb_record构建删除条件
+        $con = ['id'=>$request['id']];
+
+        //将需要删除的数据 is_del字段设置为1
+        if( M()->setData('tb_record', ['is_del'=>1], 2, $con) ){
+            $re = AJAXre();
+            $re->navTabId = $this->_navTab.'_index';
+            $re->message = '删除成功！';
+        }else{
+            $re = AJAXre(1);
+        }
+
+        //返回删除结果
+        echo json_encode($re);
+        exit;
+    }
+
+    public function upd(){
+
+        //接收数据
+        $request = $_REQUEST;
+
+        //检查数据
+        //check($request,  $this->_extra['form-elems'])
+
+        //查询数据 tb_record
+        $sql = 'select * from tb_record where id=' . $request['id'];
+        if(!$row = M()->getRow($sql)) exit('查不到数据！');
+
+        //查询关联数据tb_special_field
+        $sql = 'select id, ch_name as field_ch_name, en_name as field_en_name, ori_key_val, specification, field_type from tb_special_field where is_del=0 and tb_record__id='.$row['id'];
+        $this->_datas['tb_special_field_rows'] = M()->getRows($sql);
+
+        //特殊字段处理
+        $this->_datas['row'] = $this->_special_fields($this->_extra['special_fields'], $row);
+
+        //分配模板变量&渲染模板
+        $this->assign($this->_datas);
+        $this->display('TbStruct/upd.tpl');
+    }
+
+    protected function _get_update_data($request, $may_update_fields=[], $type=1){
+
+        $re_datas = [];
+        if( $type==1 ){//$request[$field] = 'xx';
+
+            //    $may_update_fields=['belong_db', 'ch_name', 'en_name', 'comm']
+            foreach( $may_update_fields as $elem_name=>$field){
+            
+                if(!isset($request[$field])) $field=$elem_name;
+
+                if( $request[$field]!==$request['old_'.$field] ){//新的不等于老的
+                    $re_datas[$field] = $request[$field];
+                }
+            }
+        }elseif ($type==2) {//$request[$field] = [0=>[...], 1=>[...],...]  只取需要更新的数据
+
+            foreach( $request['ids'] as $ids_k=>$id){
+
+                if($id==0) continue;//没有id，说明本条数据不是要更新的，而是要新增的
+                if($request['field_ch_name'][$ids_k]==='') continue;//没有中文字段名，则表示该数据是要被删除的数据
+
+                //$may_update_fields = ['field_ch_name'=>'ch_name', 'field_en_name'=>'en_name', 'type_sql', 'field_type', 'key_val', 'specification']
+                foreach( $may_update_fields as $elem_name=>$field ){
+                
+                    $save_field = $field;
+                    //        $request['ch_name']    $field='field_ch_name'
+                    if(isset($request[$elem_name])) $field = $elem_name;
+
+                    if( $request[$field][$ids_k]!==$request['old_'.$field][$ids_k] ){//新的不等于老的
+
+                        $re_datas[$ids_k][$save_field] = $request[$field][$ids_k];
+                        $re_datas[$ids_k]['condition'] = ['id'=>$id];//重复操作也没关系
+                    }
+                }
+            }
+        }elseif ($type==3) {
+
+            foreach( $request['field_ch_name'] as $k=>$ch_name){
+
+                if($request['ids'][$k]!=0||$ch_name==='') continue;//没有id，说明本条数据不是要更新的，而是要新增的
+
+                //$may_update_fields = ['field_ch_name'=>'ch_name', 'field_en_name'=>'en_name', 'type_sql', 'field_type', 'key_val', 'specification']
+                foreach( $may_update_fields as $elem_name=>$field ){
+                
+                    $save_field = $field;
+                    //        $request['ch_name']    $field='field_ch_name'
+                    if(isset($request[$elem_name])) $field = $elem_name;
+
+                    $re_datas[$k][$save_field] = $request[$field][$k];
+                }
+            }
+        }elseif ($type==4) {
+            foreach( $request['ids'] as $ids_k=>$id){
+
+                if($id==0) continue;//没有id，说明本条数据不是要更新的，而是要新增的
+                if($request['field_ch_name'][$ids_k]!=='') continue;//没有中文字段名，则表示该数据是要被删除的数据
+
+                $re_datas[] = $id;
+            }
+        }
+
+        return $re_datas;
+    }
+
+    public function updh(){
+        //接收数据
+        $request = $_REQUEST;
+        $has_update_data = 0;
+
+        //检查数据
+        // $this->_extra['form-elems']['id'] = ['ch'=>'表信息ID', 'rule'=>'required'];
+        //check($request,  $this->_extra['form-elems'])
+
+        // echo '<pre>';
+        // var_dump($request);
+        // echo '<pre>';
+        // exit;
+        
+        //tb_record
+        #获取被更新的数据
+        $may_update_fields = ['belong_db', 'ch_name', 'en_name', 'comm', 'create_sql', 'ori_struct'];
+        $tb_record_update = $this->_get_update_data($request, $may_update_fields);
+        if( !empty($tb_record_update) )  $has_update_data=1;
+
+        #执行更新
+        if( !empty($tb_record_update)&&!M()->setData('tb_record', $tb_record_update, 2, ['id'=>$request['id']]) ){
+            $re = AJAXre(1);
+            echo json_encode($re); 
+            exit;
+        }
+
+        //tb_special_field
+        #获取被更新的数据
+        $may_update_fields = ['field_ch_name'=>'ch_name', 'field_en_name'=>'en_name', 'field_type', 'ori_key_val', 'specification'];
+        $tb_special_field_update = $this->_get_update_data($request, $may_update_fields, 2);
+        if( !empty($tb_special_field_update) )  $has_update_data=1;
+
+        /*
+        Array
+        (
+            [0] => Array
+                (
+                    [type_sql] => eeee
+                    [condition] => Array
+                        (
+                            [id] => 1
+                        )
+                )
+        )
+        */
+
+        foreach( $tb_special_field_update as $t_s_f_u_val){
+        
+            $condition = $t_s_f_u_val['condition'];//更新条件
+            $update = $t_s_f_u_val;//更新数据
+            
+            unset($update['condition']);
+
+            if( !M()->setData('tb_special_field', $update, 2, $condition) ){//任何一条失败，则中断
+                $re = AJAXre(1);
+                echo json_encode($re); 
+                exit;
+            }
+        }
+
+        #获取要新增的数据
+        $may_add_fields = ['field_ch_name'=>'ch_name', 'field_en_name'=>'en_name', 'field_type', 'ori_key_val', 'specification'];
+        $tb_special_field_add = $this->_get_update_data($request, $may_add_fields, 3);
+        if( !empty($tb_special_field_add) )  $has_update_data=1;
+
+        $values = [];
+        $sql = 'insert into tb_special_field ';
+        /*
+array(2) {
+  [3]=>
+  array(6) {
+    ["ch_name"]=>
+    string(2) "aa"
+    ["en_name"]=>
+    string(2) "aa"
+    ["type_sql"]=>
+    string(2) "aa"
+    ["field_type"]=>
+    string(1) "0"
+    ["key_val"]=>
+    string(0) ""
+    ["specification"]=>
+    string(0) ""
+  }
+  [4]=>
+  array(6) {
+    ["ch_name"]=>
+    string(2) "bb"
+    ["en_name"]=>
+    string(0) ""
+    ["type_sql"]=>
+    string(2) "bb"
+    ["field_type"]=>
+    string(1) "0"
+    ["key_val"]=>
+    string(0) ""
+    ["specification"]=>
+    string(0) ""
+  }
+}
+        */
+        foreach( $tb_special_field_add as $t_s_f_a_val){
+        
+            $t_s_f_a_val['tb_record__id'] = $request['id'];//加上tb_record__id
+
+            if(empty($add_fields)){
+                $add_fields = array_keys($t_s_f_a_val);
+                $sql .= '(' . implode(',', $add_fields) . ') values ';
+            }
+            
+            $tmp = array_values($t_s_f_a_val);
+            $tmp = array_map(function ($elem){
+                return '"' . $elem . '"';
+            }, $tmp);
+            $values[] = '(' . implode(',', $tmp) . ')';
+        }
+
+        $sql .= implode(',', $values);
+        
+        // var_dump($tb_special_field_add);
+        // exit;
+
+        if( !empty($tb_special_field_add)&&!M()->setData1($sql) ){//不成功，则就此中断
+            $re = AJAXre(1);
+            echo json_encode($re); 
+            exit;
+        }
+
+        #获取要删除的数据
+        $tb_special_field_del = $this->_get_update_data($request, [], 4);
+        if( !empty($tb_special_field_del) )  $has_update_data=1;
+        if( !empty($tb_special_field_del) )  $sql='delete from tb_special_field where id in ('.implode(',', $tb_special_field_del).')';
+
+        if( !empty($tb_special_field_del)&&!M()->setData1($sql) ){//不成功，则就此中断
+            $re = AJAXre(1);
+            echo json_encode($re); 
+            exit;
+        }
+
+        //调整tb_record状态字段has_special_field,has_relate_field
+        
+        if( $has_update_data ){
+            
+            #查询本条数据
+            $sql = 'select has_special_field,has_relate_field from tb_record where id='.$request['id'];
+            $tb_record_row = M()->getRow($sql);
+
+            #是否有特殊字段
+            $special_field_num_arr = M()->GN('tb_special_field', ['tb_record__id'=>$request['id']]);
+            if($special_field_num_arr['num']>0&&$tb_record_row['has_special_field']==0){//tb_special_field存在特殊字段且tb_record状态字段has_special_field值又为0，则改变has_special_field字段的值为1
+
+                M()->setData('tb_record', ['has_special_field'=>1], 2, ['id'=>$request['id']]);//不成功要记录日志
+            }
+
+            #是否有关联字段
+            if($special_field_num_arr['num']>0){//存在特殊字段才可能存在关联字段
+
+                $sql = 'select en_name from tb_special_field where tb_record__id='.$request['id'];
+                $tb_special_field_rows = M()->getRows($sql);
+
+                foreach( $tb_special_field_rows as $val){
+                
+                    if( strpos($val['en_name'], '__') ){
+                        M()->setData('tb_record', ['has_relate_field'=>1], 2, ['id'=>$request['id']]);//不成功要记录日志
+                        break;
+                    }
+                }
+            }
+        }
+
+        //返回结果
+        if( $has_update_data ){
+            $re = AJAXre();
+            $re->navTabId = $this->_navTab.'_upd'.$request['id'];
+        }else{
+            $re = AJAXre(1);
+            $re->msg = '没有任何数据被修改，请先修改数据，再提交！';
+        }
+
+        echo json_encode($re); 
+        exit;
+        
+
+        /*
+UPDATE categories SET
+    display_order = CASE id
+        WHEN 1 THEN 3
+        WHEN 2 THEN 4
+        WHEN 3 THEN 5
+    END,
+    title = CASE id
+        WHEN 1 THEN 'New Title 1'
+        WHEN 2 THEN 'New Title 2'
+        WHEN 3 THEN 'New Title 3'
+    END
+WHERE id IN (1,2,3)
+        */
+
+        // print_r($tb_special_field_update);
+        // echo "\n";
+        
+        // exit;
+
+        /*$update_datas = [];
+        foreach( $tb_special_field_update as $t_s_f_u_key=>$t_s_f_u_val){
+        
+            foreach( $t_s_f_u_val as $field=>$val){
+            
+                if( $field=='condition' )   continue;
+                
+                $update_datas[$field][$t_s_f_u_key]['val'] = $val;
+                $update_datas[$field][$t_s_f_u_key]['id'] = $t_s_f_u_val['condition']['id'];
+            }
+        }
+
+        // print_r($update_datas);
+        // exit;
+
+        $sql = "UPDATE tb_special_field SET\n";
+        $tmp = [];
+        $ids = [];
+        $counter = 0;
+        foreach ($update_datas as $field => $vals) {
+            
+            $tmp[$counter] = $field . " = CASE id\n";
+            foreach( $vals as $val){
+            
+                $tmp[$counter] .= "WHEN " . $val['id'] . " THEN '" . $val['val'] . "'\n";
+                if(!in_array($val['id'], $ids)) $ids[]=$val['id'];
+            }
+            $tmp[$counter] .= "END";
+            $counter++;
+        }
+
+        $sql .= implode(",\n", $tmp) . ' WHERE id IN (' . implode(',', $ids) . ')';
+
+        var_dump($sql);
+        exit;
+        
+        #更新tb_special_field
+        if( !M()->setData1($sql) ){
+            $re = AJAXre(1);
+            echo json_encode($re); 
+            exit;
+        }
+
+        var_dump('aaa');
+        exit;*/
+        
+        
+
+        
+
+
+
+        //执行更新
+        // if( M()->setData('chifan', $datas, 2, ['id'=>$request['id']]) ){
+        //     $re = AJAXre();
+        //     $re->navTabId = $this->_navTab.'_upd';
+        //     $re->message = '更新菜品成功！';
+        // }else{
+        //     $re = AJAXre(1);
+        // }
     }
 
     private function _pageHtml($pagination){
@@ -82,7 +475,7 @@ class TBRecordController extends Controller {
 
         //分页数据
 		$this->_datas['pagination']['now_page'] = $now_page = isset($request['pageNum']) ? $request['pageNum'] : $this->_datas['pagination']['now_page'];
-        $this->_datas['pagination']['numsPerPage'] = isset($request['numPerPage']) ? $request['numPerPage'] : $this->_datas['pagination']['numsPerPage'];
+        $this->_datas['pagination']['numPerPage'] = isset($request['numPerPage']) ? $request['numPerPage'] : $this->_datas['pagination']['numsPerPage'];
 		$show_nums_from = ($now_page-1) * $this->_datas['pagination']['numsPerPage'];
 
         $this->_datas['pagination']['total_rows'] = $total_rows = M()->GN('tb_record');
@@ -90,7 +483,7 @@ class TBRecordController extends Controller {
         $limit = $show_nums_from . ',' . $this->_datas['pagination']['numsPerPage'];
 
         
-        $sql = 'select id, post_date, belong_db, ch_name, en_name, has_special_field, has_relate_field from tb_record where 1 order by post_date desc limit ' . $limit;
+        $sql = 'select id, post_date, belong_db, ch_name, en_name, has_special_field, has_relate_field from tb_record where is_del=0 order by post_date desc limit ' . $limit;
         $this->_datas['rows'] = M()->getRows($sql);
 
         //分页html
@@ -101,27 +494,6 @@ class TBRecordController extends Controller {
         
         $this->assign($this->_datas);
         $this->display('TbStruct/list.tpl');
-    }
-
-    public function upd(){
-
-        //接收数据
-        $request = $_REQUEST;
-
-        //检查数据
-        //check($request,  $this->_extra['form-elems'])
-
-        //查询数据
-        $sql = 'select * from tb_record where id=' . $request['id'];
-        $row = M()->getRow($sql);
-
-        //特殊字段处理
-        $this->_datas['row'] = $this->_special_fields($this->_extra['special_fields'], $row);
-
-        //分配模板变量&渲染模板
-        $this->assign($this->_datas);
-        $this->display('TbStruct/upd.tpl');
-    
     }
 
     public function ad(){

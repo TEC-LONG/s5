@@ -198,8 +198,8 @@ ALTER TABLE `tb_record` ADD `is_del` TINYINT( 1 )  UNSIGNED DEFAULT '0' COMMENT 
 
 #表特殊字段记录表                                                                                                                   
 #tb_special_field
-#id,post_date,所属表id,英文字段名,字段特别说明,字段值对信息,字段类型,关联表英文名,被关联字段英文名,是否删除
-#id,post_date,tb_record__id,en_name,specification,serialize,field_type,relate_tb_name,relate_field_name,is_del
+#id,post_date,所属表结构记录表id,中文字段名,英文字段名,字段特别说明,字段原始值对信息,字段类型,关联表英文名,被关联字段英文名,是否删除
+#id,post_date,tb_record__id,ch_name,en_name,specification,ori_key_val,field_type,relate_tb_name,relate_field_name,is_del
 
 field_type = {"0":'普通字段', "1":'关联字段'}
 
@@ -207,9 +207,10 @@ CREATE TABLE `tb_special_field` ( `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMEN
 ALTER TABLE `tb_special_field` ADD `post_date` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0'; ALTER TABLE `tb_special_field` ADD INDEX ( `post_date` );
 ALTER TABLE `tb_special_field` ADD `is_del` TINYINT( 1 )  UNSIGNED DEFAULT '0' COMMENT '是否删除';
 ALTER TABLE `tb_special_field` ADD `tb_record__id` INT( 4 )  UNSIGNED DEFAULT '0' COMMENT '所属表id';
+ALTER TABLE `tb_special_field` ADD `ch_name` VARCHAR( 100 )  NOT NULL DEFAULT '' COMMENT '中文字段名';
 ALTER TABLE `tb_special_field` ADD `en_name` VARCHAR( 100 )  NOT NULL DEFAULT '' COMMENT '英文字段名';
 ALTER TABLE `tb_special_field` ADD `specification` VARCHAR( 100 )  NOT NULL DEFAULT '' COMMENT '字段特别说明';
-ALTER TABLE `tb_special_field` ADD `key_val` VARCHAR( 1000 )  NOT NULL DEFAULT '' COMMENT '字段值对信息';
+ALTER TABLE `tb_special_field` ADD `ori_key_val` VARCHAR( 1000 )  NOT NULL DEFAULT '' COMMENT '字段原始值对信息';
 ALTER TABLE `tb_special_field` ADD `field_type` TINYINT( 1 )  UNSIGNED DEFAULT '0' COMMENT '字段类型';
 ALTER TABLE `tb_special_field` ADD `relate_tb_name` VARCHAR( 100 )  NOT NULL DEFAULT '' COMMENT '关联表英文名';
 ALTER TABLE `tb_special_field` ADD `relate_field_name` VARCHAR( 100 )  NOT NULL DEFAULT '' COMMENT '被关联字段英文名';
