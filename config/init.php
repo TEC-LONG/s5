@@ -30,7 +30,7 @@ spl_autoload_register('\\core\\App::autoload');//注册自动加载静态成员�
 include SMARTY_DIR . 'Smarty.class.php';//       mvc/plugins/smarty/Smarty.class.php
 
 //引入基础模型类文件
-include CORE_PATH . 'Model.class.php';
+// include CORE_PATH . 'Model.class.php';
 
 //引入父类控制器文件
 include CORE_PATH . 'Controller.class.php';
