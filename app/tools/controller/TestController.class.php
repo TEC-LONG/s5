@@ -13,6 +13,10 @@ class TestController extends Controller {
         // ->find();
 
         // $row = M()->table('tb_record')->select('*')
+        // ->where('id=100')
+        // ->find();
+
+        // $row = M()->table('tb_record')->select('*')
         // ->where('id>0')
         // ->get();
 
@@ -34,6 +38,8 @@ class TestController extends Controller {
         
         // var_dump($row);
         // echo '<pre>';
+        // exit;
+        
 
 
         // $re = M()->table('menu')->fields('name, parent_id, post_date')
@@ -51,7 +57,6 @@ class TestController extends Controller {
 
         // $re = M()->table('menu')
         // ->fields('name, parent_id, post_date')
-        // ->insert()
         // ->insert(['dd', 15, time()])
         // ->exec();
 
@@ -98,21 +103,26 @@ class TestController extends Controller {
         // ->where(['id', 3])
         // ->exec();
 
+        // $re = M()->table('menu')
+        // ->fields([
+        //     ['name', 'parent_id', 'post_date'],
+        //     ['name', 'parent_id'],
+        //     ['parent_id', 'post_date']
+        // ])
+        // ->update([
+        //     ['a', 18, time()],
+        //     ['b', 18],
+        //     [21, time()]//字段和数据不一致，将会回滚
+        // ])
+        // ->where(['id', 1])
+        // ->where(['id', 2])
+        // ->where(['id', 3])
+        // ->exec();
+
+        //删除操作
         $re = M()->table('menu')
-        ->fields([
-            ['name', 'parent_id', 'post_date'],
-            ['name', 'parent_id'],
-            ['parent_id', 'post_date']
-        ])
-        ->update([
-            ['a', 18, time()],
-            ['b', 18],
-            [21, time()]//字段和数据不一致，将会回滚
-        ])
-        ->where(['id', 1])
-        ->where(['id', 2])
-        ->where(['id', 3])
-        ->exec();
+        ->where(['id', 'in', '(1, 2, 3)'])
+        ->delete();
 
         echo '<pre>';
         

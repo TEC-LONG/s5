@@ -27,11 +27,28 @@ class Model extends NiceModel{
         return $this;
     }
 
+    /**
+     * method:指定查询字段列表
+     * @param $select string 字段列表，仅支持字符串类型
+                如：$select='name, age, user.id'
+     * @return object
+     */
     public function select($select){
         $this->select = $select;
         return $this;
     }
 
+    /**
+     * method:指定条件
+     * @param $where string|array 条件
+                可能的情况有：
+                (1) $where=['id', '>', 10]
+                (2) $where="name='zhangsan' and id in (1, 2, 3)"
+                (3) $where=[['age',12],['height', '<=', '2.0']]
+                (4) $where='user.id=1'
+                (5) $where=['id', 'in', '(1, 2, 3)']
+     * @return object
+     */
     public function where($where){
 
         if( $this->is2arr($where)==1 ){//一维数组  $where=['name', '=', 'xxx']
@@ -39,11 +56,21 @@ class Model extends NiceModel{
             $where[0] = '`' . $where[0] . '`';//字段两侧加反引号
             if( count($where)==3 ){//三个元素  $where=['name', '=', 'xxx']
 
-                $where[2] = '"' . $where[2] . '"';//数据两侧加双引号
-                $where = implode('', $where);
+                $tmp_no_need_quote = ['in', 'not in'];//不需要在值两侧包裹引号的
+                if( !in_array($where[1], $tmp_no_need_quote) ){
+                    $where[2] = '"' . str_replace('"', '\'', $where[2]) . '"';//数据两侧加双引号
+                }
+
+                $tmp_need_space = ['in', 'not in', 'like'];//需要在0,1,2元素之间加上空格的
+                if( in_array($where[1], $tmp_need_space) ){
+                    $where = implode(' ', $where);
+                }else{
+                    $where = implode('', $where);
+                }
+
             }else{//两个元素  $where=['name', 'xxx']
                 
-                $where[1] = '"' . $where[1] . '"';
+                $where[1] = '"' . str_replace('"', '\'', $where[1]) . '"';
                 $where = $where[0] . '=' . $where[1];
             }
             
@@ -55,11 +82,11 @@ class Model extends NiceModel{
                 $one[0] = '`' . $one[0] . '`';
                 if( count($one)==3 ){//三个元素  $one=['name', '=', 'xxx']
 
-                    $one[2] = '"' . $one[2] . '"';//  "xxx"
+                    $one[2] = '"' . str_replace('"', '\'', $one[2]) . '"';//  "xxx"
                     $tmp1 = implode('', $one);// name="xxx"
                 }else{//两个元素  $one=['name', 'xxx']
 
-                    $one[1] = '"' . $one[1] . '"';
+                    $one[1] = '"' . str_replace('"', '\'', $one[1]) . '"';
                     $tmp1 = $one[0] . '=' . $one[1];
                 }
                 
@@ -69,16 +96,29 @@ class Model extends NiceModel{
             $where = implode(' and ', $tmp);//    name="xxx" and age="10"
         }
 
-        $this->where[] = str_replace('\'', '"', $where);//统一数据包裹符号为双引号
+        // $this->where[] = str_replace('\'', '"', $where);//统一数据包裹符号为双引号（这么做是不对的，没有考虑数据内的引号问题）
+        $this->where[] = $where;//统一数据包裹符号为双引号
         return $this;
     }
 
+    /**
+     * method:指定limit条件
+     * @param $limit string limit条件，仅支持字符串类型
+                如：$limit=1 或 $limit='0, 20'
+     * @return object
+     */
     public function limit($limit){
     
         $this->limit = ' limit ' . $limit;
         return $this;
     }
 
+    /**
+     * method:连表操作--左连接
+     * @param $right_tb string 需要连的表其表名，如：$right_tb='user_info'
+     * @param $con string 连表指定的on条件，如：$on='user.id=user_info.user__id'
+     * @return object
+     */
     public function leftjoin($right_tb, $on){
 
         $this->left_join[] = ' left join ' . $right_tb . ' on ' . $on;
@@ -223,12 +263,27 @@ class Model extends NiceModel{
                 
             elseif ($this->flag==='delete')://删除
                 
+                $sql = 'delete from %s where %s';
+                $sql = sprintf($sql, $this->table, implode(' and ', $this->where));
+                
             endif;
         }
 
         return $this->sql=$sql;
     }
 
+    /**
+     * method:为新增指定添加数据的字段；或为修改指定修改数据的字段
+     * @param $fields string|array
+                可能的情况有：
+                (1) $fields='name, parent_id, post_date'   添加和修改均可使用这种方式指定字段 
+                (2) $fields=[
+                        ['name', 'parent_id', 'post_date'],
+                        ['name', 'parent_id'],
+                        ['parent_id', 'post_date']
+                    ]    仅用于批量更新时指定字段
+     * @return object
+     */
     public function fields($fields){
     
         if( is_array($fields) ){//传进来的是数组  $fields=['name', 'age',...]
@@ -256,6 +311,28 @@ class Model extends NiceModel{
         return $this;
     }
 
+    public function delete(){
+        
+        $this->flag = 'delete';//操作标识， delete代表在get_sql方法中返回删除数据的SQL语句来执行
+        
+        if( $this->query(2) )
+            return true;
+        else
+            return false;
+    }
+
+    /**
+     * method:指定更新的数据
+     * @param $update array 通过fields方法指定字段对应的更新数据
+                可能的情况有：
+                (1) $update=['aaab', 18, time()]  这种方式用于更新一条数据
+                (2) $update=[
+                        ['a', 18, time()],
+                        ['b', 18],
+                        ['c', time()]
+                    ]   这种方式用于批量更新数据
+     * @return object
+     */
     public function update($update){
 
         if( $this->is2arr($update)==1 ){//一维数组  $insert=['zhangsan', 12]
@@ -278,6 +355,21 @@ class Model extends NiceModel{
         return $this;
     }
 
+    /**
+     * method:指定新增的数据
+     * @param $insert string|array 通过fields方法指定字段对应的新增数据
+                可能的情况有：
+                (1) $insert='"bb", 12, '.time()   用于新增一条数据
+                (2) $insert=['aa', 12, time()]   用于新增一条数据
+                (3) $insert=['name'=>'ee', 'parent_id'=>17, 'post_date'=>time()]  用于新增一条数据，这种方式同时指定了数据对应的字段，所以可以不用额外使用fields方法指定字段
+                (4) $insert=[
+                        ['ff', 18, time()],
+                        ['gg', 14, time()],
+                        ['hh', 19, time()],
+                        ['ii', 21, time()]
+                    ]   用于一次新增多条数据
+     * @return object
+     */
     public function insert($insert){
         
         if( $this->is2arr($insert)==1 ){//一维数组  $insert=['zhangsan', 12]或$insert=['name'=>'zhangsan', 'age'=>12]
@@ -310,6 +402,10 @@ class Model extends NiceModel{
         return $this;
     }
 
+    /**
+     * method:执行新增或修改操作
+     * @return bool 执行成功:true; 执行失败:false
+     */
     public function exec(){
 
         if( $this->query(2) )
@@ -348,12 +444,6 @@ class Model extends NiceModel{
     }
 
     public function replace(){
-    
-    }
-
-    
-
-    public function del(){
     
     }
 
