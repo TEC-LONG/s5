@@ -31,7 +31,7 @@ ALTER TABLE `bg_user` ADD `salt` char( 6 ) NOT NULL DEFAULT ''  COMMENT '干扰�
 #id,栏目名称,父级id,权限,最后操作人真实姓名,最终操作人id,首次添加人真实姓名,首次添加人id,最后修改时间(首次添加为0),层级,平台,模块,动作
 #id,name,parent_id,authority,last_add_user,last_add_userid,first_add_user,first_add_userid,last_update,level,plat,module,act
 
-CREATE TABLE `menu` ( `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ) ENGINE=myisam DEFAULT CHARSET=utf8;
+CREATE TABLE `menu` ( `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 ALTER TABLE `menu` ADD `post_date` INT( 11 ) UNSIGNED NOT NULL DEFAULT '0' COMMENT '注册时间'; ALTER TABLE `bg_user` ADD INDEX ( `post_date` );
 ALTER TABLE `menu` ADD `name` VARCHAR( 30 ) NOT NULL DEFAULT ''  COMMENT '栏目名称';
 ALTER TABLE `menu` ADD `parent_id` INT( 4 ) UNSIGNED NOT NULL DEFAULT '0' COMMENT '父级id';
@@ -78,7 +78,7 @@ ALTER TABLE `editormd_img` ADD `has_use` TINYINT( 1 )  UNSIGNED DEFAULT '0' COMM
 #level = {"1":"1级节点", "2":"2级节点" "3":"3级节点"}
 #is_have_child = {"0":"无", "1":"有"}
 
-CREATE TABLE `expcat` ( `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+CREATE TABLE `expcat` ( `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 ALTER TABLE `expcat` ADD `post_date` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0'; ALTER TABLE `` ADD INDEX ( `post_date` );
 ALTER TABLE `expcat` ADD `name` VARCHAR( 30 )  NOT NULL DEFAULT '' COMMENT '分类名称';
 ALTER TABLE `expcat` ADD `pid` INT( 4 )  UNSIGNED DEFAULT '0' COMMENT '上级分类id';
@@ -96,7 +96,7 @@ update `expcat` set `child_nums`=child_nums+1,`child_ids`="concat(child_ids, ",1
 #id,post_date,标题,所属exp分类id,所属exp分类名称,内容,标签,所属exp分类id父级关系,所属exp分类名称父级关系,是否删除
 #id,post_date,title,expcat__id,expcat__name,content,tags,crumbs_expcat_ids,crumbs_expcat_names,is_del
 
-CREATE TABLE `expnew` ( `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+CREATE TABLE `expnew` ( `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 ALTER TABLE `expnew` ADD `post_date` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0'; ALTER TABLE `` ADD INDEX ( `post_date` );
 ALTER TABLE `expnew` ADD `title` VARCHAR( 50 )  NOT NULL DEFAULT '' COMMENT '标题';
 ALTER TABLE `expnew` ADD `expcat__id` INT( 4 )  UNSIGNED DEFAULT '0' COMMENT '所属exp分类id';
@@ -120,7 +120,7 @@ mouthfeel = {"0":"软", "1":"硬", "2":"糯", "3":"脆", "4":"Q弹", "5":"丝滑
 effects = {"0":"温补", "1":"清热", "2":"解毒", "3":"去湿", "4":"安神", "5":"镇痛"}
 is_del = {"0":"否", "1":"是"}
 
-CREATE TABLE `chifan` ( `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+CREATE TABLE `chifan` ( `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 ALTER TABLE `chifan` ADD `post_date` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0'; ALTER TABLE `` ADD INDEX ( `post_date` );
 ALTER TABLE `chifan` ADD `cai` VARCHAR( 100 )  NOT NULL DEFAULT '' COMMENT '菜品';
 ALTER TABLE `chifan` ADD `descr` TEXT NOT NULL COMMENT '描述';
@@ -142,7 +142,7 @@ ALTER TABLE `chifan` ADD `is_del` TINYINT( 1 )  UNSIGNED DEFAULT '0' COMMENT '�
 
 #is_multipart = [0=>'否', 1=>'是'];
 
-CREATE TABLE `vimshortcut` ( `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+CREATE TABLE `vimshortcut` ( `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 ALTER TABLE `vimshortcut` ADD `post_date` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0'; ALTER TABLE `` ADD INDEX ( `post_date` );
 ALTER TABLE `vimshortcut` ADD `shortcut` VARCHAR( 100 )  NOT NULL DEFAULT '' COMMENT '快捷键';
 ALTER TABLE `vimshortcut` ADD `key_comment` VARCHAR( 255 )  NOT NULL DEFAULT '' COMMENT '快捷键说明';
@@ -160,7 +160,7 @@ ALTER TABLE `vimshortcut` ADD `second_key` VARCHAR( 30 )  NOT NULL DEFAULT '' CO
 belong_pro = [0=>'exp', 1=>'玖富', 2=>'综合']
 is_del = [0=>'未删除', 1=>'已删除']
 
-CREATE TABLE `prorecord` ( `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+CREATE TABLE `prorecord` ( `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 ALTER TABLE `prorecord` ADD `post_date` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0'; ALTER TABLE `` ADD INDEX ( `post_date` );
 ALTER TABLE `prorecord` ADD `belong_pro` TINYINT( 1 )  UNSIGNED DEFAULT '0' COMMENT '所属工程';
 ALTER TABLE `prorecord` ADD `title` VARCHAR( 100 )  NOT NULL DEFAULT '' COMMENT '标题';

@@ -81,6 +81,23 @@ class TestController extends Controller {
         // ->where([['id', 2],['age', '>=', '18']])
         // ->exec();
 
+        //批量更新
+        // $re = M()->table('menu')
+        // ->fields([
+        //     ['name', 'parent_id', 'post_date'],
+        //     ['name', 'parent_id'],
+        //     ['parent_id', 'post_date']
+        // ])
+        // ->update([
+        //     ['a', 18, time()],
+        //     ['b', 18],
+        //     ['c', time()]//字段和数据不一致，将会回滚
+        // ])
+        // ->where(['id', 1])
+        // ->where(['id', 2])
+        // ->where(['id', 3])
+        // ->exec();
+
         $re = M()->table('menu')
         ->fields([
             ['name', 'parent_id', 'post_date'],
@@ -88,13 +105,13 @@ class TestController extends Controller {
             ['parent_id', 'post_date']
         ])
         ->update([
-            ['aaab', 18, time()],
-            ['aaab', 18, time()],
-            ['aaab', 18, time()]
+            ['a', 18, time()],
+            ['b', 18],
+            [21, time()]//字段和数据不一致，将会回滚
         ])
         ->where(['id', 1])
-        ->where(['age', '>=', 12])
-        ->where(['height', '<', 2])
+        ->where(['id', 2])
+        ->where(['id', 3])
         ->exec();
 
         echo '<pre>';

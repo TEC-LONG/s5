@@ -114,26 +114,26 @@ class Model extends NiceModel{
             
             if( is_array($sql) ){//本条件只对批量更新有效，若为批量更新，则使用事务
             
-                $this->_pdo->beginTransaction();
-                $is_ok = 1;
-                foreach( $sql as $one_sql){
-                
-                    try{
+                try{
+                    $this->_pdo->beginTransaction();
+                    foreach( $sql as $one_sql){
+                    
                         $this->_pdo->exec($one_sql);
-                    }catch(\PDOException $e){
-            
-                        $this->e = $e;//记录错误对象
-                        if( C('pdo.mysql.debug') ){
-                            $this->dbug('err.echo', $one_sql);
-                        }else{
-                            $this->dbug('err.log', $one_sql);
-                        }
-                        $this->_pdo->rollBack();//有问题则立即回滚
-                        return false;//并且终止继续执行
                     }
+                    $re = $this->_pdo->commit();//全部执行成功则提交事务
+
+                }catch(\PDOException $e){
+                
+                    $this->e = $e;//记录错误对象
+                    if( C('pdo.mysql.debug') ){
+                        $this->dbug('err.echo', $one_sql);
+                    }else{
+                        $this->dbug('err.log', $one_sql);
+                    }
+                    $re = $this->_pdo->rollBack();//有问题则立即回滚
+                    return false;
                 }
 
-                $this->_pdo->commit();//全部执行成功则提交事务
             }else{
 
                 try{
@@ -382,7 +382,7 @@ class Model extends NiceModel{
             echo '错误程序文件名称：'.$this->e->getFile();echo '<br/>';
             echo '错误代码在文件中的行号：'.$this->e->getLine();echo '<br/>';
             echo 'SQL语句：' . $sql;echo '<br/>';
-            exit;
+            // exit;
         elseif ($flag==='err.log')://记录错误到日志文件
 
             $log = "-----------------------------------------------------------------\n";
