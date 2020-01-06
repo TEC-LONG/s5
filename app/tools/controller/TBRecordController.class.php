@@ -117,6 +117,11 @@ class TBRecordController extends Controller {
         echo $enumHtml;
     }
 
+    public function robot(){
+    
+        echo 'rebot';
+    }
+
     public function del(){
         //接收数据
         $request = $_REQUEST;
@@ -209,11 +214,11 @@ class TBRecordController extends Controller {
                     }
                 }
             }
-        }elseif ($type==3) {
+        }elseif ($type==3) {//只取需要新增的数据
 
             foreach( $request['field_ch_name'] as $k=>$ch_name){
 
-                if($request['ids'][$k]!=0||$ch_name==='') continue;//没有id，说明本条数据不是要更新的，而是要新增的
+                if($request['ids'][$k]!=0||$ch_name==='') continue;//有id，说明本条数据不是要新增的
 
                 //$may_update_fields = ['field_ch_name'=>'ch_name', 'field_en_name'=>'en_name', 'type_sql', 'field_type', 'key_val', 'specification']
                 foreach( $may_update_fields as $elem_name=>$field ){
@@ -225,7 +230,7 @@ class TBRecordController extends Controller {
                     $re_datas[$k][$save_field] = $request[$field][$k];
                 }
             }
-        }elseif ($type==4) {
+        }elseif ($type==4) {//只取需要被删除数据的id
             foreach( $request['ids'] as $ids_k=>$id){
 
                 if($id==0) continue;//没有id，说明本条数据不是要更新的，而是要新增的
@@ -259,7 +264,8 @@ class TBRecordController extends Controller {
         if( !empty($tb_record_update) )  $has_update_data=1;
 
         #执行更新
-        if( !empty($tb_record_update)&&!M()->setData('tb_record', $tb_record_update, 2, ['id'=>$request['id']]) ){
+        ;
+        if( !empty($tb_record_update)&&!M()->table('tb_record')->fields(array_keys($tb_record_update))->update($tb_record_update)->where(['id', $request['id']])->exec() ){
             $re = AJAXre(1);
             echo json_encode($re); 
             exit;
@@ -351,7 +357,7 @@ array(2) {
             
             $tmp = array_values($t_s_f_a_val);
             $tmp = array_map(function ($elem){
-                return '"' . $elem . '"';
+                return '"' . str_replace('"', '\'', $elem) . '"';
             }, $tmp);
             $values[] = '(' . implode(',', $tmp) . ')';
         }
@@ -579,17 +585,55 @@ WHERE id IN (1,2,3)
         $arr_field = explode(',', $arr_struct[3]);
         foreach ($arr_field as  $field) {
 
-            if( strpos(trim($field), '__') ){//关联字段
-                
+            if( strpos(trim($field), '__') ){//有关联字段
+
                 $data['has_special_field'] = 1;
                 break;
             }
         }
 
         #执行新增
-        if( !M()->setData('tb_record', $data) ){//不成功，则就此中断
+        if( !$id=M()->setData('tb_record', $data) ){//不成功，则就此中断
             $re = AJAXre(1);
         }else{
+
+            //是否有关联字段
+            $arr_field = explode(',', $arr_struct[3]);
+            $arr_field_ch_name = explode(',', $arr_struct[2]);
+            $tmp_relate_fields = [];
+            $tmp_counter = 0;
+            foreach ($arr_field as  $k=>$field) {
+
+                if( strpos(trim($field), '__') ){//关联字段
+
+                    $tmp_relate_fields[$tmp_counter]['ch_name'] = $arr_field_ch_name[$k];
+                    $tmp_relate_fields[$tmp_counter]['en_name'] = $field;
+                    $tmp_relate_fields[$tmp_counter]['field_type'] = 1;
+                    $tmp_relate_fields[$tmp_counter]['tb_record__id'] = $id;
+                    $tmp_relate_fields[$tmp_counter]['post_date'] = time();
+
+                    $tmp_arr_relate_field = explode('__', trim($field));
+                    $tmp_relate_fields[$tmp_counter]['relate_tb_name'] = $tmp_arr_relate_field[0];
+                    $tmp_relate_fields[$tmp_counter]['relate_field_name'] = $tmp_arr_relate_field[1];
+                    
+                    if(!isset($data['has_special_field'])) $data['has_special_field'] = 1;
+                }
+            }
+
+            if(!empty($tmp_relate_fields)){
+
+                $tmp_fields = implode(',', array_keys($tmp_relate_fields[0]));
+                $re = M()->table('tb_special_field')
+                ->fields($tmp_fields)
+                ->insert($tmp_relate_fields)
+                ->exec();
+
+                if(!$re){
+                    $re = AJAXre(1);
+                    echo json_encode($re); 
+                    exit;
+                }
+            }
 
             //成功
             $re = AJAXre();

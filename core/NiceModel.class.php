@@ -43,7 +43,7 @@ class NiceModel{
 			$this->_pdo->exec($sql);
 		}catch(\PDOException $aa){//捕获异常,并且进行捕获异常后的处理.
 
-			if( C('pdo.mysql.debug') ) $this->debug($aa);
+			if( C('pdo.mysql.debug') ) $this->debug($aa, $sql);
 		}
 		return true;
 	
@@ -72,7 +72,7 @@ class NiceModel{
             if(!empty($upd_not_use_quote_fields) && in_array($datas_key, $upd_not_use_quote_fields))
                 $arrDatas[] = '`'.$datas_key.'`='.$data;
             else
-                $arrDatas[] = '`'.$datas_key.'`="'.$data.'"';
+                $arrDatas[] = '`'.$datas_key.'`="'.str_replace('"', '\'', $data).'"';
         endforeach;
         $strDatas = implode(',', $arrDatas);
 
@@ -86,7 +86,7 @@ class NiceModel{
                 $con = array();
                 foreach( $condition as $k=>$v ){ 
 
-                    $con[] = '`' . $k . '`' . '="' . $v . '"';
+                    $con[] = '`' . $k . '`' . '="' . str_replace('"', '\'', $v) . '"';
                 }
                 $con = implode(',', $con);
                 $sql = 'update `' . $tbname . '` set ' . $strDatas . ' where ' . $con;
@@ -200,11 +200,12 @@ class NiceModel{
 	}
 
     //输出错误信息
-    protected function debug($e){ 
+    protected function debug($e, $sql=''){ 
         echo '错误消息内容'.$e->getMessage();echo '<br/>';
         echo '错误代码'.$e->getCode();echo '<br/>';
         echo '错误程序文件名称'.$e->getFile();echo '<br/>';
         echo '错误代码在文件中的行号'.$e->getLine();echo '<br/>';
+        echo '出错的SQL语句：'.$sql;echo '<br/>';
         exit;
     }
 }

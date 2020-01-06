@@ -70,11 +70,12 @@ class Controller extends \Smarty{
         #分页参数
         $page = [];
         $page['numPerPageList'] = [20, 30, 40, 60, 80, 100, 120, 160, 200];
-        $page['pageNum'] = $pageNum = isset($_POST['pageNum']) ? intval($_POST['pageNum']) : 1;
+        $page['pageNum'] = $pageNum = isset($_POST['pageNum']) ? intval($_POST['pageNum']) : (isset($_COOKIE['pageNum']) ? intval($_COOKIE['pageNum']) : 1);
+        setcookie('pageNum', $pageNum);
         $page['numPerPage'] = $numPerPage = isset($_POST['numPerPage']) ? intval($_POST['numPerPage']) : 30;
         $page['totalNum'] = $totalNum = M()->GN($tb, $condition, $type);
-        $page['totalPageNum'] = $totalPageNum = intval(ceil(($totalNum/$numPerPage)));
-        $page['limitM'] = $limitM = ($pageNum-1)*$numPerPage;
+        $page['totalPageNum'] = intval(ceil(($totalNum/$numPerPage)));
+        $page['limitM'] = ($pageNum-1)*$numPerPage;
 
         return $page;
     } 
@@ -114,12 +115,12 @@ class Controller extends \Smarty{
                     }
                     //                             1|3|4
                     $con[$elem[0]] = ' REGEXP "' . implode('|', $str_arr) . '"';
-                }elseif( $elem[1]==='like' ){
+                }elseif( $elem[1]==='like' ){//模糊匹配
 
                     $con[$elem[0]] = ' like "%' . $request[$elem[0]] . '%"';
                 }
             
-            }else{
+            }else{//普通
 
                 //     'name'                     'name'
                 $con[$elem[0]] = '="' . $request[$elem[0]] . '"';

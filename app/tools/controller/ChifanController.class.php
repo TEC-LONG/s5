@@ -124,10 +124,13 @@ class ChifanController extends Controller {
         $this->_datas['page'] = $page = $this->_page('chifan', $con, 3);
 
         //查询数据
-        $sql = 'select * from chifan where ' . $con . ' order by id desc limit ' . $page['limitM'] . ',' . $page['numPerPage'];
-        // var_dump($sql);
+        $cais = M()->table('chifan')
+                ->select('*')
+                ->where($con)
+                ->limit($page['limitM'] . ',' . $page['numPerPage'])
+                ->get();
 
-        if( $cais = M()->getRows($sql) ){
+        if( $cais ){
             foreach( $cais as &$cai ){ 
                 if( !empty($cai['expnew_ids']) ){
                     $cai['expnew_titles'] = explode('|', $cai['expnew_titles']);
@@ -161,7 +164,7 @@ class ChifanController extends Controller {
         //check($request,  $this->_extra['form-elems'])
 
         //构建新增数据
-        $datas = [
+        $insert = [
             'cai' => $request['cai'],
             'descr' => $request['descr'],
             'types' => implode(',', $request['types']),
@@ -174,8 +177,10 @@ class ChifanController extends Controller {
             'post_date' => time()
         ];
 
+        $re = M()->table('chifan')->insert($insert)->exec();
+
         //执行新增
-        if( M()->setData('chifan', $datas) ){
+        if( $re ){
             $re = AJAXre();
             $re->navTabId = $this->_navTab.'_ad';
             $re->message = '菜品添加成功！';
@@ -197,8 +202,7 @@ class ChifanController extends Controller {
         //check($request,  $this->_extra['form-elems'])
 
         //查询数据
-        $sql = 'select * from chifan where id=' . $request['id'];
-        $row = M()->getRow($sql);
+        $row = M()->table('chifan')->select('*')->where(['id', $request['id']])->find();
 
         //特殊字段处理
         $this->_datas['row'] = $this->_special_fields($this->_extra['special_fields'], $row);
@@ -231,8 +235,14 @@ class ChifanController extends Controller {
             'byeffect' => $request['byeffect']
         ];
 
+        $re = M()->table('chifan')
+        ->fields(array_keys($datas))
+        ->update($datas)
+        ->where(['id', '=', $request['id']])
+        ->exec();
+
         //执行更新
-        if( M()->setData('chifan', $datas, 2, ['id'=>$request['id']]) ){
+        if( $re ){
             $re = AJAXre();
             $re->navTabId = $this->_navTab.'_upd';
             $re->message = '更新菜品成功！';
@@ -254,11 +264,11 @@ class ChifanController extends Controller {
         // $this->_extra['form-elems']['id'] = ['ch'=>'菜品ID', 'rule'=>'required'];
         //check($request,  $this->_extra['form-elems'])
 
-        //构建删除条件
-        $con = ['id'=>$request['id']];
+        //执行删除操作
+        $re = M()->table('chifan')->fields('is_del')->update([1])->where(['id', '=', $request['id']])->exec();
 
         //将需要删除的数据 is_del字段设置为1
-        if( M()->setData('chifan', ['is_del'=>1], 2, $con) ){
+        if( $re ){
             $re = AJAXre();
             $re->navTabId = $this->_navTab.'_index';
             $re->message = '删除成功！';

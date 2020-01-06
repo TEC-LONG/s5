@@ -233,7 +233,7 @@ class Model extends NiceModel{
 
                     $tmp_arr_target = [];
                     foreach( $this->update_fields[0] as $k=>$field){
-                        $tmp_arr_target[] = '`'.$field.'`='.$this->update[0][$k];
+                        $tmp_arr_target[] = isset($this->update[0][$k]) ? '`'.$field.'`='.$this->update[0][$k] : '`'.$field.'`='.$this->update[0][$field];
                     }
                     $target = implode(',', $tmp_arr_target);
 
@@ -253,7 +253,7 @@ class Model extends NiceModel{
 
                         $tmp_arr_target = [];
                         foreach( $fields_row as $k1=>$field){
-                            $tmp_arr_target[] = '`'.$field.'`='.$this->update[$k][$k1];
+                            $tmp_arr_target[] = isset($this->update[$k][$k1]) ? '`'.$field.'`='.$this->update[$k][$k1] : '`'.$field.'`='.$this->update[$k][$field];
                         }
                         $target = implode(',', $tmp_arr_target);
 
@@ -350,7 +350,6 @@ class Model extends NiceModel{
                 }, $row);
             }
         }
-    
         $this->flag = 'update';//操作标识， update代表接下来如果调用exec方法则将执行update操作
         return $this;
     }
@@ -465,7 +464,6 @@ class Model extends NiceModel{
 
             return $sql;
         elseif ($flag==='err.echo')://输出错误
-
             echo '时间：' . date('Y-m-d H:i:s');echo '<br/>';
             echo '错误消息内容：'.$this->e->getMessage();echo '<br/>';
             echo '错误代码：'.$this->e->getCode();echo '<br/>';

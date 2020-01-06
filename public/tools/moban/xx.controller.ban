@@ -21,19 +21,10 @@ class {{$controller_name}}Controller extends Controller {
         
         //不同页面的个性化需求
         switch ( ACT ){
-            case 'index':
-                {{$init_index}}
-            break;
-            case 'ad':
-                {{$init_ad}}
-            break;
-            case 'adh':
-            case 'updh':
-                {{$init_adh_and_updh}}
-            break;
-            case 'upd':
-                {{$init_upd}}
-            break;
+            {{$init_index}}
+            {{$init_ad}}
+            {{$init_adh_and_updh}}
+            {{$init_upd}}
         }
 
         $this->_datas['navTab'] = $this->_navTab;
