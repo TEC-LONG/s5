@@ -42,7 +42,8 @@ class TestController extends Controller {
         
 
 
-        // $re = M()->table('menu')->fields('name, parent_id, post_date')
+        // $re = M()->table('menu')
+        // ->fields('name, parent_id, post_date')
         // ->insert(['aa', 12, time()])
         // ->exec();
 
@@ -86,7 +87,7 @@ class TestController extends Controller {
         // ->where([['id', 2],['age', '>=', '18']])
         // ->exec();
 
-        //批量更新
+        // //批量更新
         // $re = M()->table('menu')
         // ->fields([
         //     ['name', 'parent_id', 'post_date'],

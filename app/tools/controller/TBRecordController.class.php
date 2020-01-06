@@ -19,6 +19,7 @@ class TBRecordController extends Controller {
         $this->_datas['navTab'] = $this->_navTab;
         $this->_datas['url'] = [
             'index' => L(PLAT, MOD, 'index'),
+            'robot' => L(PLAT, MOD, 'robot'),
             'ad' => L(PLAT, MOD, 'ad'),
             'adh' => L(PLAT, MOD, 'adh'),
             'upd' => L(PLAT, MOD, 'upd'),
@@ -66,7 +67,54 @@ class TBRecordController extends Controller {
                 //tb_special_field表值对字段数据
                 $this->_datas['field_type'] = ['普通字段', '关联字段'];
             break;
+            case 'robot':
+            case 'enum':
+                $this->_datas['major_acts'] = ['列表页', '添加页', '编辑页', '模型'];
+                $this->_datas['list_url_acts'] = ['index', 'ad', 'upd', 'del'];
+                $this->_datas['list_search_rule'] = ['like', 'mul'];
+            break;
         }
+    }
+
+    public function robot(){
+        //接收数据
+        $request = $_REQUEST;
+
+        //检查数据
+        // var_dump($request);
+        // exit;
+        // var_dump(111);
+        // exit;
+        
+        $this->assign($this->_datas);
+        $this->display('TbStruct/robot.tpl');
+
+    }
+
+    public function enum(){
+    
+        //接收数据
+        $request = $_REQUEST;
+
+        if( $request['type']==1 ){
+        
+            $enumHtml = '<select class="combox" name="${param.inputName}">
+                            <option value="0">否</option>
+                            <option value="1">是</option>
+                        </select>';
+        }elseif( $request['type']==2 ) {
+            
+            $enumHtml = '<select class="combox" name="${param.inputName}">';
+
+            foreach( $this->_datas['list_search_rule'] as $k=>$v){
+                
+                $enumHtml .= '<option value="'.$k.'">'.$v.'</option>';
+            }
+            $enumHtml .= '</select>';
+                            
+        }
+
+        echo $enumHtml;
     }
 
     public function del(){
