@@ -187,7 +187,7 @@ var key_val_del_f = function(a){
 								<th type="text" name="list_must_show_ch[]" size="12">中文字段名</th>
 								<th type="text" name="list_must_show_en[]" size="12">英文字段名</th>
 								<th type="text" name="list_must_show_width[]" defaultVal="70" size="12">列显示宽度</th>
-								<th type="enum" name="list_must_show_is_set[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=1" size="12">是否为集合类型字段(如："1,2,4,7")</th>
+								<th type="enum" name="list_must_show_is_set[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=1&name=list_must_show_is_set" size="12">是否为集合类型字段(如："1,2,4,7")</th>
 								<th type="del" width="60">操作</th>
 							</tr>
 						</thead>
@@ -217,7 +217,7 @@ var key_val_del_f = function(a){
 						<thead>
 							<tr>
 								<th type="text" name="list_search_name[]" size="12">字段名</th>
-								<th type="enum" name="list_search_rule[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=2" size="12">条件拼接规则</th>
+								<th type="enum" name="list_search_rule[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=2&name=list_search_rule" size="12">条件拼接规则</th>
 								<th type="del" width="60">操作</th>
 							</tr>
 						</thead>

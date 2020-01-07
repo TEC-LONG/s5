@@ -35,8 +35,8 @@ class RobotController extends Controller {
     public function adh(){
         //接收数据
         $request =$this->_requ->all('l');
-        // var_dump($request);
-        // exit;
+        var_dump($request);
+        exit;
         
 
         //控制器公共初始化部分
@@ -250,13 +250,13 @@ class RobotController extends Controller {
 
         if( $request['type']==1 ){
         
-            $enumHtml = '<select class="combox" name="${param.inputName}">
+            $enumHtml = '<select class="combox" name="'.$request['name'].'[]">
                             <option value="0">否</option>
                             <option value="1">是</option>
                         </select>';
         }elseif( $request['type']==2 ) {
             
-            $enumHtml = '<select class="combox" name="${param.inputName}">';
+            $enumHtml = '<select class="combox" name="'.$request['name'].'[]">';
 
             foreach( $this->_datas['list_search_rule'] as $k=>$v){
                 
