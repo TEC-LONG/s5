@@ -21,6 +21,7 @@
 	var _onchange = function(event){
 		var $ref = $("#"+event.data.ref);
 		if ($ref.size() == 0) return false;
+		console.log(event.data.refUrl.replace("{value}", encodeURIComponent(event.data.$this.val())));
 		$.ajax({
 			type:'POST', dataType:"json", url:event.data.refUrl.replace("{value}", encodeURIComponent(event.data.$this.val())), cache: false,
 			data:{},
@@ -97,6 +98,11 @@
 					
 					var $input = $("select", box);
 					if ($input.val() != $this.attr("value")) {
+						console.log(box);
+						console.log($("select", box));
+						console.log($("select", box).val());
+						console.log($this.attr("value"));
+
 						$("select", box).val($this.attr("value")).trigger("change");
 					}
 				});
@@ -137,7 +143,9 @@
 				$("body").append(options);
 				$this.after(select);
 				$("div.select", $this.next()).comboxSelect().append($this);
-				
+				// console.log(options);
+				// console.log(ref);
+				// console.log(refUrl);
 				if (ref && refUrl) {
 					$this.unbind("change", _onchange).bind("change", {ref:ref, refUrl:refUrl, $this:$this}, _onchange);
 				}
