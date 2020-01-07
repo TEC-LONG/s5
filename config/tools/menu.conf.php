@@ -8,7 +8,7 @@ $configs['tools']['menu'] = array(
     'menu2'=>[  
         array( 
             0=>'帮助中心',
-            1=>'建表工具',
+            1=>'开发工具',
             2=>'经验系统',
             3=>'vim快捷键',
             4=>'吃饭',
@@ -22,7 +22,7 @@ $configs['tools']['menu'] = array(
     'menu3'=>[ 
         array( 
             0=>[ '导航' ],
-            1=>[ '表信息', '智能建表', '逆向分解' ],
+            1=>[ '表信息', '智能建表', '逆向分解', '后台机器人' ],
             2=>[ 'exp列表', 'exp分类列表' ],
             3=>[ 'vim快捷键or操作列表', '模块列表' ],
             4=>[ '随机点餐' ],
@@ -41,7 +41,8 @@ $configs['tools']['menu'] = array(
             1=>[ 
                 array( 'plat'=>'tools', 'module'=>'TBRecord', 'act'=>'index', 'rel'=>'TBRecord_index' ),
                 array( 'plat'=>'tools', 'module'=>'AutoTb', 'act'=>'index', 'rel'=>'AutoTb_index' ),
-                array( 'plat'=>'Apps', 'module'=>'Goods', 'act'=>'index', 'rel'=>'Goods' )
+                array( 'plat'=>'Apps', 'module'=>'Goods', 'act'=>'index', 'rel'=>'Goods' ),
+                array( 'plat'=>'tools', 'module'=>'Robot', 'act'=>'index', 'rel'=>'Robot_index' )
             ],
             2=>[ 
                 array( 'plat'=>'tools', 'module'=>'exp', 'act'=>'index', 'rel'=>'exp_index' ),

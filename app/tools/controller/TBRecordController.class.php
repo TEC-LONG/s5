@@ -67,56 +67,55 @@ class TBRecordController extends Controller {
                 //tb_special_field表值对字段数据
                 $this->_datas['field_type'] = ['普通字段', '关联字段'];
             break;
-            case 'robot':
-            case 'enum':
-                $this->_datas['major_acts'] = ['列表页', '添加页', '编辑页', '模型'];
-                $this->_datas['list_url_acts'] = ['index', 'ad', 'upd', 'del'];
-                $this->_datas['list_search_rule'] = ['like', 'mul'];
-            break;
+            // case 'robot':
+            // case 'enum':
+            //     $this->_datas['major_acts'] = ['列表页', '添加页', '编辑页', '模型'];
+            //     $this->_datas['list_url_acts'] = ['index', 'ad', 'upd', 'del'];
+            //     $this->_datas['list_search_rule'] = ['like', 'mul'];
+            // break;
         }
     }
 
-    public function robot(){
-        //接收数据
-        $request = $_REQUEST;
+    // public function robot(){
+    //     //接收数据
+    //     $request = $_REQUEST;
 
-        //检查数据
-        // var_dump($request);
-        // exit;
-        // var_dump(111);
-        // exit;
+    //     //检查数据
+    //     // var_dump($request);
+    //     // exit;
+    //     // var_dump(111);
+    //     // exit;
         
-        $this->assign($this->_datas);
-        $this->display('TbStruct/robot.tpl');
+    //     $this->assign($this->_datas);
+    //     $this->display('TbStruct/robot.tpl');
 
-    }
+    // }
 
-    public function enum(){
+    // public function enum(){
     
-        //接收数据
-        $request = $_REQUEST;
+    //     //接收数据
+    //     $request = $_REQUEST;
 
-        if( $request['type']==1 ){
+    //     if( $request['type']==1 ){
         
-            $enumHtml = '<select class="combox" name="${param.inputName}">
-                            <option value="0">否</option>
-                            <option value="1">是</option>
-                        </select>';
-        }elseif( $request['type']==2 ) {
+    //         $enumHtml = '<select class="combox" name="${param.inputName}">
+    //                         <option value="0">否</option>
+    //                         <option value="1">是</option>
+    //                     </select>';
+    //     }elseif( $request['type']==2 ) {
             
-            $enumHtml = '<select class="combox" name="${param.inputName}">';
+    //         $enumHtml = '<select class="combox" name="${param.inputName}">';
 
-            foreach( $this->_datas['list_search_rule'] as $k=>$v){
+    //         foreach( $this->_datas['list_search_rule'] as $k=>$v){
                 
-                $enumHtml .= '<option value="'.$k.'">'.$v.'</option>';
-            }
-            $enumHtml .= '</select>';
+    //             $enumHtml .= '<option value="'.$k.'">'.$v.'</option>';
+    //         }
+    //         $enumHtml .= '</select>';
                             
-        }
+    //     }
 
-        echo $enumHtml;
-    }
-
+    //     echo $enumHtml;
+    // }
 
     public function del(){
         //接收数据

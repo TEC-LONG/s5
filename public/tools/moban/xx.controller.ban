@@ -8,7 +8,8 @@ class {{$controller_name}}Controller extends Controller {
     protected $_datas = [];
     private $_init=[];
     private $_extra=[];
-    private $_model;
+    
+    private $_m;
     private $_navTab;
 
     public function __construct(){
