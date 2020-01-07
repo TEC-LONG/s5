@@ -117,10 +117,6 @@ class TBRecordController extends Controller {
         echo $enumHtml;
     }
 
-    public function robot(){
-    
-        echo 'rebot';
-    }
 
     public function del(){
         //接收数据
