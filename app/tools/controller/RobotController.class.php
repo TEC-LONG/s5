@@ -19,12 +19,14 @@ class RobotController extends Controller {
         $this->_datas['navTab'] = $this->_navTab;
         $this->_datas['url'] = [
             'index' => L(PLAT, MOD, 'index'),
-            'adh' => L(PLAT, MOD, 'adh')
+            'adh' => L(PLAT, MOD, 'adh'),
+            'tbLookup' => L(PLAT, 'TBRecord', 'tbLookup')
         ];
 
         switch (ACT) {
             case 'index':
             case 'enum':
+            case 'adh':
                 $this->_datas['major_acts'] = ['列表页', '添加页', '编辑页', '模型'];
                 $this->_datas['list_url_acts'] = ['index', 'ad', 'upd', 'del'];
                 $this->_datas['list_search_rule'] = ['like', 'mul'];
@@ -35,9 +37,8 @@ class RobotController extends Controller {
     public function adh(){
         //接收数据
         $request =$this->_requ->all('l');
-        var_dump($request);
-        exit;
-        
+        // var_dump($request);
+        // exit;
 
         //控制器公共初始化部分
         #文件名
@@ -45,10 +46,188 @@ class RobotController extends Controller {
 
         #控制器构造方法初始化部分
         $controller_construct = $this->controller_construct($request);
-        echo $controller_construct;
+        // echo $controller_construct;
+        // exit;
 
+        #列表页部分
+        $controller_index = '';
+        if( in_array('0', $request['major_acts']) ){
+            $controller_index = $this->controller_index($request);
+            // $templ_index = $this->templ_index($request);
+
+            // echo $controller_index;
+            // exit;
+        }
+
+        #添加页部分
+        if( in_array('1', $request['major_acts']) ){
+            // $controller_add = $this->controller_add($request);
+            // $controller_adh = $this->controller_adh($request);
+            // $templ_add = $this->templ_add($request);
+        }
+
+        #编辑页部分
+        if( in_array('2', $request['major_acts']) ){
+            // $controller_upd = $this->controller_upd($request);
+            // $controller_updh = $this->controller_updh($request);
+            // $templ_upd = $this->templ_upd($request);
+        }
+
+        #形成控制器文件
+        $ori_controller_templ = file_get_contents(PUBLIC_PATH . 'tools/moban/xx.controller.ban');
+        $controller_templ = str_replace('{{$controller_construct}}', $controller_construct, $ori_controller_templ);
+        $controller_templ = str_replace('{{$controller_index}}', $controller_index, $controller_templ);
+        
+        var_dump($controller_templ);
         exit;
         
+        
+    }
+
+    /**
+     * 
+     */
+    protected function controller_index($request){
+        
+        #初始条件
+        /*B
+        如：$request['list_search_init'] = 'is_del:0|id:>:10|name:!=:zhangsan'
+        */
+        $list_search_init_arr = explode('|', $request['list_search_init']);
+        $list_search_init = [];
+        
+        foreach( $list_search_init_arr as $field){
+
+            if( !empty($field)&&strpos($field, ':') ){
+
+                $field_arr = explode(':', $field);
+                if( count($field_arr)==2 ){
+                    
+                    $list_search_init[] = "'" . $field_arr[0] . "'=>'" . $field_arr[1] . "'";
+                }elseif (count($field_arr==3)) {
+                    $list_search_init[] = "'" . $field_arr[0] . "'=>'" . $field_arr[1] . "\"" . $field_arr[2] . "\"'";
+                }
+            }
+        }
+        $list_search_init = implode(',', $list_search_init);
+        /*E
+        最终形成：
+        'is_del'=>'=0','id'=>'>"10"','name'=>'!="zhangsan"'
+        它将会用到模板中形成：
+        $con_arr = ['is_del'=>'=0','id'=>'>"10"','name'=>'!="zhangsan"'];
+        */
+
+        #查询字段
+        /*B
+        如：
+        $request['list_search_name']:
+                                        array(3) {
+                                            [0]=>
+                                            string(3) "cai"
+                                            [1]=>
+                                            string(5) "types"
+                                            [2]=>
+                                            string(7) "effects"
+                                        }
+        $request['list_search_rule']：
+                                        array(3) {
+                                            [0]=>
+                                            string(1) "0"
+                                            [1]=>
+                                            string(1) "1"
+                                            [2]=>
+                                            string(1) "1"
+                                        }
+        */
+        $list_search = [];
+        foreach( $request['list_search_name'] as $k=>$v){
+            
+            $tmp_rule_index = $request['list_search_rule'][$k];
+            $list_search[] = "['".$v."', '".$this->_datas['list_search_rule'][$tmp_rule_index]."']";
+        }
+        $list_search = implode(',\n', $list_search);
+        /*E
+        最终形成：
+        ['cai', 'like'],
+        ['types', 'mul'],
+        ['effects', 'mul']
+        它将会用到模板中形成：
+        $form_elems = [
+            ['cai', 'like'],
+            ['types', 'mul'],
+            ['effects', 'mul']
+        ];
+        */
+
+        #操作主表名称
+        $major_table_name = $request['list_major_table'];
+        /*E
+        最终形成：tb_record
+        */
+
+        #查询字段
+        $select = $request['list_fields'];
+        /*E
+        最终形成：id,name,age,user.id,user.name as uname
+        */
+
+        #渲染模板文件名
+        $display_template = $request['list_tpl_name'];
+        /*E
+        最终形成：User/index.tpl
+        */
+    
+        #列表页方法模板合成
+        $templ = '
+        public function index(){ 
+
+            $request = $_REQUEST;
+    
+            //初始条件
+            $con_arr = ['.$list_search_init.'];
+
+            //查询字段
+            $form_elems = [
+                '.$list_search.'
+            ];
+            
+            //将条件数组数据转换为条件字符串
+            $con = $this->_condition_string($request, $form_elems, $con_arr);
+    
+            //将搜索的原始数据扔进模板
+            $this->_datas[\'search\'] = $this->_get_ori_search_datas($request, $form_elems);
+    
+            //分页参数
+            $this->_datas[\'page\'] = $page = $this->_page(\''.$major_table_name.'\', $con, 3);
+    
+            //查询数据
+            $rows = M()->table(\''.$major_table_name.'\')
+                    ->select(\''.$select.'\')
+                    ->where($con)
+                    ->limit($page[\'limitM\'] . \',\' . $page[\'numPerPage\'])
+                    ->get();
+    
+            /*if( $rows ){
+                foreach( $rows as &$row ){ 
+                    if( !empty($row[\'expnew_ids\']) ){
+                        $row[\'expnew_titles\'] = explode(\'|\', $row[\'expnew_titles\']);
+                        $row[\'expnew_ids\'] = explode(\'|\', $row[\'expnew_ids\']);
+                    }
+                    $row[\'has_descr\'] = !empty($row[\'descr\']) ? \'是\' : \'否\';
+                }
+            }*/
+            $this->_datas[\'rows\'] = $rows;//扔到模板中
+    
+            //列表html 扔到模板中
+            $this->_datas[\'tbhtml\'] = $this->_tbhtml($this->_datas[\'mustShow\'], $cais, $this->_navTab, $this->_init);
+    
+            //分配模板变量&渲染模板
+            $this->assign($this->_datas);
+            $this->display(\''.$display_template.'\');
+        }
+        ';
+
+        return $templ;
     }
 
     /**
@@ -69,9 +248,11 @@ class RobotController extends Controller {
         $init = '';
         foreach( $request['names'] as $k=>$name){
         
-            $init .= '
-            $this->_init[\''.$name.'\'] = \''.$request['key_vals'][$k].'\';
-            ';
+            if(!empty($name)){
+                $init .= '
+                $this->_init[\''.$name.'\'] = \''.$request['key_vals'][$k].'\';
+                ';
+            }
         }
         if(!empty($init)){
             $init .= '
@@ -133,9 +314,10 @@ class RobotController extends Controller {
             #初始化mustShow
             $init_index_mustShow = [];
             foreach( $request['list_must_show_ch'] as $k=>$v){
-                
-                $tmp_is_set = ($request['list_must_show_is_set'][$k]=='1') ? ",'is_set'=>1" : "";
-                $init_index_mustShow[] = "'".$request['list_must_show_en'][$k]."'=>['ch'=>'".$v."', 'width'=>".$request['list_must_show_width'][$k].$tmp_is_set."]";
+                if( !empty($v) ){
+                    $tmp_is_set = ($request['list_must_show_is_set'][$k]=='1') ? ",'is_set'=>1" : "";
+                    $init_index_mustShow[] = "'".$request['list_must_show_en'][$k]."'=>['ch'=>'".$v."', 'width'=>".$request['list_must_show_width'][$k].$tmp_is_set."]";
+                }
             }
 
             $str_init_index_mustShow = '';
@@ -188,7 +370,6 @@ class RobotController extends Controller {
         
 
         }
-
 
         //init_adh_and_updh
         $init_adh_and_updh = '';

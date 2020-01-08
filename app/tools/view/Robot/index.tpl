@@ -19,12 +19,13 @@
 <script>
 $('input[name="controller_name"]').keyup(function(){
 	$('input[name="navtab"]').val($(this).val());
+	$('input[name="list_tpl_name"]').val($(this).val()+'/index.tpl');//列表页模板文件名
 });
 </script>
 
 		<dl class="nowrap">
 			<dt>生成页面：</dt>
-			<dd>
+			<dd class="Robot_major_acts">
 				{foreach $major_acts as $key=>$val}
 				<input type="checkbox" name="major_acts[]" value="{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
 				{/foreach}
@@ -48,7 +49,7 @@ $('input[name="controller_name"]').keyup(function(){
 					<th width="100">操作</th>
 				</tr>
 			</thead>
-			<tbody  class="columArea">
+			<tbody  class="Robot_columArea">
 				<tr>
 					<td><input type="text" name="names[]" style="width:90%" /></td>
 					<td><input type="text" name="key_vals[]" style="width:75%"/></td>
@@ -59,7 +60,7 @@ $('input[name="controller_name"]').keyup(function(){
 
 <script>
 var key_val_num = 1;//填写值对信息的tr个数，初始状态下为1，删除到只剩1个时，不可继续删除
-//var tmp_tr = $('.columArea').find('tr');
+//var tmp_tr = $('.Robot_columArea').find('tr');
 
 var key_val_add_f = function(){
 
@@ -70,7 +71,7 @@ var key_val_add_f = function(){
 	tmp_tr += '<td><a class="btnDel key_val_del_f" style="cursor:pointer;" onclick="key_val_del_f(this)">删除</a></td>';
 	tmp_tr += '</tr>';
 
-	$('.columArea').append(tmp_tr);
+	$('.Robot_columArea').append(tmp_tr);
 	key_val_num++;
 };
 
@@ -88,9 +89,9 @@ var key_val_del_f = function(a){
 		<div class="tabs" currentIndex="0" eventType="click">
 			<div class="tabsHeader">
 				<div class="tabsHeaderContent">
-					<ul>
+					<ul class="Robot_major_acts_tab">
 						{foreach $major_acts as $major_acts_k=>$major_acts_val}
-							<li class="{if $major_acts_k==0}selected{/if} major_acts_{$major_acts_k}"><a href="javascript:void(0)"><span>{$major_acts_val}</span></a></li>
+							<li class="{if $major_acts_k==0}selected{/if} Robot_major_acts_tab_{$major_acts_k}"><a href="javascript:void(0)"><span>{$major_acts_val}</span></a></li>
 						{/foreach}
 					</ul>
 				</div>
@@ -98,11 +99,11 @@ var key_val_del_f = function(a){
 			<div class="tabsContent">
 				{foreach $major_acts as $major_acts_k=>$major_acts_val}
 				{if $major_acts_val==='列表页'}
-				<div>
+				<div class="Robot_major_acts_info_{$major_acts_k}">
 					<dl class="nowrap">
 						<dt>操作主表：</dt>
 						<dd>
-							<a class="btnLook" href="" lookupGroup="expcat">查找带回</a>
+							<a class="btnLook" href="{$url.tbLookup}" lookupGroup="robot_tb_record">查找带回</a>
 							<input name="list_major_table" type="text"/>
 						</dd>
 					</dl>
@@ -149,8 +150,8 @@ var key_val_del_f = function(a){
 					<dl class="nowrap">
 						<dt>模板文件名：</dt>
 						<dd>
-							<input type="text" name="list_tpl_name" value="" style="width:75%" />
-							<span class="info">不填写则表示使用默认的"index.tpl"名称</span>
+							<input type="text" name="list_tpl_name" value="index.tpl" style="width:75%" />
+							<span class="info">1)需要指定目录名;2)默认使用"控制器名/index.tpl"名称</span>
 						</dd>
 					</dl>
 
@@ -255,12 +256,12 @@ var key_val_del_f = function(a){
 					</dl>
 				</div>
 				{elseif $major_acts_val==='添加页'}
-				<div>
+				<div class="Robot_major_acts_info_{$major_acts_k}">
 					<dl class="nowrap">
 						<dt>模板文件名：</dt>
 						<dd>
 							<input type="text" name="add_tpl_name" value="" style="width:75%" />
-							<span class="info">不填写则表示使用默认的"ad.tpl"名称</span>
+							<span class="info">不填写则表示使用默认的"控制器名/ad.tpl"名称</span>
 						</dd>
 					</dl>
 
@@ -312,3 +313,77 @@ var key_val_del_f = function(a){
 	</div>
 </form>
 </div>
+
+<script>
+//初始化
+var Robot_init = function (){
+
+	$('.Robot_major_acts').find('input').each(function(i){
+
+		if(i==0){ //列表页 按钮选中；同时相关的tab要显示
+			$($('.Robot_major_acts').find('input')[i]).prop("checked",true);
+			$('.Robot_major_acts_tab_'+i).show();
+			$('.Robot_major_acts_info_'+i).show();
+		}else{ //其它按钮都不选中；同时相关的tab要隐藏
+			$($('.Robot_major_acts').find('input')[i]).prop("checked",false);
+			$('.Robot_major_acts_tab_'+i).hide();
+			$('.Robot_major_acts_info_'+i).hide();
+		}
+	});
+};
+
+Robot_init();
+
+var has_selected = true;//当前tab被关闭后，是否有tab没有关闭的；false表示所有都关了，true表示还有没关的
+//生成页面 选项点击事件
+$('.Robot_major_acts').find('input').click(function(){
+
+	//console.log($(this).is(":checked"));
+	//console.log($(this).val());
+
+	var this_index = parseInt($(this).val());
+	var this_tab = '.Robot_major_acts_tab_'+this_index;//比如：Robot_major_acts_tab_0表示第一个选项对应的tab 的class名
+	var this_tab_info = '.Robot_major_acts_info_'+this_index;//比如：Robot_major_info_tab_0表示第一个选项对应的tab info 的class名
+
+	if($(this).is(":checked")){
+
+		$(this_tab).show();
+		
+		if(!has_selected){
+			$(this_tab_info).show();
+			$(this_tab).addClass('selected');
+			has_selected = true;
+		}
+	}else{
+
+		var this_is_selected = false;//当前这个按钮对应的tab是否是 当前显示的项
+		if($(this_tab).hasClass('selected')){
+			this_is_selected = true;
+		}
+
+		//当前这个 按钮 相关的tab和tab info隐藏
+		$(this_tab).hide();
+		$(this_tab_info).hide();
+
+		if(this_is_selected){ //如果关闭的是当前显示的项，则需要将未关闭的项中的第一项打开
+
+			has_selected = false;//当前tab被关闭后，是否有tab没有关闭的；false表示所有都关了，true表示还有没关的
+			$('.Robot_major_acts').find('input').each(function(i){
+
+				if($(this).is(":checked")){ //第一个还被选中的显示出来
+
+					has_selected = true;
+					$($('.Robot_major_acts_tab').find('li')[i]).addClass('selected');
+					$($('.Robot_major_acts_tab').find('li')[i]).siblings().removeClass('selected');//已经有一个被选中了，其它的都取消选中
+					$('.Robot_major_acts_info_'+i).show();
+					return false;
+				}
+			});
+
+			if(!has_selected){ //如果tab已经全部关闭了，则移除所有的selected
+				$('.Robot_major_acts_tab').find('li').siblings().removeClass('selected');
+			}
+		}
+	}
+});
+</script>

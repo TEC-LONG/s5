@@ -76,6 +76,17 @@ class TBRecordController extends Controller {
         }
     }
 
+    public function tbLookup(){
+        #获得所有tb_record数据
+        $rows = M()->table('tb_record')->select('en_name')->where('is_del!=0')->get();
+
+        $this->assign([
+            'rows'=>$rows
+        ]);
+
+        $this->display('TbStruct/tbLookup.tpl');
+    }
+
     // public function robot(){
     //     //接收数据
     //     $request = $_REQUEST;
