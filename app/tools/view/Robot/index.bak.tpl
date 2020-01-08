@@ -41,25 +41,48 @@ $('input[name="controller_name"]').keyup(function(){
 
 		<div class="divider"></div>
 
-		<table class="list nowrap itemDetail" addButton="添加值对字段" width="100%">
+		<table class="table" width="100%">
 			<thead>
 				<tr>
-					<th type="lookup" name="robot_key_val[#index#].en_name" lookupGroup="robot_key_val[#index#]" lookupUrl="{$url.tbLookup}&type=1" size="12">字段名称</th>
-					<th type="text" name="robot_key_val[#index#].key_vals" size="130">字段值对信息</th>
-					<th type="del" width="60">操作</th>
+					<th width="60">字段名称</th>
+					<th width="75%">字段值对信息</th>
+					<th width="100">操作</th>
 				</tr>
 			</thead>
-			<tbody>
-				<tr class="unitBox">
-					<td>
-						<input type="text" name="robot_key_val[0].en_name" size="12">
-						<a class="btnLook" href="{$url.tbLookup}" lookupgroup="robot_key_val[0]">查找带回</a>
-					</td>
-					<td><input type="text" name="robot_key_val[0].key_vals" size="130"></td>
-					<td><a href="javascript:void(0)" class="btnDel ">删除</a></td>
+			<tbody  class="Robot_columArea">
+				<tr>
+					<td><a class="btnLook" href="{$url.tbLookup}" lookupGroup="robot_tb_record">查找带回</a><input type="text" name="names[]" style="width:70%" /></td>
+					<td><input type="text" name="key_vals[]" style="width:75%"/></td>
+					<td><a class="btnDel key_val_del_f" style="cursor:pointer;" onclick="key_val_del_f(this)">删除</a></td>
 				</tr>
 			</tbody>
 		</table>
+
+<script>
+var key_val_num = 1;//填写值对信息的tr个数，初始状态下为1，删除到只剩1个时，不可继续删除
+//var tmp_tr = $('.Robot_columArea').find('tr');
+
+var key_val_add_f = function(){
+
+	var tmp_tr = '';
+	tmp_tr += '<tr>';
+	tmp_tr += '<td><a class="btnLook" href="{$url.tbLookup}" lookupGroup="robot_tb_record">查找带回</a><input type="text" name="names[]" style="width:70%" /></td>';
+	tmp_tr += '<td><input type="text" name="key_vals[]" style="width:75%"/></td>';
+	tmp_tr += '<td><a class="btnDel key_val_del_f" style="cursor:pointer;" onclick="key_val_del_f(this)">删除</a></td>';
+	tmp_tr += '</tr>';
+
+	$('.Robot_columArea').append(tmp_tr);
+	key_val_num++;
+};
+
+var key_val_del_f = function(a){
+
+	if(key_val_num!=1){
+		$(a).parents('tr').remove();
+		key_val_num--;
+	}
+};
+</script>
 
 		<div class="divider"></div>
 

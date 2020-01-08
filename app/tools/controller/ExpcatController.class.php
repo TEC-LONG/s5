@@ -157,7 +157,8 @@ class ExpcatController extends Controller {
                 $cats_val1['space'] = $space;
                 $tree_in[] = $cats_val1;
 
-                $this->recursiveCat($tree_in, $cats, $cats_val1['id'], $space_id);
+                $next_space = $space+1;
+                $this->recursiveCat($tree_in, $cats, $cats_val1['id'], $next_space);
             }
         }
     }

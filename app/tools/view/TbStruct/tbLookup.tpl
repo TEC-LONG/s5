@@ -1,26 +1,14 @@
 <div class="pageContent">
 	<div class="pageFormContent" layoutH="58">
 		<ul class="tree expand">
-			{foreach $cats as $cat1}
-			{if $cat1.level==1}
-			<li><a href="javascript:">{$cat1.name}</a>
+			{foreach $rows as $rows_k=>$rows_v}
+			<li><a href="javascript:">{$rows_k}</a>
 				<ul>
-					{foreach $cats as $cat2}
-					{if $cat2.level==2&&$cat2.pid==$cat1.id}
-					<li><a href="javascript:">{$cat2.name}</a>
-						<ul>
-							{foreach $cats as $cat3}
-							{if $cat3.level==3&&$cat3.pid==$cat2.id}
-							<li><a href="javascript:" onclick="$.bringBack({ldelim}cat3id:{$cat3.id}, cat2id:{$cat2.id}, cat1id:{$cat1.id}, cat1name:'{$cat1.name}', cat2name:'{$cat2.name}', cat3name:'{$cat3.name}'{rdelim})">{$cat3.name}</a></li>
-							{/if}
-							{/foreach}
-						</ul>
-					</li>
-					{/if}
+					{foreach $rows_v as $row}
+					<li><a href="javascript:" onclick="$.bringBack({ldelim}en_name:'{$row.en_name}'{rdelim})">{$row.en_name}</a></li>
 					{/foreach}
 				</ul>
 			</li>
-			{/if}
 			{/foreach}
 		</ul>
 	</div>
