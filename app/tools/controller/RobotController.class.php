@@ -20,7 +20,8 @@ class RobotController extends Controller {
         $this->_datas['url'] = [
             'index' => L(PLAT, MOD, 'index'),
             'adh' => L(PLAT, MOD, 'adh'),
-            'tbLookup' => L(PLAT, 'TBRecord', 'tbLookup')
+            'tbLookup' => L(PLAT, 'TBRecord', 'tbLookup'),
+            'kvLookup' => L(PLAT, 'TBRecord', 'kvLookup')
         ];
 
         switch (ACT) {
@@ -37,8 +38,8 @@ class RobotController extends Controller {
     public function adh(){
         //接收数据
         $request =$this->_requ->all('l');
-        // var_dump($request);
-        // exit;
+        var_dump($request);
+        exit;
 
         //控制器公共初始化部分
         #文件名
@@ -160,7 +161,7 @@ class RobotController extends Controller {
         */
 
         #操作主表名称
-        $major_table_name = $request['list_major_table'];
+        $major_table_name = $request['robot_tb_record_en_name'];
         /*E
         最终形成：tb_record
         */

@@ -33,9 +33,9 @@ $('input[name="controller_name"]').keyup(function(){
 		</dl>
 		
 		<dl class="nowrap">
-			<dt>表数据值对文案：</dt>
+			<dt><strong>表数据值对文案：</strong></dt>
 			<dd>
-				<a class="button key_val_add" onclick="key_val_add_f()"><span>添加值对字段</span></a>
+				<!--<a class="button key_val_add" onclick="key_val_add_f()"><span>添加值对字段</span></a>-->
 			</dd>
 		</dl>
 
@@ -44,8 +44,8 @@ $('input[name="controller_name"]').keyup(function(){
 		<table class="list nowrap itemDetail" addButton="添加值对字段" width="100%">
 			<thead>
 				<tr>
-					<th type="lookup" name="robot_key_val[#index#].en_name" lookupGroup="robot_key_val[#index#]" lookupUrl="{$url.tbLookup}&type=1" size="12">字段名称</th>
-					<th type="text" name="robot_key_val[#index#].key_vals" size="130">字段值对信息</th>
+					<th type="lookup" name="robot_key_val[#index#].en_name" lookupGroup="robot_key_val[#index#]" lookupUrl="{$url.kvLookup}" size="12">字段名称</th>
+					<th type="text" name="robot_key_val[#index#].ori_key_val" size="130">字段值对信息</th>
 					<th type="del" width="60">操作</th>
 				</tr>
 			</thead>
@@ -53,9 +53,9 @@ $('input[name="controller_name"]').keyup(function(){
 				<tr class="unitBox">
 					<td>
 						<input type="text" name="robot_key_val[0].en_name" size="12">
-						<a class="btnLook" href="{$url.tbLookup}" lookupgroup="robot_key_val[0]">查找带回</a>
+						<a class="btnLook" href="{$url.kvLookup}" lookupgroup="robot_key_val[0]">查找带回</a>
 					</td>
-					<td><input type="text" name="robot_key_val[0].key_vals" size="130"></td>
+					<td><input type="text" name="robot_key_val[0].ori_key_val" size="130"></td>
 					<td><a href="javascript:void(0)" class="btnDel ">删除</a></td>
 				</tr>
 			</tbody>

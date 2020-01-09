@@ -8,14 +8,16 @@ class TBRecordController extends Controller {
     private $_extra=[];
     private $_model;
     private $_navTab;
+    private $_requ;
 
     public function __construct(){
     
         parent::__construct();
 
         $this->_navTab = 'TBRecord';
+        $this->_requ = M('RequestTool');
 
-        $this->_datas['belong_db'] = ['exp'];
+        $this->_datas['belong_db'] = ['exp', 'test'];
         $this->_datas['navTab'] = $this->_navTab;
         $this->_datas['url'] = [
             'index' => L(PLAT, MOD, 'index'),
@@ -96,6 +98,68 @@ class TBRecordController extends Controller {
         ]);
 
         $this->display('TbStruct/tbLookup.tpl');
+    }
+
+    public function kvLookup(){
+        //接收数据
+        $request =$this->_requ->all();
+
+        if( isset($request['id']) ){
+            //查询表下的普通特殊字段
+            $tb_normal_special_fields = M()->table('tb_special_field')->select('ori_key_val, en_name')
+            ->where([
+                ['is_del', 0],
+                ['tb_record__id', $request['id']],
+                ['field_type', 0]
+            ])
+            ->get('index');
+
+            if(empty($tb_normal_special_fields))
+                echo json_encode([['none', 'none']]);
+            else
+                echo json_encode($tb_normal_special_fields);
+            exit;
+        }
+        
+        //获得当前数据库下的所有表，初始状态下就是第一个数据库下的所有表
+        if(isset($request['belong_db'])){
+
+            $belong_db = $request['belong_db'];
+        }else{
+            $belong_db_keys = array_keys($this->_datas['belong_db']);
+            $belong_db = $belong_db_keys[0];
+        }
+
+        $this->_datas['first_database_tbs'] = M()->table('tb_record')->select('id, en_name')
+        ->where([
+            ['is_del', '0'],
+            ['belong_db', $belong_db]
+        ])
+        ->get('index');
+
+        if( isset($request['belong_db']) ){
+            
+            echo json_encode($this->_datas['first_database_tbs']);
+            exit;
+        }
+        
+        //查询第一个数据表下的所有普通特殊字段
+        $this->_datas['first_tb_normal_special_fields'] = [];
+        if( !empty($this->_datas['first_database_tbs']) ){
+        
+            $this->_datas['first_tb_normal_special_fields'] = M()->table('tb_special_field')->select('en_name, ori_key_val')
+            ->where([
+                ['is_del', 0],
+                ['tb_record__id', $this->_datas['first_database_tbs'][0][0]],
+                ['field_type', 0]
+            ])
+            ->get();
+        }
+
+        $this->_datas['url']['combox_tb'] = L(PLAT, MOD, 'kvLookup');
+
+        $this->assign($this->_datas);
+        $this->display('TbStruct/kvLookup.tpl');
     }
 
     // public function robot(){
@@ -595,6 +659,7 @@ WHERE id IN (1,2,3)
             'ori_struct' => $request['ori_struct'],
             'create_sql' => $request['create_sql'],
             'comm' => $request['comm'],
+            'belong_db' => $request['belong_db'],
             'post_date' => time()
         ];
 
