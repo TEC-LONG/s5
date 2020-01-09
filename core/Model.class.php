@@ -27,6 +27,15 @@ class Model extends NiceModel{
         return $this;
     }
 
+    protected function init(){
+    
+        $this->where = [];
+        $this->insert = [];
+        $this->update = [];
+        $this->left_join = [];
+        $this->update_fields = [];
+    }
+
     /**
      * method:指定查询字段列表
      * @param $select string 字段列表，仅支持字符串类型
@@ -133,6 +142,7 @@ class Model extends NiceModel{
 
             try{
                 $this->pdostatement=$this->_pdo->query($sql);
+                $this->init();//执行完SQL语句则初始化一次
             }catch(\PDOException $e){//捕获异常,并且进行捕获异常后的处理.
     
                 $this->e = $e;//记录错误对象
@@ -161,9 +171,11 @@ class Model extends NiceModel{
                         $this->_pdo->exec($one_sql);
                     }
                     $re = $this->_pdo->commit();//全部执行成功则提交事务
+                    $this->init();//执行完SQL语句则初始化一次
 
                 }catch(\PDOException $e){
-                
+
+                    $this->init();//出现错误也视为执行完，执行完SQL语句则初始化一次
                     $this->e = $e;//记录错误对象
                     if( C('pdo.mysql.debug') ){
                         $this->dbug('err.echo', $one_sql);
@@ -178,8 +190,10 @@ class Model extends NiceModel{
 
                 try{
                     $this->_pdo->exec($sql);
+                    $this->init();//执行完SQL语句则初始化一次
                 }catch(\PDOException $e){
         
+                    $this->init();//出现错误也视为执行完，执行完SQL语句则初始化一次
                     $this->e = $e;//记录错误对象
                     if( C('pdo.mysql.debug') ){
                         $this->dbug('err.echo');
@@ -415,16 +429,20 @@ class Model extends NiceModel{
 
     /**
      * method:获取多条数据
+     * @param $type string 指定返回的数据数组类型，$type='relate'为关联数组；$type='index'为索引数组；默认为'relate'
      * @return 二维数组
      */
-    public function get(){
+    public function get($type='relate'){
         
         $re = $this->query();
-
-        if( $re )
+        if( $re ){
+            if( $type==='index' ){
+                return $this->pdostatement->fetchAll(\PDO::FETCH_NUM);
+            }
             return $this->pdostatement->fetchAll(\PDO::FETCH_ASSOC);
-        else
+        }else{
             return [];
+        }
     }
 
     /**

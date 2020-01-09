@@ -58,7 +58,7 @@
 				<th width="200">字段备注信息</th>
 			</tr>
 		</thead>
-		<tbody  class="columArea">
+		<tbody  class="TBStruct_columArea">
 		{foreach $tb_special_field_rows as $k=>$t_s_f_row}
 			<tr>
 				<td>{$k+1}<input type="hidden" name="ids[]" value="{$t_s_f_row['id']}" /></td>
@@ -75,7 +75,7 @@
 		<div class="divider"></div>
 		
 <script type="text/javascript">
-var l_counter = $('.columArea').find('tr').length;
+var l_counter = $('.TBStruct_columArea').find('tr').length;
 var click_counter = l_counter;
 
 var columAreaInit = function (){
@@ -88,12 +88,12 @@ var columAreaInit = function (){
 		addRow += '<td><input type="text" name="ori_key_val[]" value=""  style="width:90%" /><input type="hidden" name="old_ori_key_val[]" value="" /></td>';
 		addRow += '<td><input type="text" name="specification[]"  style="width:90%" /><input type="hidden" name="old_specification[]" /></td>';
 		addRow += '</tr>';
-		$('.columArea').append(addRow);
+		$('.TBStruct_columArea').append(addRow);
 	}
 }
 
 var btnAddColumClick = function (){
-	var jqObj_tr = $('.columArea').find('tr');
+	var jqObj_tr = $('.TBStruct_columArea').find('tr');
 	$(jqObj_tr[click_counter]).show();
 	if ( click_counter<l_counter+20 )	click_counter++;
 }
