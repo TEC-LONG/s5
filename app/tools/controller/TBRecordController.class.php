@@ -79,8 +79,8 @@ class TBRecordController extends Controller {
     }
 
     public function tbLookup(){
-        #获得所有tb_record数据
-        $ori_rows = M()->table('tb_record')->select('en_name,belong_db')->where(['is_del', 0])->get();
+        //获得所有tb_record数据
+        $ori_rows = M()->table('tb_record')->select('en_name,ch_name,belong_db,ch_fields,en_fields')->where(['is_del', 0])->get();
 
         $rows = [];
         foreach( $this->_datas['belong_db'] as $k=>$v){
@@ -90,9 +90,10 @@ class TBRecordController extends Controller {
                 if( $k==$v1['belong_db'] ){
                     $rows[$v][$k1] = $v1;
                 }
+
+                
             }
         }
-
         $this->assign([
             'rows'=>$rows
         ]);

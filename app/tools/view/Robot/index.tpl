@@ -63,6 +63,35 @@ $('input[name="controller_name"]').keyup(function(){
 
 		<div class="divider"></div>
 
+		<table class="list nowrap itemDetail field_list" addButton="添加操作字段" width="100%">
+			<thead>
+				<tr>
+					<th type="text" name="field_list_ch_name[]" size="24">中文名</th>
+					<th type="text" name="field_list_en_name[]" size="24">英文名</th>
+					<th type="enum" name="field_list_is_mustShow[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=1&name=field_list_is_mustShow" size="12">是否列表必显</th>
+					<th type="enum" name="field_list_is_search[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=1&name=field_list_is_search" size="12">是否为搜索条件</th>
+					<th type="enum" name="field_list_is_add[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=1&name=field_list_is_add" size="12">是否可添加</th>
+					<th type="enum" name="field_list_is_upd[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=1&name=field_list_is_upd" size="12">是否可编辑</th>
+					<th type="enum" name="field_list_form_type[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=3&name=field_list_form_type" size="12" type="text" name="field_list_form_type[]" size="12">表单类型</th>
+					<th type="del" width="60">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="unitBox">
+					<td><input type="text" name="field_list_ch_name[]" size="24"></td>
+					<td><input type="text" name="field_list_en_name[]" size="24"></td>
+					<td>{T_createSelectHtml(['否', '是'], 'field_list_is_mustShow[]', 2)}</td>
+					<td>{T_createSelectHtml(['否', '是'], 'field_list_is_search[]', 2)}</td>
+					<td>{T_createSelectHtml(['否', '是'], 'field_list_is_add[]', 2)}</td>
+					<td>{T_createSelectHtml(['否', '是'], 'field_list_is_upd[]', 2)}</td>
+					<td>{T_createSelectHtml($field_list_form_type, 'field_list_form_type[]', 2)}</td>
+					<td><a href="javascript:void(0)" class="btnDel ">删除</a></td>
+				</tr>
+			</tbody>
+		</table>
+
+		<div class="divider"></div>
+
 		<div class="tabs" currentIndex="0" eventType="click">
 			<div class="tabsHeader">
 				<div class="tabsHeaderContent">
@@ -83,9 +112,58 @@ $('input[name="controller_name"]').keyup(function(){
 							<a class="btnLook" href="{$url.tbLookup}" lookupGroup="robot_tb_record">查找带回</a>
 							{* <input name="list_major_table" type="text" value=""/> *}
 							<input name="robot_tb_record.en_name" type="text"/>
+							<input name="robot_tb_record.ch_fields" type="hidden"/>
+							<input name="robot_tb_record.en_fields" type="hidden"/>
+							<span class="info">可以连带设置别名，如"User as u"</span>
 						</dd>
 					</dl>
+					<dl class="nowrap">
+						<dt>主表连带操作：</dt>
+						<dd>
+							<a class="button robot_field_list" href="javascript:;" onclick="robot_field_list()"><span>生成操作字段</span></a>
+						</dd>
+					</dl>
+<script>
+var robot_field_list = function (){
 
+	$('.field_list').find('tbody').html('');
+
+	var ch_fields = $('input[name="robot_tb_record.ch_fields"]').val().split(',');
+	var en_fields = $('input[name="robot_tb_record.en_fields"]').val().split(',');
+
+	var tr_html = '';
+	for( var i in ch_fields ){
+		tr_html += '<tr class="unitBox">';
+		tr_html += '<td><input type="text" name="field_list_ch_name[]" size="24" value="'+ch_fields[i]+'"></td>';
+		tr_html += '<td><input type="text" name="field_list_en_name[]" size="24" value="'+en_fields[i]+'"></td>';
+		tr_html += '<td>{T_createSelectHtml(["否", "是"], "field_list_is_mustShow[]", 2)}</td>';
+		tr_html += '<td>{T_createSelectHtml(["否", "是"], "field_list_is_search[]", 2)}</td>';
+		tr_html += '<td>{T_createSelectHtml(["否", "是"], "field_list_is_add[]", 2)}</td>';
+		tr_html += '<td>{T_createSelectHtml(["否", "是"], "field_list_is_upd[]", 2)}</td>';
+		tr_html += '<td>{T_createSelectHtml($field_list_form_type, "field_list_form_type[]", 2)}</td>';
+		tr_html += '<td><a href="javascript:void(0)" class="btnDel ">删除</a></td>';
+		tr_html += '</tr>';
+	}
+
+	$('.field_list').find('tbody').append(tr_html);
+
+/*
+<tr class="unitBox">
+	<td><input type="text" name="field_list_ch_name[]" size="12"></td>
+	<td><input type="text" name="field_list_en_name[]" size="12"></td>
+	<td>{T_createSelectHtml(['否', '是'], 'field_list_is_mustShow[]', 2)}</td>
+	<td>{T_createSelectHtml(['否', '是'], 'field_list_is_search[]', 2)}</td>
+	<td>{T_createSelectHtml(['否', '是'], 'field_list_is_add[]', 2)}</td>
+	<td>{T_createSelectHtml(['否', '是'], 'field_list_is_upd[]', 2)}</td>
+	<td>{T_createSelectHtml($field_list_form_type, 'field_list_form_type[]', 2)}</td>
+	<td><a href="javascript:void(0)" class="btnDel ">删除</a></td>
+</tr>
+
+*/
+
+};
+
+</script>
 					<dl class="nowrap">
 						<dt>是否连表：</dt>
 						<dd>
@@ -94,12 +172,36 @@ $('input[name="controller_name"]').keyup(function(){
 					</dl>
 
 					<dl class="nowrap">
-						<dt>连表集合：</dt>
+						<dt><strong>连表信息：</strong></dt>
 						<dd>
-							<input type="text" maxlength="100" name="list_leftjoin_table" value="" style="width:75%" readonly />
-							<span class="info"></span>
+							<!-- <input type="text" maxlength="100" name="list_leftjoin_table" value="" style="width:75%" readonly />
+							<span class="info"></span> -->
 						</dd>
 					</dl>
+
+					<div class="divider"></div>
+
+					<table class="list nowrap itemDetail" addButton="添加连接的表" width="100%">
+						<thead>
+							<tr>
+								<th type="lookup" name="leftjoin_tb_name[#index#].en_name" lookupGroup="leftjoin_tb_name[#index#]" lookupUrl="{$url.tbLookup}" size="24">表英文名(可以连带设置表别名,如“操作主表”)</th>
+								<th type="text" name="leftjoin_condition[]" defaultVal="" size="100">连接条件</th>
+								<th type="del" width="60">操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="unitBox">
+								<td>
+									<input type="text" name="leftjoin_tb_name[0].en_name" size="24">
+									<a class="btnLook" href="{$url.tbLookup}" lookupgroup="leftjoin_tb_name[0]">查找带回</a>
+								</td>
+								<td><input type="text" name="leftjoin_condition[]" size="100"></td>
+								<td><a href="javascript:void(0)" class="btnDel ">删除</a></td>
+							</tr>
+						</tbody>
+					</table>
+
+					<div class="divider"></div>
 
 					<dl class="nowrap">
 						<dt>查询字段：</dt>
@@ -163,8 +265,8 @@ $('input[name="controller_name"]').keyup(function(){
 					<table class="list nowrap itemDetail" addButton="新增必显字段" width="100%">
 						<thead>
 							<tr>
-								<th type="text" name="list_must_show_ch[]" size="12">中文字段名</th>
-								<th type="text" name="list_must_show_en[]" size="12">英文字段名</th>
+								<th type="text" name="list_must_show_ch[]" size="24">中文字段名</th>
+								<th type="text" name="list_must_show_en[]" size="24">英文字段名</th>
 								<th type="text" name="list_must_show_width[]" defaultVal="70" size="12">列显示宽度</th>
 								<th type="enum" name="list_must_show_is_set[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=1&name=list_must_show_is_set" size="12">是否为集合类型字段(如："1,2,4,7")</th>
 								<th type="del" width="60">操作</th>
@@ -172,8 +274,10 @@ $('input[name="controller_name"]').keyup(function(){
 						</thead>
 						<tbody>
 							<tr class="unitBox">
-								<td><input type="text" name="list_must_show_ch[]" size="12"></td>
-								<td><input type="text" name="list_must_show_en[]" size="12"></td>
+								<td>
+									<input type="text" name="list_must_show_ch[]" size="24">
+								</td>
+								<td><input type="text" name="list_must_show_en" size="24"></td>
 								<td><input type="text" name="list_must_show_width[]" size="12" value="70"></td>
 								<td>{T_createSelectHtml(['否', '是'], 'list_must_show_is_set[]', 2)}</td>
 								<td><a href="javascript:void(0)" class="btnDel ">删除</a></td>
