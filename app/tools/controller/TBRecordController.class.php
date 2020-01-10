@@ -343,12 +343,24 @@ class TBRecordController extends Controller {
         #获取被更新的数据
         $may_update_fields = ['belong_db', 'ch_name', 'en_name', 'comm', 'create_sql', 'ori_struct'];
         $tb_record_update = $this->_get_update_data($request, $may_update_fields);
+
+        if( isset($tb_record_update['ori_struct']) ){
+            //处理原始表结构
+            $arr_struct = explode("\r\n", $request['ori_struct']);	//表结构第一次拆分形成的数组  array(表中文名, 表英文名, 表字段中文名, 表字段英文名);
+            $arr_struct = array_map(function($ele){
+                return trim($ele);
+            }, $arr_struct);
+
+            $tb_record_update['ch_fields'] = $arr_struct[2];
+            $tb_record_update['en_fields'] = $arr_struct[3];
+        }
+
         if( !empty($tb_record_update) )  $has_update_data=1;
 
         #执行更新
-        ;
         if( !empty($tb_record_update)&&!M()->table('tb_record')->fields(array_keys($tb_record_update))->update($tb_record_update)->where(['id', $request['id']])->exec() ){
             $re = AJAXre(1);
+            $re->message = 'tb_record更新失败，导致操作失败！';
             echo json_encode($re); 
             exit;
         }
@@ -382,6 +394,7 @@ class TBRecordController extends Controller {
 
             if( !M()->setData('tb_special_field', $update, 2, $condition) ){//任何一条失败，则中断
                 $re = AJAXre(1);
+                $re->message = 'tb_special_field中的数据更新失败，导致操作失败！';
                 echo json_encode($re); 
                 exit;
             }
@@ -451,6 +464,7 @@ array(2) {
 
         if( !empty($tb_special_field_add)&&!M()->setData1($sql) ){//不成功，则就此中断
             $re = AJAXre(1);
+            $re->message = 'tb_special_field的数据新增失败，导致操作失败！';
             echo json_encode($re); 
             exit;
         }
@@ -462,6 +476,7 @@ array(2) {
 
         if( !empty($tb_special_field_del)&&!M()->setData1($sql) ){//不成功，则就此中断
             $re = AJAXre(1);
+            $re->message = 'tb_special_field的数据删除失败，导致操作失败！';
             echo json_encode($re); 
             exit;
         }

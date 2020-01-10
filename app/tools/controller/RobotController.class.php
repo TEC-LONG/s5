@@ -39,10 +39,10 @@ class RobotController extends Controller {
     public function adh(){
         //接收数据
         $request =$this->_requ->all('l');
-        var_dump($request);
-        exit;
+        // var_dump($request);
+        // exit;
 
-        //控制器公共初始化部分
+        //形成控制器
         #文件名
         $controller_file_name = $request['controller_name'] . 'Controller.class.php';
 
@@ -55,7 +55,7 @@ class RobotController extends Controller {
         $controller_index = '';
         if( in_array('0', $request['major_acts']) ){
             $controller_index = $this->controller_index($request);
-            // $templ_index = $this->templ_index($request);
+            $templ_index = $this->templ_index($request);
 
             // echo $controller_index;
             // exit;
@@ -82,6 +82,149 @@ class RobotController extends Controller {
         
         var_dump($controller_templ);
         exit;
+    }
+
+    /**
+     * 
+     */
+    protected function templ_index($request){
+
+        var_dump($request);
+        exit;
+    
+        //搜索区域内容
+        $search_html = '';
+        #检查是否有搜索的内容
+        if( isset($request['list_search_name'])&&$request['list_search_name'][0]!=='' ){ //存在且第一个元素不为空字符串，才说明真的有搜索部分
+
+            $templ_form_action = '';
+
+            $search_html = '
+<div class="pageHeader">
+    <form onsubmit="return navTabSearch(this);" action="{'.$templ_form_action.'}" method="post" onreset="$(this).find(\'select.combox\').comboxReset()">
+    <div class="searchBar">
+        <table class="searchContent">
+            <tr>
+                <td>
+                    菜品：<input type="text" name="cai" value="{$search.cai}" />中文标题，表单name值，表单类型，若果是select之类的还需要值对信息；优先解决：添加tr样式跟随
+                </td>
+                <td>
+                    适用场景：
+                    {foreach $types as $key=>$val}
+                    <input type="checkbox" name="types[]" value="{$key}" {if in_array($key, $search.types)}checked{/if} />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+                    {/foreach}
+                </td>
+                <td>
+                    食物类型：
+                    {foreach $food_types as $key=>$val}
+                    <input type="checkbox" name="food_types[]" value="{$key}" {if in_array($key, $search.food_types)}checked{/if} />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+                    {/foreach}
+                </td>
+                {* <td>
+                    口味：
+                    {foreach $taste as $key=>$val}
+                    <input type="checkbox" name="taste[]" value="{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+                    {/foreach}
+                </td>
+                <td>
+                    口感：
+                    {foreach $mouthfeel as $key=>$val}
+                    <input type="checkbox" name="mouthfeel[]" value="{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+                    {/foreach}
+                </td>
+                <td>
+                    功效：
+                    {foreach $effects as $key=>$val}
+                    <input type="checkbox" name="effects[]" value="{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+                    {/foreach}
+                </td>
+                <td class="dateRange">
+                    建档日期:
+                    <input name="startDate" class="date readonly" readonly="readonly" type="text" value="">
+                    <span class="limit">-</span>
+                    <input name="endDate" class="date readonly" readonly="readonly" type="text" value="">
+                </td> *}
+            </tr>
+        </table>
+        <div class="subBar">
+            <ul>
+                <li><div class="button"><div class="buttonContent"><button type="reset">重置</button></div></div></li>
+                <li><div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div></li>
+                <li><a class="button" href="demo_page6.html" target="dialog" mask="true" title="查询框"><span>高级检索</span></a></li>
+            </ul>
+        </div>
+    </div>
+    </form>
+</div>
+            ';
+            
+        }
+        
+        /*E
+        最终得到：
+        <div class="pageHeader">
+            <form onsubmit="return navTabSearch(this);" action="{$url.index}" method="post" onreset="$(this).find('select.combox').comboxReset()">
+            <div class="searchBar">
+                <table class="searchContent">
+                    <tr>
+                        <td>
+                            菜品：<input type="text" name="cai" value="{$search.cai}" />
+                        </td>
+                        <td>
+                            适用场景：
+                            {foreach $types as $key=>$val}
+                            <input type="checkbox" name="types[]" value="{$key}" {if in_array($key, $search.types)}checked{/if} />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+                            {/foreach}
+                        </td>
+                        <td>
+                            食物类型：
+                            {foreach $food_types as $key=>$val}
+                            <input type="checkbox" name="food_types[]" value="{$key}" {if in_array($key, $search.food_types)}checked{/if} />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+                            {/foreach}
+                        </td>
+                        {* <td>
+                            口味：
+                            {foreach $taste as $key=>$val}
+                            <input type="checkbox" name="taste[]" value="{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+                            {/foreach}
+                        </td>
+                        <td>
+                            口感：
+                            {foreach $mouthfeel as $key=>$val}
+                            <input type="checkbox" name="mouthfeel[]" value="{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+                            {/foreach}
+                        </td>
+                        <td>
+                            功效：
+                            {foreach $effects as $key=>$val}
+                            <input type="checkbox" name="effects[]" value="{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+                            {/foreach}
+                        </td>
+                        <td class="dateRange">
+                            建档日期:
+                            <input name="startDate" class="date readonly" readonly="readonly" type="text" value="">
+                            <span class="limit">-</span>
+                            <input name="endDate" class="date readonly" readonly="readonly" type="text" value="">
+                        </td> *}
+                    </tr>
+                </table>
+                <div class="subBar">
+                    <ul>
+                        <li><div class="button"><div class="buttonContent"><button type="reset">重置</button></div></div></li>
+                        <li><div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div></li>
+                        <li><a class="button" href="demo_page6.html" target="dialog" mask="true" title="查询框"><span>高级检索</span></a></li>
+                    </ul>
+                </div>
+            </div>
+            </form>
+        </div>
+        */
+
+
+        //列表区域内容
+
+        //分页区域内容
+
     }
 
     /**
@@ -145,7 +288,7 @@ class RobotController extends Controller {
             $tmp_rule_index = $request['list_search_rule'][$k];
             $list_search[] = "['".$v."', '".$this->_datas['list_search_rule'][$tmp_rule_index]."']";
         }
-        $list_search = implode(',\n', $list_search);
+        $list_search = implode(','.PHP_EOL, $list_search);
         /*E
         最终形成：
         ['cai', 'like'],
@@ -246,11 +389,11 @@ class RobotController extends Controller {
 
         //$this->_init
         $init = '';
-        foreach( $request['names'] as $k=>$name){
+        foreach( $request['robot_key_val_en_name'] as $k=>$name){
         
             if(!empty($name)){
                 $init .= '
-                $this->_init[\''.$name.'\'] = \''.$request['key_vals'][$k].'\';
+                $this->_init[\''.$name.'\'] = \''.$request['robot_key_val_ori_key_val'][$k].'\';
                 ';
             }
         }

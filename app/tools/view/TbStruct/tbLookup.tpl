@@ -5,7 +5,7 @@
 			<li><a href="javascript:">{$rows_k}</a>
 				<ul>
 					{foreach $rows_v as $row}
-					<li><a href="javascript:" onclick="$.bringBack({ldelim}en_name:'{$row.en_name}',ch_name:'{$row.ch_name}',ch_fields:'{$row.ch_fields}',en_fields:'{$row.en_fields}'{rdelim})">{$row.en_name}</a></li>
+					<li><a href="javascript:" onclick="$.bringBack({ldelim}'en_name':'{$row.en_name}','en_name[]':'{$row.en_name}',ch_name:'{$row.ch_name}',ch_fields:'{$row.ch_fields}',en_fields:'{$row.en_fields}'{rdelim})">{$row.en_name}</a></li>
 					{/foreach}
 				</ul>
 			</li>
