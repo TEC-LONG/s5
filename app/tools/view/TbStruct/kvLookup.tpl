@@ -19,7 +19,7 @@
 		<br/><br/>
 		<ul class="tree">
 		{foreach $first_tb_normal_special_fields as $first_tb_normal_special_fields_k=>$first_tb_normal_special_fields_v}
-			<li><a href="javascript:" onclick="$.bringBack({ldelim}en_name:'{$first_tb_normal_special_fields_v.en_name}',ori_key_val:'{$first_tb_normal_special_fields_v.ori_key_val}'{rdelim})">{$first_tb_normal_special_fields_v.en_name}：{$first_tb_normal_special_fields_v.ori_key_val}</a></li>
+			<li><a href="javascript:" onclick="$.bringBack({ldelim}'en_name[]':'{$first_tb_normal_special_fields_v.en_name}','ori_key_val[]':'{$first_tb_normal_special_fields_v.ori_key_val}'{rdelim})">{$first_tb_normal_special_fields_v.en_name}：{$first_tb_normal_special_fields_v.ori_key_val}</a></li>
 		{/foreach}
 		</ul>
 	</div>

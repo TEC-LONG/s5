@@ -44,18 +44,18 @@ $('input[name="controller_name"]').keyup(function(){
 		<table class="list nowrap itemDetail" addButton="添加值对字段" width="100%">
 			<thead>
 				<tr>
-					<th type="lookup" name="robot_key_val[#index#].en_name" lookupGroup="robot_key_val[#index#]" lookupUrl="{$url.kvLookup}" size="12">字段名称</th>
-					<th type="text" name="robot_key_val[#index#].ori_key_val" size="130">字段值对信息</th>
+					<th type="lookup" name="robot_key_val.en_name[]" lookupGroup="robot_key_val" lookupUrl="{$url.kvLookup}" size="12">字段名称</th>
+					<th type="text" name="robot_key_val.ori_key_val[]" size="130">字段值对信息</th>
 					<th type="del" width="60">操作</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr class="unitBox">
 					<td>
-						<input type="text" name="robot_key_val[0].en_name" size="12">
-						<a class="btnLook" href="{$url.kvLookup}" lookupgroup="robot_key_val[0]">查找带回</a>
+						<input type="text" name="robot_key_val.en_name[]" size="12">
+						<a class="btnLook" href="{$url.kvLookup}" lookupgroup="robot_key_val">查找带回</a>
 					</td>
-					<td><input type="text" name="robot_key_val[0].ori_key_val" size="130"></td>
+					<td><input type="text" name="robot_key_val.ori_key_val[]" size="130"></td>
 					<td><a href="javascript:void(0)" class="btnDel ">删除</a></td>
 				</tr>
 			</tbody>
@@ -63,7 +63,15 @@ $('input[name="controller_name"]').keyup(function(){
 
 		<div class="divider"></div>
 
-		<table class="list nowrap itemDetail field_list" addButton="添加操作字段" width="100%">
+		<dl class="nowrap">
+			<dt><strong>操作字段：</strong></dt>
+			<dd>
+				<!--<a class="button key_val_add" onclick="key_val_add_f()"><span>添加值对字段</span></a>-->
+			</dd>
+		</dl>
+
+		{* <table class="list nowrap field_list itemDetail" addButton="添加值对字段"width="100%"> *}
+		<table class="list nowrap field_list" width="100%">
 			<thead>
 				<tr>
 					<th type="text" name="field_list_ch_name[]" size="24">中文名</th>
@@ -123,47 +131,6 @@ $('input[name="controller_name"]').keyup(function(){
 							<a class="button robot_field_list" href="javascript:;" onclick="robot_field_list()"><span>生成操作字段</span></a>
 						</dd>
 					</dl>
-<script>
-var robot_field_list = function (){
-
-	$('.field_list').find('tbody').html('');
-
-	var ch_fields = $('input[name="robot_tb_record.ch_fields"]').val().split(',');
-	var en_fields = $('input[name="robot_tb_record.en_fields"]').val().split(',');
-
-	var tr_html = '';
-	for( var i in ch_fields ){
-		tr_html += '<tr class="unitBox">';
-		tr_html += '<td><input type="text" name="field_list_ch_name[]" size="24" value="'+ch_fields[i]+'"></td>';
-		tr_html += '<td><input type="text" name="field_list_en_name[]" size="24" value="'+en_fields[i]+'"></td>';
-		tr_html += '<td>{T_createSelectHtml(["否", "是"], "field_list_is_mustShow[]", 2)}</td>';
-		tr_html += '<td>{T_createSelectHtml(["否", "是"], "field_list_is_search[]", 2)}</td>';
-		tr_html += '<td>{T_createSelectHtml(["否", "是"], "field_list_is_add[]", 2)}</td>';
-		tr_html += '<td>{T_createSelectHtml(["否", "是"], "field_list_is_upd[]", 2)}</td>';
-		tr_html += '<td>{T_createSelectHtml($field_list_form_type, "field_list_form_type[]", 2)}</td>';
-		tr_html += '<td><a href="javascript:void(0)" class="btnDel ">删除</a></td>';
-		tr_html += '</tr>';
-	}
-
-	$('.field_list').find('tbody').append(tr_html);
-
-/*
-<tr class="unitBox">
-	<td><input type="text" name="field_list_ch_name[]" size="12"></td>
-	<td><input type="text" name="field_list_en_name[]" size="12"></td>
-	<td>{T_createSelectHtml(['否', '是'], 'field_list_is_mustShow[]', 2)}</td>
-	<td>{T_createSelectHtml(['否', '是'], 'field_list_is_search[]', 2)}</td>
-	<td>{T_createSelectHtml(['否', '是'], 'field_list_is_add[]', 2)}</td>
-	<td>{T_createSelectHtml(['否', '是'], 'field_list_is_upd[]', 2)}</td>
-	<td>{T_createSelectHtml($field_list_form_type, 'field_list_form_type[]', 2)}</td>
-	<td><a href="javascript:void(0)" class="btnDel ">删除</a></td>
-</tr>
-
-*/
-
-};
-
-</script>
 					<dl class="nowrap">
 						<dt>是否连表：</dt>
 						<dd>
@@ -184,7 +151,7 @@ var robot_field_list = function (){
 					<table class="list nowrap itemDetail" addButton="添加连接的表" width="100%">
 						<thead>
 							<tr>
-								<th type="lookup" name="leftjoin_tb_name[#index#].en_name" lookupGroup="leftjoin_tb_name[#index#]" lookupUrl="{$url.tbLookup}" size="24">表英文名(可以连带设置表别名,如“操作主表”)</th>
+								<th type="lookup" name="leftjoin_tb_name.en_name[]" lookupGroup="leftjoin_tb_name" lookupUrl="{$url.tbLookup}" size="24">表英文名(可以连带设置表别名,如“操作主表”)</th>
 								<th type="text" name="leftjoin_condition[]" defaultVal="" size="100">连接条件</th>
 								<th type="del" width="60">操作</th>
 							</tr>
@@ -192,8 +159,8 @@ var robot_field_list = function (){
 						<tbody>
 							<tr class="unitBox">
 								<td>
-									<input type="text" name="leftjoin_tb_name[0].en_name" size="24">
-									<a class="btnLook" href="{$url.tbLookup}" lookupgroup="leftjoin_tb_name[0]">查找带回</a>
+									<input type="text" name="leftjoin_tb_name.en_name[]" size="24">
+									<a class="btnLook" href="{$url.tbLookup}" lookupgroup="leftjoin_tb_name">查找带回</a>
 								</td>
 								<td><input type="text" name="leftjoin_condition[]" size="100"></td>
 								<td><a href="javascript:void(0)" class="btnDel ">删除</a></td>
@@ -214,7 +181,7 @@ var robot_field_list = function (){
 					<dl class="nowrap">
 						<dt>每页显示数据条数：</dt>
 						<dd>
-							<input type="text" name="list_num_perpage" value="" style="width:75%" />
+							<input type="text" name="list_num_perpage" value="30" style="width:75%" />
 							<span class="info">不填写则表示列表页不构建分页</span>
 						</dd>
 					</dl>
@@ -223,7 +190,7 @@ var robot_field_list = function (){
 						<dt>初始查询条件：</dt>
 						<dd>
 							<input type="text" maxlength="60" name="list_search_init" value="is_del:0" style="width:75%" />
-							<span class="info"></span>
+							<span class="info">格式样例："is_del:0|id:>:10|name:!=:zhangsan"</span>
 						</dd>
 					</dl>
 
@@ -262,7 +229,7 @@ var robot_field_list = function (){
 
 					<div class="divider"></div>
 					
-					<table class="list nowrap itemDetail" addButton="新增必显字段" width="100%">
+					<table class="list nowrap itemDetail add_list_mustShow" addButton="新增必显字段" width="100%">
 						<thead>
 							<tr>
 								<th type="text" name="list_must_show_ch[]" size="24">中文字段名</th>
@@ -277,7 +244,7 @@ var robot_field_list = function (){
 								<td>
 									<input type="text" name="list_must_show_ch[]" size="24">
 								</td>
-								<td><input type="text" name="list_must_show_en" size="24"></td>
+								<td><input type="text" name="list_must_show_en[]" size="24"></td>
 								<td><input type="text" name="list_must_show_width[]" size="12" value="70"></td>
 								<td>{T_createSelectHtml(['否', '是'], 'list_must_show_is_set[]', 2)}</td>
 								<td><a href="javascript:void(0)" class="btnDel ">删除</a></td>
@@ -296,10 +263,10 @@ var robot_field_list = function (){
 
 					<div class="divider"></div>
 
-					<table class="list nowrap itemDetail" addButton="添加搜索查询条件" width="100%">
+					<table class="list nowrap itemDetail add_list_search" addButton="添加搜索查询条件" width="100%">
 						<thead>
 							<tr>
-								<th type="text" name="list_search_name[]" size="12">字段名</th>
+								<th type="text" name="list_search_name[]" size="12">字段英文名</th>
 								<th type="enum" name="list_search_rule[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=2&name=list_search_rule" size="12">条件拼接规则</th>
 								<th type="del" width="60">操作</th>
 							</tr>
@@ -312,30 +279,6 @@ var robot_field_list = function (){
 							</tr>
 						</tbody>
 					</table>
-
-					<div class="divider"></div>
-
-					<dl class="nowrap">
-						<dt>列表页是否包含删除功能：</dt>
-						<dd>
-							{T_createSelectHtml(['否', '是'], 'list_is_has_delete', 2, 1)}
-						</dd>
-					</dl>
-
-					<dl class="nowrap">
-						<dt>删除方式：</dt>
-						<dd>
-							{T_createSelectHtml(['更新is_del字段', '直接删除数据'], 'delete_type', 2)}
-						</dd>
-					</dl>
-
-					<dl class="nowrap">
-						<dt>额外扩充的删除条件：</dt>
-						<dd>
-							<input type="text" name="delete_extra_condition" value="" style="width:75%" />
-							<span class="info">表示在默认删除条件基础上扩充的删除条件</span>
-						</dd>
-					</dl>
 				</div>
 				{elseif $major_acts_val==='添加页'}
 				<div class="Robot_major_acts_info_{$major_acts_k}">
@@ -369,6 +312,30 @@ var robot_field_list = function (){
 							</tr>
 						</tbody>
 					</table>
+
+					<div class="divider"></div>
+
+					{* <dl class="nowrap">
+						<dt>列表页是否包含删除功能：</dt>
+						<dd>
+							{T_createSelectHtml(['否', '是'], 'list_is_has_delete', 2, 1)}
+						</dd>
+					</dl> *}
+
+					<dl class="nowrap">
+						<dt>删除方式：</dt>
+						<dd>
+							{T_createSelectHtml(['更新is_del字段', '直接删除数据'], 'delete_type', 2)}
+						</dd>
+					</dl>
+
+					<dl class="nowrap">
+						<dt>额外扩充的删除条件：</dt>
+						<dd>
+							<input type="text" name="delete_extra_condition" value="" style="width:75%" />
+							<span class="info">表示在默认删除条件基础上扩充的删除条件</span>
+						</dd>
+					</dl>
 				</div>
 				{elseif $major_acts_val==='编辑页'}
 				<div>
@@ -468,4 +435,149 @@ $('.Robot_major_acts').find('input').click(function(){
 		}
 	}
 });
+
+//生成操作字段列表
+var robot_field_list = function (){
+
+	$('.field_list').find('tbody').html('');
+
+	var ch_fields = $('input[name="robot_tb_record.ch_fields"]').val().split(',');
+	var en_fields = $('input[name="robot_tb_record.en_fields"]').val().split(',');
+
+	var tr_html = '';
+	for( var i in ch_fields ){
+		tr_html += '<tr class="unitBox">';
+		tr_html += '<td><input type="text" name="field_list_ch_name[]" size="24" value="'+ch_fields[i]+'"></td>';
+		tr_html += '<td><input type="text" name="field_list_en_name[]" size="24" value="'+en_fields[i]+'"></td>';
+		tr_html += '<td>{T_createSelectHtml(["否", "是"], "field_list_is_mustShow[]", 2)}</td>';
+		tr_html += '<td>{T_createSelectHtml(["否", "是"], "field_list_is_search[]", 2)}</td>';
+		tr_html += '<td>{T_createSelectHtml(["否", "是"], "field_list_is_add[]", 2)}</td>';
+		tr_html += '<td>{T_createSelectHtml(["否", "是"], "field_list_is_upd[]", 2)}</td>';
+		tr_html += '<td>{T_createSelectHtml($field_list_form_type, "field_list_form_type[]", 2)}</td>';
+		tr_html += '<td><a href="javascript:void(0)" class="btnDel ">删除</a></td>';
+		tr_html += '</tr>';
+	}
+
+	$('.field_list').find('tbody').append(tr_html);
+	$('select[name="field_list_is_mustShow[]"]').bind('change', field_list_is_mustShow);
+	$('select[name="field_list_is_search[]"]').bind('change', field_list_is_search);
+};
+
+//设置搜索字段
+var field_list_is_search = function(){
+
+	//当前选中行的数据
+	var en_name = $(this).parents('tr').find('input[name="field_list_en_name[]"]').val();
+
+	//清掉没有内容的tr
+	$('.add_list_search').find('tbody tr').each(function(i){
+
+		var en = $(this).find('input[name="list_search_name[]"]').val();
+
+		if(en===''){
+			$(this).find('.btnDel').click();
+		}
+	});
+
+	if( $(this).val()==='1' ){ //选择了“是”
+
+		//查找是否已经存在一样的数据，如果存在则不再额外增加
+		var is_has = false;
+		$('.add_list_search').find('tbody tr').each(function(i){
+
+			var en = $(this).find('input[name="list_search_name[]"]').val();
+			if(en===en_name){
+				is_has = true;
+				return false;
+			}
+		});
+
+		if(!is_has){ //不存在相同的，才增加一条
+
+			//新增一条tr
+			$('.add_list_search').prev().prev().find('button').click();
+
+			//给新增的tr填充数据
+			$('.add_list_search').find('tbody tr').last().find('input[name="list_search_name[]"]').val(en_name);
+		}
+		
+
+	}else if( $(this).val()==='0' ){ //选择了“否”
+		
+		//删除与当前内容一致的行
+		$('.add_list_search').find('tbody tr').each(function(i){
+
+			var en = $(this).find('input[name="list_search_name[]"]').val();
+
+			if(en===en_name){
+				$(this).find('.btnDel').click();
+				return false;
+			}
+		});
+	}
+};
+
+//设置必显字段
+var field_list_is_mustShow = function(){
+
+	//当前选中行的数据
+	var ch_name = $(this).parents('tr').find('input[name="field_list_ch_name[]"]').val();
+	var en_name = $(this).parents('tr').find('input[name="field_list_en_name[]"]').val();
+
+	//清掉没有内容的tr
+	//console.log($($('.add_list_mustShow').find('tbody tr')[0]).find('input[name="list_must_show_ch[]"]').val()==='');
+	$('.add_list_mustShow').find('tbody tr').each(function(i){
+
+		var ch = $(this).find('input[name="list_must_show_ch[]"]').val();
+		var en = $(this).find('input[name="list_must_show_en[]"]').val();
+
+		if(ch===''&&en===''){
+			$(this).find('.btnDel').click();
+		}
+	});
+
+	if( $(this).val()==='1' ){ //选择了“是”
+
+		//查找是否已经存在一样的数据，如果存在则不再额外增加
+		var is_has = false;
+		$('.add_list_mustShow').find('tbody tr').each(function(i){
+
+			var ch = $(this).find('input[name="list_must_show_ch[]"]').val();
+			var en = $(this).find('input[name="list_must_show_en[]"]').val();
+
+			if(ch===ch_name&&en===en_name){
+				is_has = true;
+				return false;
+			}
+		});
+
+		if(!is_has){
+			//新增一条tr
+			$('.add_list_mustShow').prev().prev().find('button').click();
+
+			//给新增的tr填充数据
+			$('.add_list_mustShow').find('tbody tr').last().find('input[name="list_must_show_ch[]"]').val(ch_name);
+			$('.add_list_mustShow').find('tbody tr').last().find('input[name="list_must_show_en[]"]').val(en_name);
+		}
+
+	}else if( $(this).val()==='0' ){ //选择了“否”
+		
+		//删除与当前内容一致的行
+		$('.add_list_mustShow').find('tbody tr').each(function(i){
+
+			var ch = $(this).find('input[name="list_must_show_ch[]"]').val();
+			var en = $(this).find('input[name="list_must_show_en[]"]').val();
+
+			if(ch===ch_name&&en===en_name){
+				$(this).find('.btnDel').click();
+				return false;
+			}
+		});
+	}
+};
+
+var clear_tr_no_content = function (table, type){
+
+	//if(type==1)
+}
 </script>
