@@ -31,6 +31,7 @@ class RobotController extends Controller {
                 $this->_datas['major_acts'] = ['列表页', '添加页', '编辑页', '模型'];
                 $this->_datas['list_url_acts'] = ['index', 'ad', 'upd', 'del'];
                 $this->_datas['list_search_rule'] = ['like', 'mul'];
+                $this->_datas['list_search_form_type'] = ['text-normal', 'text-numb', 'text-phone', 'text-pwd', 'text-email', 'select', 'radio', 'checkbox'];
                 $this->_datas['field_list_form_type'] = ['text-normal', 'text-numb', 'text-phone', 'text-pwd', 'text-email', 'select', 'radio', 'checkbox', 'file', 'txt-area'];
             break;
         }
@@ -591,6 +592,9 @@ class RobotController extends Controller {
         }elseif ( $request['type']==3 ) {
             
             $enumHtml = T_createSelectHtml($this->_datas['field_list_form_type'], $request['name'].'[]', 2);
+        }elseif ( $request['type']==4 ) {
+            
+            $enumHtml = T_createSelectHtml($this->_datas['list_search_form_type'], $request['name'].'[]', 2);
         }
 
         echo $enumHtml;

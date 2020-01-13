@@ -73,7 +73,7 @@ $('input[name="controller_name"]').keyup(function(){
 		{* <table class="list nowrap field_list itemDetail" addButton="添加值对字段"width="100%"> *}
 		<table class="list nowrap field_list" width="100%">
 			<thead>
-				<tr>
+				<tr id="hder">
 					<th type="text" name="field_list_ch_name[]" size="24">中文名</th>
 					<th type="text" name="field_list_en_name[]" size="24">英文名</th>
 					<th type="enum" name="field_list_is_mustShow[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=1&name=field_list_is_mustShow" size="12">是否列表必显</th>
@@ -267,6 +267,8 @@ $('input[name="controller_name"]').keyup(function(){
 						<thead>
 							<tr>
 								<th type="text" name="list_search_name[]" size="12">字段英文名</th>
+								<th type="text" name="list_search_form_name[]" size="12">表单name值（通常与英文名相同）</th>
+								<th type="enum" name="list_search_form_type[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=4&name=list_search_form_type" size="12">表单类型</th>
 								<th type="enum" name="list_search_rule[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=2&name=list_search_rule" size="12">条件拼接规则</th>
 								<th type="del" width="60">操作</th>
 							</tr>
@@ -274,6 +276,8 @@ $('input[name="controller_name"]').keyup(function(){
 						<tbody>
 							<tr class="unitBox">
 								<td><input type="text" name="list_search_name[]" value="" size="12" maxlength="30"></td>
+								<td><input type="text" name="list_search_form_name[]" value="" size="12" maxlength="30"></td>
+								<td>{T_createSelectHtml($list_search_form_type, 'list_search_form_type[]', 2)}</td>
 								<td>{T_createSelectHtml($list_search_rule, 'list_search_rule[]', 2)}</td>
 								<td><a href="javascript:void(0)" class="btnDel ">删除</a></td>
 							</tr>
@@ -461,6 +465,8 @@ var robot_field_list = function (){
 	$('.field_list').find('tbody').append(tr_html);
 	$('select[name="field_list_is_mustShow[]"]').bind('change', field_list_is_mustShow);
 	$('select[name="field_list_is_search[]"]').bind('change', field_list_is_search);
+
+	doChangeColorOfRow(".field_list tr:even:not(.hder)", ".field_list tr:odd:not(.hder)");
 };
 
 //设置搜索字段
