@@ -267,6 +267,7 @@ $('input[name="controller_name"]').keyup(function(){
 						<thead>
 							<tr>
 								<th type="text" name="list_search_name[]" size="12">字段英文名</th>
+								<th type="text" name="list_search_ch_title[]" size="12">表单搜索模块中文标题</th>
 								<th type="text" name="list_search_form_name[]" size="12">表单name值（通常与英文名相同）</th>
 								<th type="enum" name="list_search_form_type[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=4&name=list_search_form_type" size="12">表单类型</th>
 								<th type="enum" name="list_search_rule[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=2&name=list_search_rule" size="12">条件拼接规则</th>
@@ -276,6 +277,7 @@ $('input[name="controller_name"]').keyup(function(){
 						<tbody>
 							<tr class="unitBox">
 								<td><input type="text" name="list_search_name[]" value="" size="12" maxlength="30"></td>
+								<td><input type="text" name="list_search_ch_title[]" value="" size="12" maxlength="30"></td>
 								<td><input type="text" name="list_search_form_name[]" value="" size="12" maxlength="30"></td>
 								<td>{T_createSelectHtml($list_search_form_type, 'list_search_form_type[]', 2)}</td>
 								<td>{T_createSelectHtml($list_search_rule, 'list_search_rule[]', 2)}</td>
@@ -466,7 +468,7 @@ var robot_field_list = function (){
 	$('select[name="field_list_is_mustShow[]"]').bind('change', field_list_is_mustShow);
 	$('select[name="field_list_is_search[]"]').bind('change', field_list_is_search);
 
-	doChangeColorOfRow(".field_list tr:even:not(.hder)", ".field_list tr:odd:not(.hder)");
+	doChangeColorOfRow(".field_list tr:even:not(.hder)", ".field_list tr:odd:not(.hder)");//生成表内容后调整表内行交替颜色
 };
 
 //设置搜索字段

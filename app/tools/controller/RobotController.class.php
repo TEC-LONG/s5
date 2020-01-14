@@ -9,6 +9,9 @@ class RobotController extends Controller {
     private $_navTab;
     private $_requ;
 
+    //记录处理过程中需要的数据
+    private $save_key_val = [];//处理后的值对信息
+
     public function __construct(){
     
         parent::__construct();
@@ -28,10 +31,10 @@ class RobotController extends Controller {
             case 'index':
             case 'enum':
             case 'adh':
-                $this->_datas['major_acts'] = ['列表页', '添加页', '编辑页', '模型'];
+                $this->_datas['major_acts'] = ['列表页', '添加页', '编辑页', '模型', '删除功能', '列表导出功能'];
                 $this->_datas['list_url_acts'] = ['index', 'ad', 'upd', 'del'];
                 $this->_datas['list_search_rule'] = ['like', 'mul'];
-                $this->_datas['list_search_form_type'] = ['text-normal', 'text-numb', 'text-phone', 'text-pwd', 'text-email', 'select', 'radio', 'checkbox'];
+                $this->_datas['list_search_form_type'] = ['text-normal'=>'text-normal', 'text-numb'=>'text-numb', 'text-phone'=>'text-phone', 'text-pwd'=>'text-pwd', 'text-email'=>'text-email', 'select'=>'select', 'radio'=>'radio', 'checkbox'=>'checkbox'];
                 $this->_datas['field_list_form_type'] = ['text-normal', 'text-numb', 'text-phone', 'text-pwd', 'text-email', 'select', 'radio', 'checkbox', 'file', 'txt-area'];
             break;
         }
@@ -56,10 +59,10 @@ class RobotController extends Controller {
         $controller_index = '';
         if( in_array('0', $request['major_acts']) ){
             $controller_index = $this->controller_index($request);
-            $templ_index = $this->templ_index($request);
+            $templ_index = $this->templ_index($request);//列表页html模板
 
-            // echo $controller_index;
-            // exit;
+            echo $templ_index;
+            exit;
         }
 
         #添加页部分
@@ -85,14 +88,77 @@ class RobotController extends Controller {
         exit;
     }
 
+    protected function search_td($form_name, $form_type, $save_key_val){
+
+        $td_html = '';
+        $tmp_save_key_val_keys = array_keys($save_key_val);
+
+        switch($form_type){
+        case 'text-normal':
+            $td_html .= '<input type="text" name="'.$form_name.'" value="{if isset($search.'.$form_name.')}{$search.'.$form_name.'}{/if}" />';
+        break;
+        case 'text-email':
+            $td_html .= '<input type="text" name="'.$form_name.'" class="email" alt="请输入您的电子邮件"/>';
+        break;
+        case 'text-phone':
+            $td_html .= '<input type="text" name="'.$form_name.'" class="phone" alt="请输入您的电话"/>';
+        break;
+        case 'text-numb':
+            $td_html .= '<input type="text" name="'.$form_name.'" class="number" alt="请输入数字"/>';
+        break;
+        case 'select':
+            if( in_array($form_name, $tmp_save_key_val_keys) ){
+                $td_html .= '<select class="combox" name="'.$form_name.'">';
+                foreach( $save_key_val[$form_name] as $k=>$v){
+                    $td_html .= '<option value="'.$k.'" {if isset($search.'.$form_name.')&&$search.'.$form_name.'=="'.$k.'"}selected{/if}>'.$v.'</option>';
+                }
+                $td_html .= '</select>';
+            }
+            /*
+            <select class="combox" name="xxx">
+                <option value="1">test1</option>
+                <option value="2" {if $search.xxx=="2"}selected{/if}>test2</option>
+            </select>
+            */
+        break;
+        case 'radio':
+            if( in_array($form_name, $tmp_save_key_val_keys) ){
+                $td_html .= '<select class="combox" name="'.$form_name.'">';
+                foreach( $save_key_val[$form_name] as $k=>$v){
+                    $td_html .= '<option value="'.$k.'" {if $search.'.$form_name.'=="'.$k.'"}selected{/if}>'.$v.'</option>';
+                }
+                $td_html .= '</select>';
+            }
+            /*
+            <select class="combox" name="xxx">
+                <option value="1">test1</option>
+                <option value="2" {if $search.xxx=="2"}selected{/if}>test2</option>
+            </select>
+            */
+        break;
+        case 'checkbox':
+            if( in_array($form_name, $tmp_save_key_val_keys) ){
+                foreach( $save_key_val[$form_name] as $k=>$v){
+                    $td_html .= '<input type="checkbox" name="'.$form_name.'[]" value="'.$k.'" {if in_array("'.$k.'", $search.'.$form_name.')}checked{/if} />'.$v.'&nbsp;&nbsp;&nbsp;&nbsp;';
+                }
+            }
+            /*
+            <input type="checkbox" name="xxx[]" value="1" {if in_array("1", $search.xxx)}checked{/if} />'.test1.'&nbsp;&nbsp;&nbsp;&nbsp;
+            <input type="checkbox" name="xxx[]" value="2" {if in_array("2", $search.xxx)}checked{/if} />'.test2.'&nbsp;&nbsp;&nbsp;&nbsp;
+            */
+        break;
+        }
+
+        return $td_html;
+    }
+
     /**
      * 
      */
     protected function templ_index($request){
+        // var_dump($request);
+        // exit;
 
-        var_dump($request);
-        exit;
-    
         //搜索区域内容
         $search_html = '';
         #检查是否有搜索的内容
@@ -100,51 +166,21 @@ class RobotController extends Controller {
 
             $templ_form_action = '';
 
+            $templ_search_td = '';
+            foreach( $request['list_search_ch_title'] as $k=>$ch_title){
+            
+                $templ_search_td .= '<td>'.$ch_title.'：';
+                $templ_search_td .= $this->search_td($request['list_search_form_name'][$k], $request['list_search_form_type'][$k], $this->save_key_val);
+                $templ_search_td .= '</td>';
+            }
+
             $search_html = '
 <div class="pageHeader">
     <form onsubmit="return navTabSearch(this);" action="{'.$templ_form_action.'}" method="post" onreset="$(this).find(\'select.combox\').comboxReset()">
     <div class="searchBar">
         <table class="searchContent">
             <tr>
-                <td>
-                    菜品：<input type="text" name="cai" value="{$search.cai}" />中文标题，表单name值，表单类型，若果是select之类的还需要值对信息；优先解决：添加tr样式跟随
-                </td>
-                <td>
-                    适用场景：
-                    {foreach $types as $key=>$val}
-                    <input type="checkbox" name="types[]" value="{$key}" {if in_array($key, $search.types)}checked{/if} />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
-                    {/foreach}
-                </td>
-                <td>
-                    食物类型：
-                    {foreach $food_types as $key=>$val}
-                    <input type="checkbox" name="food_types[]" value="{$key}" {if in_array($key, $search.food_types)}checked{/if} />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
-                    {/foreach}
-                </td>
-                {* <td>
-                    口味：
-                    {foreach $taste as $key=>$val}
-                    <input type="checkbox" name="taste[]" value="{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
-                    {/foreach}
-                </td>
-                <td>
-                    口感：
-                    {foreach $mouthfeel as $key=>$val}
-                    <input type="checkbox" name="mouthfeel[]" value="{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
-                    {/foreach}
-                </td>
-                <td>
-                    功效：
-                    {foreach $effects as $key=>$val}
-                    <input type="checkbox" name="effects[]" value="{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
-                    {/foreach}
-                </td>
-                <td class="dateRange">
-                    建档日期:
-                    <input name="startDate" class="date readonly" readonly="readonly" type="text" value="">
-                    <span class="limit">-</span>
-                    <input name="endDate" class="date readonly" readonly="readonly" type="text" value="">
-                </td> *}
+                '.$templ_search_td.'
             </tr>
         </table>
         <div class="subBar">
@@ -158,9 +194,7 @@ class RobotController extends Controller {
     </form>
 </div>
             ';
-            
         }
-        
         /*E
         最终得到：
         <div class="pageHeader">
@@ -171,42 +205,14 @@ class RobotController extends Controller {
                         <td>
                             菜品：<input type="text" name="cai" value="{$search.cai}" />
                         </td>
-                        <td>
-                            适用场景：
-                            {foreach $types as $key=>$val}
-                            <input type="checkbox" name="types[]" value="{$key}" {if in_array($key, $search.types)}checked{/if} />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
-                            {/foreach}
+                        <td>适用场景：
+                            <input type="checkbox" name="types[]" value="1" {if in_array("1", $search.types)}checked{/if} />test1&nbsp;&nbsp;&nbsp;&nbsp;
+                            <input type="checkbox" name="types[]" value="2" {if in_array("2", $search.types)}checked{/if} />test2&nbsp;&nbsp;&nbsp;&nbsp;
                         </td>
-                        <td>
-                            食物类型：
-                            {foreach $food_types as $key=>$val}
-                            <input type="checkbox" name="food_types[]" value="{$key}" {if in_array($key, $search.food_types)}checked{/if} />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
-                            {/foreach}
+                        <td>食物类型：
+                            <input type="checkbox" name="food_types[]" value="1" {if in_array("1", $search.food_types)}checked{/if} />类型1&nbsp;&nbsp;&nbsp;&nbsp;
+                            <input type="checkbox" name="food_types[]" value="2" {if in_array("2", $search.food_types)}checked{/if} />类型2&nbsp;&nbsp;&nbsp;&nbsp;
                         </td>
-                        {* <td>
-                            口味：
-                            {foreach $taste as $key=>$val}
-                            <input type="checkbox" name="taste[]" value="{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
-                            {/foreach}
-                        </td>
-                        <td>
-                            口感：
-                            {foreach $mouthfeel as $key=>$val}
-                            <input type="checkbox" name="mouthfeel[]" value="{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
-                            {/foreach}
-                        </td>
-                        <td>
-                            功效：
-                            {foreach $effects as $key=>$val}
-                            <input type="checkbox" name="effects[]" value="{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
-                            {/foreach}
-                        </td>
-                        <td class="dateRange">
-                            建档日期:
-                            <input name="startDate" class="date readonly" readonly="readonly" type="text" value="">
-                            <span class="limit">-</span>
-                            <input name="endDate" class="date readonly" readonly="readonly" type="text" value="">
-                        </td> *}
                     </tr>
                 </table>
                 <div class="subBar">
@@ -221,11 +227,169 @@ class RobotController extends Controller {
         </div>
         */
 
-
         //列表区域内容
+        #按钮部分
+        $btn_html = '';
+        
+        $tmp_li = '';
+        if( in_array('1', $request['major_acts']) ){//勾选了 "添加页"
+
+            $tmp_li .= '<li><a class="add" href="{$url.ad.url}" target="navTab" rel="{$url.ad.rel}"><span>xxxx</span></a></li>';
+        }
+
+        if( in_array('4', $request['major_acts']) ){//勾选了 "删除功能"
+
+            $tmp_li .= '<li><a class="delete" href="{$url.del}&id={ldelim}sid_{$navTab}}" target="ajaxTodo" title="确定要删除吗?"><span>删除</span></a></li>';
+        }
+
+        if( in_array('2', $request['major_acts']) ){//勾选了 "编辑页"
+
+            $tmp_li .= '<li><a class="edit" href="{$url.upd.url}&id={ldelim}sid_{$navTab}}" target="navTab"  rel="{$url.upd.rel}"><span>xxxx</span></a></li>';
+        }
+
+        if( in_array('5', $request['major_acts']) ){//勾选了 "列表导出功能"
+
+            $tmp_li .= '<li class="line">line</li>';
+            $tmp_li .= '<li><a class="icon" href="demo/common/dwz-team.xls" target="dwzExport" targetType="navTab" title="实要导出这些记录吗?"><span>导出EXCEL</span></a></li>';
+        }
+
+        if( !empty($tmp_li) ){
+
+            $btn_html = '
+            <div class="panelBar">
+                <ul class="toolBar">
+                    '.$tmp_li.'
+                </ul>
+            </div>
+            ';
+        }
+        /*E
+        最终得到：
+        <div class="panelBar">
+            <ul class="toolBar">
+                <li><a class="add" href="{$url.ad.url}" target="navTab" rel="{$url.ad.rel}"><span>添加菜品</span></a></li>
+                <li><a class="delete" href="{$url.del}&id={ldelim}sid_{$navTab}}" target="ajaxTodo" title="确定要删除吗?"><span>删除</span></a></li>
+                <li><a class="edit" href="{$url.upd.url}&id={ldelim}sid_{$navTab}}" target="navTab"  rel="{$url.upd.rel}"><span>修改菜品</span></a></li>
+                <li class="line">line</li>
+                <li><a class="icon" href="demo/common/dwz-team.xls" target="dwzExport" targetType="navTab" title="实要导出这些记录吗?"><span>导出EXCEL</span></a></li>
+            </ul>
+        </div>
+        */
+
+        #内容部分
+        $main_list_html = '';
+
+        if( !empty($request['list_must_show_ch'])&&!empty($request['list_must_show_en']) ){
+
+            $tmp_thead = '
+            <thead>
+                <tr>
+                    <th width="30"><input type="checkbox" group="ids" class="checkboxCtrl"></th>
+                    <th width="30">序号</th>
+            ';
+            /*
+            $request['list_must_show_ch']：
+            array(3) {
+                [0]=>
+                string(9) "post_date"
+                [1]=>
+                string(6) "账号"
+                [2]=>
+                string(12) "用户昵称"
+            }
+            */
+            foreach( $request['list_must_show_ch'] as $k=>$v){
+            
+                $tmp_thead .= '<th width="'.$request['list_must_show_width'][$k].'">'.$v.'</th>';
+            }
+
+            $tmp_thead .= '
+                </tr>
+            </thead>
+            ';
+
+            $tmp_tbody = '
+            <tbody>
+            {foreach $rows as $rows_key=>$row}
+            <tr target="sid_{$navtab}" rel="{$row.id}">
+                <td><input name="ids_{$navtab}[]" value="{$row.id}" type="checkbox"></td>
+                <td>{$rows_key+1}</td>
+            ';
+
+            foreach( $request['list_must_show_en'] as $k=>$v){
+            
+                $tmp_tbody .= '
+                <td>{$row.'.$v.'}</td>
+                ';
+            }
+            $tmp_tbody .= '
+            </tr>
+            {/foreach}
+            </tbody>
+            ';
+
+            $main_list_html = '
+            <table class="table" width="100%" layoutH="138">
+                '.$tmp_thead.'
+                '.$tmp_tbody.'
+            </table>
+            ';
+
+        }
+
+        /*E
+        最终得到：
+        <table class="table" width="100%" layoutH="138">
+            <thead>
+                <tr>
+                    <th width="30"><input type="checkbox" group="ids" class="checkboxCtrl"></th>
+                    <th width="30">序号</th>
+                    {foreach $mustShow as $col}
+                    <th {if !empty($col.width)}width="{$col.width}"{/if}>{$col.ch}</th>
+                    {/foreach}
+                </tr>
+            </thead>
+            <tbody>
+                {$tbhtml}
+            </tbody>
+        </table>
+        */
 
         //分页区域内容
+        $page_html = '';
 
+        /*E
+        最终得到：
+        <form id="pagerForm" method="post" action="{$url.index}">
+            <input type="hidden" name="pageNum" value="1" />
+            <input type="hidden" name="numPerPage" value="{$page.numPerPage}" />
+            <input type="hidden" name="cai" value="{$search.cai}" />
+            {foreach $search.types as $val}
+            <input type="hidden" name="types[]" value="{$val}"/>
+            {/foreach}
+            {foreach $search.food_types as $val}
+            <input type="hidden" name="food_types[]" value="{$val}"/>
+            {/foreach}
+        </form>
+        <div class="panelBar">
+            <div class="pages">
+                <span>显示</span>
+                <select class="combox" name="numPerPage" {literal}onchange="navTabPageBreak({numPerPage:this.value})"{/literal}>
+                    <option value="{$page.numPerPage}">{$page.numPerPage}</option>
+                    {foreach $page.numPerPageList as $thisNumPerPage}
+                        {if $thisNumPerPage!=$page.numPerPage}
+                    <option value="{$thisNumPerPage}">{$thisNumPerPage}</option>
+                        {/if}
+                    {/foreach}
+                </select>
+                <span>条，总共{$page.totalNum}条记录，合计{$page.totalPageNum}页</span>
+            </div>
+            <div class="pagination" targetType="navTab" totalCount="{$page.totalNum}" numPerPage="{$page.numPerPage}" pageNumShown="10" currentPage="{$page.pageNum}"></div>
+        </div>
+        */
+
+        $index_html = $search_html . '<div class="pageContent">' . PHP_EOL . $btn_html . $main_list_html . $page_html . PHP_EOL . '</div>';
+        return $index_html;
     }
 
     /**
@@ -374,6 +538,59 @@ class RobotController extends Controller {
         return $templ;
     }
 
+    protected function handler_ori_key_val($key_val_en_name, $key_val_ori_key_val){
+    
+        /*B
+        原有数据：
+        $key_val_en_name:
+        array(2) {
+            [0]=>
+            string(5) "level"
+            [1]=>
+            string(6) "status"
+        }
+        $key_val_ori_key_val:
+        array(2) {
+            [0]=>
+            string(26) "0:普通用户|1:管理员"
+            [1]=>
+            string(17) "0:正常|1:禁用"
+        }
+        */
+
+        foreach( $key_val_en_name as $k=>$name){
+        
+            if(!empty($name)){
+
+                $tmp_arr1 = explode('|', $key_val_ori_key_val[$k]);
+                $tmp_arr1 = array_map(function($elem){
+                    return trim($elem);
+                }, $tmp_arr1);
+
+                #                          0:普通用户
+                foreach( $tmp_arr1 as $k1=>$v1){
+
+                    $tmp_arr2 = explode(':', $v1);
+                    $tmp_arr2 = array_map(function($elem){
+                        return trim($elem);
+                    }, $tmp_arr2);
+
+                    if( is_numeric($tmp_arr2[0]) ) $tmp_arr2[0] = intval($tmp_arr2[0]);//如果是数字类型，则转换为整型
+                    #                  'level'     0             '普通用户'
+                    $this->save_key_val[$name][$tmp_arr2[0]] = $tmp_arr2[1];
+                }
+            }
+        }
+
+        /*E
+        最终形成：
+        $this->save_key_val = [
+            'level' => [0=>'普通用户', 1=>'管理员'],
+            'status' => [0=>'正常', 1=>'禁用']
+        ];
+        */
+    }
+
     /**
      * method:构建控制器构造方法
      */
@@ -383,12 +600,29 @@ class RobotController extends Controller {
         $navtab = '
             $this->_navTab = \''.$request['navtab'].'\';
         ';
-        /*
+        /*E
         最终形成：
         $this->_navTab = 'chifan';
         */
 
         //$this->_init
+        /*B
+        原有数据：
+        $request['robot_key_val_en_name']:
+        array(2) {
+            [0]=>
+            string(5) "level"
+            [1]=>
+            string(6) "status"
+        }
+        $request['robot_key_val_ori_key_val']:
+        array(2) {
+            [0]=>
+            string(26) "0:普通用户|1:管理员"
+            [1]=>
+            string(17) "0:正常|1:禁用"
+        }
+        */
         $init = '';
         foreach( $request['robot_key_val_en_name'] as $k=>$name){
         
@@ -403,6 +637,8 @@ class RobotController extends Controller {
             $this->JD($this->_init);
             ';
         }
+        #处理并记录key_val数据，供之后处理过程使用
+        $this->handler_ori_key_val($request['robot_key_val_en_name'], $request['robot_key_val_ori_key_val']);
         /*
         最终形成：
         $this->_init['field_type'] = '0:普通字段|1:关联字段';
