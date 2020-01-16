@@ -16,9 +16,24 @@ ALTER TABLE `vimshortcut` ADD `first_key` VARCHAR( 30 )  NOT NULL DEFAULT '' COM
 ALTER TABLE `vimshortcut` ADD `second_key` VARCHAR( 30 )  NOT NULL DEFAULT '' COMMENT '辅键';
 
 
+测试表
+testuser
+ID,数据添加时间,姓名,年龄,手机号,座机号,邮箱,简介,用户类型,头像(25*25)
+id,post_date,name,age,cell,phone,email,intro,user_type,headimg
 
+user_type = 0:普通用户|1:普通管理员|2:超级管理员
 
+导航菜单表
+menu
+id,数据添加时间,栏目名称,父级id,权限,最终操作人id,首次添加人id,最后修改时间(首次添加为0),层级,平台,模块,动作
+id,post_date,name,parent_id,authority,user__id___last_do,user__id___first_do,last_update,level,plat,module,act
 
+导航菜单表
+menu
+栏目名称,父级id,首次添加人id,最后修改时间(首次添加为0),层级,平台,模块,动作
+name,parent_id,user__id,last_update,level,plat,module,act
+
+level = 0:大栏目级|1:小栏目级|2:选项卡级
 
 
 

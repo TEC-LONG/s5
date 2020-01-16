@@ -68,6 +68,8 @@ class RobotController extends Controller {
         }
 
         #添加页部分
+        $controller_ad = '';
+        $controller_adh = '';
         $templ_ad = '';
         if( in_array('1', $request['major_acts']) ){
             // $controller_add = $this->controller_add($request);
@@ -76,10 +78,19 @@ class RobotController extends Controller {
         }
 
         #编辑页部分
+        $controller_upd = '';
+        $controller_updh = '';
+        $templ_upd = '';
         if( in_array('2', $request['major_acts']) ){
             // $controller_upd = $this->controller_upd($request);
             // $controller_updh = $this->controller_updh($request);
             // $templ_upd = $this->templ_upd($request);
+        }
+
+        #编辑页部分
+        $controller_del = '';
+        if( in_array('4', $request['major_acts']) ){
+
         }
 
         #形成控制器文件
@@ -88,6 +99,11 @@ class RobotController extends Controller {
         $controller_templ = str_replace('{{$controller_name}}', ucfirst($request['controller_name']), $controller_templ);
         $controller_templ = str_replace('{{$controller_construct}}', $controller_construct, $controller_templ);
         $controller_templ = str_replace('{{$controller_index}}', $controller_index, $controller_templ);
+        $controller_templ = str_replace('{{$ad}}', $controller_ad, $controller_templ);
+        $controller_templ = str_replace('{{$adh}}', $controller_adh, $controller_templ);
+        $controller_templ = str_replace('{{$upd}}', $controller_upd, $controller_templ);
+        $controller_templ = str_replace('{{$updh}}', $controller_updh, $controller_templ);
+        $controller_templ = str_replace('{{$del}}', $controller_del, $controller_templ);
         
         // var_dump($controller_templ);
         // exit;
@@ -110,13 +126,13 @@ class RobotController extends Controller {
         }
 
         if( !empty($templ_index) ){
-
-            $templ_index_name = $templ_dir . '/index.tpl';
+            $templ_index_url_info = $this->handler_get_jump_url('列表页');
+            $templ_index_name = $templ_dir . '/'.$templ_index_url_info['index'].'.tpl';
             file_put_contents($templ_index_name, $templ_index);
         }
     }
 
-    protected function search_td($form_name, $form_type, $save_key_val){
+    protected function search_td($form_name, $form_type, $save_key_val, $ch_title=''){
 
         $td_html = '';
         $tmp_save_key_val_keys = array_keys($save_key_val);
@@ -137,6 +153,7 @@ class RobotController extends Controller {
         case 'select':
             if( in_array($form_name, $tmp_save_key_val_keys) ){
                 $td_html .= '<select class="combox" name="'.$form_name.'">' . PHP_EOL;
+                $td_html .= '<option value="">'.$ch_title.'</option>' . PHP_EOL;
                 foreach( $save_key_val[$form_name] as $k=>$v){
                     $td_html .= '<option value="'.$k.'" {if isset($search.'.$form_name.')&&$search.'.$form_name.'=="'.$k.'"}selected{/if}>'.$v.'</option>' . PHP_EOL;
                 }
@@ -152,6 +169,7 @@ class RobotController extends Controller {
         case 'radio':
             if( in_array($form_name, $tmp_save_key_val_keys) ){
                 $td_html .= '<select class="combox" name="'.$form_name.'">' . PHP_EOL;
+                $td_html .= '<option value="">'.$ch_title.'</option>' . PHP_EOL;
                 foreach( $save_key_val[$form_name] as $k=>$v){
                     $td_html .= '<option value="'.$k.'" {if $search.'.$form_name.'=="'.$k.'"}selected{/if}>'.$v.'</option>' . PHP_EOL;
                 }
@@ -215,6 +233,7 @@ class RobotController extends Controller {
             if( $v['ch_name']===$ch_name ){
             
                 $templ_form_action['url'] = '{$url.'.$v['index'].'.url}';
+                $templ_form_action['index'] = $v['index'];
                 $templ_form_action['descr_name'] = empty($v['descr_name'])?$v['ch_name']:$v['descr_name'];
                 $templ_form_action['navtab'] = $v['navtab'];
                 break;
@@ -246,9 +265,14 @@ class RobotController extends Controller {
             $templ_search_td = '';
             foreach( $request['list_search_ch_title'] as $k=>$ch_title){
             
-                $templ_search_td .= '<td>'.$ch_title.'：';
-                $templ_search_td .= $this->search_td($request['list_search_form_name'][$k], $request['list_search_form_type'][$k], $this->save_key_val);
+                if( $request['list_search_form_type'][$k]=='select'||$request['list_search_form_type'][$k]=='radio' ){
+                    $templ_search_td .= '<td>';
+                }else{
+                    $templ_search_td .= '<td>'.$ch_title.'：';
+                }
+                $templ_search_td .= $this->search_td($request['list_search_form_name'][$k], $request['list_search_form_type'][$k], $this->save_key_val, $ch_title);
                 $templ_search_td .= '</td>';
+                
             }
 
             $search_html = '
@@ -593,7 +617,8 @@ class RobotController extends Controller {
         */
 
         #渲染模板文件名
-        $display_template = $request['list_tpl_name'];
+        $templ_index_url_info = $this->handler_get_jump_url('列表页');
+        $display_template = strtolower($request['controller_name']) . '/'.$templ_index_url_info['index'].'.tpl';
         /*E
         最终形成：User/index.tpl
         */
@@ -744,7 +769,7 @@ class RobotController extends Controller {
         }
         if(!empty($init)){
             $init .= '
-            $this->JD($this->_init);
+            handler_init_special_fields($this->_init);
             ';
         }
         #处理并记录key_val数据，供之后处理过程使用
@@ -824,11 +849,11 @@ class RobotController extends Controller {
             $str_init_index_mustShow = '';
             if( !empty($init_index_mustShow) ){
 
-                $str_init_index_mustShow = "
-                    $this->_datas['mustShow'] = [
-                        ".implode(','.PHP_EOL, $init_index_mustShow)."
+                $str_init_index_mustShow = '
+                    $this->_datas[\'mustShow\'] = [
+                        '.implode(','.PHP_EOL, $init_index_mustShow).'
                     ];
-                ";
+                ';
             }
             /*
             最终形成：

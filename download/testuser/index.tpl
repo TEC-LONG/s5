@@ -4,7 +4,12 @@
     <div class="searchBar">
         <table class="searchContent">
             <tr>
-                <td>账号：<input type="text" name="acc" value="{if isset($search.acc)}{$search.acc}{/if}" /></td><td>用户昵称：<input type="text" name="nickname" value="{if isset($search.nickname)}{$search.nickname}{/if}" /></td>
+                <td>姓名：<input type="text" name="name" value="{if isset($search.name)}{$search.name}{/if}" /></td><td>年龄：<input type="text" name="age" value="{if isset($search.age)}{$search.age}{/if}" /></td><td>用户类型：<select class="combox" name="user_type">
+<option value="0" {if isset($search.user_type)&&$search.user_type=="0"}selected{/if}>普通用户</option>
+<option value="1" {if isset($search.user_type)&&$search.user_type=="1"}selected{/if}>普通管理员</option>
+<option value="2" {if isset($search.user_type)&&$search.user_type=="2"}selected{/if}>超级管理员</option>
+</select>
+</td>
             </tr>
         </table>
         <div class="subBar">
@@ -25,7 +30,14 @@
                 <tr>
                     <th width="30"><input type="checkbox" group="ids" class="checkboxCtrl"></th>
                     <th width="30">序号</th>
-            <th width="70">账号</th><th width="70">post_date</th><th width="70">id</th><th width="70">用户昵称</th><th width="70">手机号</th>
+            <th width="70">姓名</th>
+<th width="70">年龄</th>
+<th width="70">手机号</th>
+<th width="70">座机号</th>
+<th width="70">邮箱</th>
+<th width="70">用户类型</th>
+<th width="70">头像(25*25)</th>
+
                 </tr>
             </thead>
             
@@ -36,15 +48,19 @@
                 <td><input name="ids_{$navtab}[]" value="{$row.id}" type="checkbox"></td>
                 <td>{$rows_key+1}</td>
             
-                <td>{$row.acc}</td>
+                <td>{$row.name}</td>
                 
-                <td>{$row.post_date}</td>
-                
-                <td>{$row.id}</td>
-                
-                <td>{$row.nickname}</td>
+                <td>{$row.age}</td>
                 
                 <td>{$row.cell}</td>
+                
+                <td>{$row.phone}</td>
+                
+                <td>{$row.email}</td>
+                
+                <td>{$row.user_type}</td>
+                
+                <td>{$row.headimg}</td>
                 
             </tr>
             {/foreach}
@@ -56,9 +72,11 @@
             <input type="hidden" name="pageNum" value="1" />
             <input type="hidden" name="numPerPage" value="{$page.numPerPage}" />
             
-            <input type="hidden" name="acc" value="{$search.acc}" />
+            <input type="hidden" name="name" value="{$search.name}" />
             
-            <input type="hidden" name="nickname" value="{$search.nickname}" />
+            <input type="hidden" name="age" value="{$search.age}" />
+            
+            <input type="hidden" name="user_type" value="{$search.user_type}" />
             
         </form>
         <div class="panelBar">
