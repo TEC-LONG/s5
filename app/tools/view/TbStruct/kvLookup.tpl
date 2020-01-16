@@ -50,7 +50,7 @@ var f1 = function (select){
 			var div2 = document.createElement("div");
 			$(div2).addClass('node');
 			a.setAttribute('href', 'javascript:');
-			a.setAttribute('onclick', '$.bringBack({ldelim}en_name:"'+$(this).html()+'",ori_key_val:"'+$(this).val()+'"{rdelim})');
+			a.setAttribute('onclick', '$.bringBack({ldelim}"en_name[]":"'+$(this).html()+'","ori_key_val[]":"'+$(this).val()+'"{rdelim})');
 			a.innerText = $(this).html()+'：'+$(this).val();
 			div1.appendChild(div2);
 			div1.appendChild(a);

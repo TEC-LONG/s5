@@ -2,6 +2,13 @@
 <form method="post" action="{$url.adh}" class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
 	<div class="pageFormContent" layoutH="57">
 		<dl class="nowrap">
+			<dt>平台名称：</dt>
+			<dd>
+				{T_createSelectHtml($plats, 'plat', 1)}
+				<span class="info"></span>
+			</dd>
+		</dl>
+		<dl class="nowrap">
 			<dt>控制器名称：</dt>
 			<dd>
 				<input type="text" maxlength="20" name="controller_name" value="" class="required" />
@@ -73,7 +80,7 @@ $('input[name="controller_name"]').keyup(function(){
 		{* <table class="list nowrap field_list itemDetail" addButton="添加值对字段"width="100%"> *}
 		<table class="list nowrap field_list" width="100%">
 			<thead>
-				<tr>
+				<tr id="hder">
 					<th type="text" name="field_list_ch_name[]" size="24">中文名</th>
 					<th type="text" name="field_list_en_name[]" size="24">英文名</th>
 					<th type="enum" name="field_list_is_mustShow[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=1&name=field_list_is_mustShow" size="12">是否列表必显</th>
@@ -194,13 +201,13 @@ $('input[name="controller_name"]').keyup(function(){
 						</dd>
 					</dl>
 
-					<dl class="nowrap">
+					{* <dl class="nowrap">
 						<dt>模板文件名：</dt>
 						<dd>
 							<input type="text" name="list_tpl_name" value="index.tpl" style="width:75%" />
 							<span class="info">1)需要指定目录名;2)默认使用"控制器名/index.tpl"名称</span>
 						</dd>
-					</dl>
+					</dl> *}
 
 					<div class="divider"></div>
 
@@ -211,19 +218,23 @@ $('input[name="controller_name"]').keyup(function(){
 								<th type="text" name="list_url_mod[]" defaultVal="MOD" size="12">模块参数</th>
 								<th type="text" name="list_url_act[]" size="12">动作参数</th>
 								<th type="text" name="list_url_navtab[]" size="12" defaultVal="default">本条链接对应的navtab</th>
+								<th type="enum" name="list_url_name[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=5&name=list_url_name" size="12">链接名</th>
+								<th type="text" name="list_url_descr_name[]" size="12">链接描述名（用于跳转显示）</th>
 								<th type="del" width="60">操作</th>
 							</tr>
 						</thead>
 						<tbody>
-							{for $i=0 to 3}
+							{foreach $list_url_acts_default as $k=>$v}
 							<tr class="unitBox">
 								<td><input type="text" name="list_url_plat[]" value="PLAT" size="12"></td>
 								<td><input type="text" name="list_url_mod[]" value="MOD" size="12"></td>
-								<td><input type="text" name="list_url_act[]" value="{$list_url_acts[$i]}" size="12"></td>
+								<td><input type="text" name="list_url_act[]" value="{$k}" size="12"></td>
 								<td><input type="text" name="list_url_navtab[]" value="default" size="12"></td>
+								<td>{T_createSelectHtml($list_url_acts, 'list_url_name[]', 1, {$v})}</td>
+								<td><input type="text" name="list_url_descr_name[]" value="{$v}" size="12"></td>
 								<td><a href="javascript:void(0)" class="btnDel ">删除</a></td>
 							</tr>
-							{/for}
+							{/foreach}
 						</tbody>
 					</table>
 
@@ -267,6 +278,9 @@ $('input[name="controller_name"]').keyup(function(){
 						<thead>
 							<tr>
 								<th type="text" name="list_search_name[]" size="12">字段英文名</th>
+								<th type="text" name="list_search_ch_title[]" size="12">表单搜索模块中文标题</th>
+								<th type="text" name="list_search_form_name[]" size="12">表单name值（通常与英文名相同）</th>
+								<th type="enum" name="list_search_form_type[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=4&name=list_search_form_type" size="12">表单类型</th>
 								<th type="enum" name="list_search_rule[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=2&name=list_search_rule" size="12">条件拼接规则</th>
 								<th type="del" width="60">操作</th>
 							</tr>
@@ -274,6 +288,9 @@ $('input[name="controller_name"]').keyup(function(){
 						<tbody>
 							<tr class="unitBox">
 								<td><input type="text" name="list_search_name[]" value="" size="12" maxlength="30"></td>
+								<td><input type="text" name="list_search_ch_title[]" value="" size="12" maxlength="30"></td>
+								<td><input type="text" name="list_search_form_name[]" value="" size="12" maxlength="30"></td>
+								<td>{T_createSelectHtml($list_search_form_type, 'list_search_form_type[]', 2)}</td>
 								<td>{T_createSelectHtml($list_search_rule, 'list_search_rule[]', 2)}</td>
 								<td><a href="javascript:void(0)" class="btnDel ">删除</a></td>
 							</tr>
@@ -282,13 +299,13 @@ $('input[name="controller_name"]').keyup(function(){
 				</div>
 				{elseif $major_acts_val==='添加页'}
 				<div class="Robot_major_acts_info_{$major_acts_k}">
-					<dl class="nowrap">
+					{* <dl class="nowrap">
 						<dt>模板文件名：</dt>
 						<dd>
 							<input type="text" name="add_tpl_name" value="" style="width:75%" />
 							<span class="info">不填写则表示使用默认的"控制器名/ad.tpl"名称</span>
 						</dd>
-					</dl>
+					</dl> *}
 
 					<div class="divider"></div>
 
@@ -461,6 +478,8 @@ var robot_field_list = function (){
 	$('.field_list').find('tbody').append(tr_html);
 	$('select[name="field_list_is_mustShow[]"]').bind('change', field_list_is_mustShow);
 	$('select[name="field_list_is_search[]"]').bind('change', field_list_is_search);
+
+	doChangeColorOfRow(".field_list tr:even:not(.hder)", ".field_list tr:odd:not(.hder)");//生成表内容后调整表内行交替颜色
 };
 
 //设置搜索字段
@@ -468,6 +487,7 @@ var field_list_is_search = function(){
 
 	//当前选中行的数据
 	var en_name = $(this).parents('tr').find('input[name="field_list_en_name[]"]').val();
+	var ch_name = $(this).parents('tr').find('input[name="field_list_ch_name[]"]').val();
 
 	//清掉没有内容的tr
 	$('.add_list_search').find('tbody tr').each(function(i){
@@ -498,7 +518,9 @@ var field_list_is_search = function(){
 			$('.add_list_search').prev().prev().find('button').click();
 
 			//给新增的tr填充数据
-			$('.add_list_search').find('tbody tr').last().find('input[name="list_search_name[]"]').val(en_name);
+			$('.add_list_search').find('tbody tr').last().find('input[name="list_search_name[]"]').val(en_name);//字段英文名
+			$('.add_list_search').find('tbody tr').last().find('input[name="list_search_ch_title[]"]').val(ch_name);//表单搜索模块中文标题
+			$('.add_list_search').find('tbody tr').last().find('input[name="list_search_form_name[]"]').val(en_name);//表单name值（通常与英文名相同）
 		}
 		
 

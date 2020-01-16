@@ -141,6 +141,36 @@ function T(&$target){
     }
 }
 
+function handler_init_special_fields(&$init){
+    
+        /*
+        $init = [
+            'level'=>'0:大栏目级|1:小栏目级|2:选项卡级',
+            'type'=>'0:否|1:是'
+        ]
+        */
+        foreach( $init as $k=>$v){
+
+            $tmp_arr_1 = explode('|', trim($v));
+            
+            /*
+            $tmp_arr_1 = ['0:大栏目级', '1:小栏目级', '2:选项卡级']
+            */
+            foreach( $tmp_arr_1 as $k1=>$v1){
+
+                $tmp_arr_2 = explode(':', trim($v));// $tmp_arr_2=['0', '大栏目级']
+                $init[$k][$tmp_arr_2[0]] = $tmp_arr_2[1];
+            }
+        }
+        /*
+        最终形成：
+        $init = [
+            'level'=>[0=>'大栏目级', 1=>'小栏目级', 2=>'选项卡级'],
+            'type'=>[0=>'否', 1=>'是']
+        ]
+        */
+    }
+
 /**
  *  过滤检查是否为空函数
  * @param   $target   mixed    需要检查的目标，可以是数组，也可以是单值，例：$target=$_POST;

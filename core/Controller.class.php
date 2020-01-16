@@ -72,7 +72,7 @@ class Controller extends \Smarty{
         $page['numPerPageList'] = [20, 30, 40, 60, 80, 100, 120, 160, 200];
         $page['pageNum'] = $pageNum = isset($_POST['pageNum']) ? intval($_POST['pageNum']) : (isset($_COOKIE['pageNum']) ? intval($_COOKIE['pageNum']) : 1);
         setcookie('pageNum', $pageNum);
-        $page['numPerPage'] = $numPerPage = isset($_POST['numPerPage']) ? intval($_POST['numPerPage']) : 30;
+        $page['numPerPage'] = $numPerPage = isset($_POST['numPerPage']) ? intval($_POST['numPerPage']) : 32;
         $page['totalNum'] = $totalNum = M()->GN($tb, $condition, $type);
         $page['totalPageNum'] = intval(ceil(($totalNum/$numPerPage)));
         $page['limitM'] = ($pageNum-1)*$numPerPage;
@@ -83,7 +83,8 @@ class Controller extends \Smarty{
     protected function _condition_string($request, $form_elems, $con_arr){
 
         $con_search = $this->_condition($request, $form_elems);//将查询的数据进行整理
-        $con_arr = array_merge($con_arr, $con_search);//将非查询的数据与查询的数据进行合并，形成完整的条件数组数据
+        $con_default = $this->_condition($con_arr, [], 2);//将查询的数据进行整理
+        $con_arr = array_merge($con_default, $con_search);//将非查询的数据与查询的数据进行合并，形成完整的条件数组数据
         
         $con = [];
         foreach( $con_arr as $field=>$val){
@@ -96,36 +97,58 @@ class Controller extends \Smarty{
         return $con;
     }
 
-    protected function _condition($request, $form_elems){
+    /**
+     * 方法名:_condition
+     * 方法作用:处理条件初稿，得到可使用的条件数组集合
+     * 参数：
+     * $request
+     * $form_elems
+     * $type    处理方式，1=处理带限制规则的条件，当$type为1时，只需要传递第一个参数；2=处理不带限制规则的条件
+     * return: array
+     */
+    protected function _condition($request, $form_elems=[], $type=1){
     
         $con = [];
-        foreach( $form_elems as $elem){
+        if( $type==1 ){
 
-            if(!isset($request[$elem[0]])||$request[$elem[0]]==='') continue;
-            
-            if( isset($elem[1]) ){//y有特殊处理标记
+            foreach( $form_elems as $elem){
 
-                if( $elem[1]==='mul' ){//数组
-                    
-                    $str_arr = [];
-                    //        [1, 3, 4]
-                    foreach( $request[$elem[0]] as $val){
+                if(!isset($request[$elem[0]])||$request[$elem[0]]==='') continue;
+                
+                if( isset($elem[1]) ){//y有特殊处理标记
 
-                        $str_arr[] = $val;
+                    if( $elem[1]==='mul' ){//数组
+                        
+                        $str_arr = [];
+                        //        [1, 3, 4]
+                        foreach( $request[$elem[0]] as $val){
+
+                            $str_arr[] = $val;
+                        }
+                        //                             1|3|4
+                        $con[$elem[0]] = ' REGEXP "' . implode('|', $str_arr) . '"';
+                    }elseif( $elem[1]==='like' ){//模糊匹配
+
+                        $con[$elem[0]] = ' like "%' . $request[$elem[0]] . '%"';
                     }
-                    //                             1|3|4
-                    $con[$elem[0]] = ' REGEXP "' . implode('|', $str_arr) . '"';
-                }elseif( $elem[1]==='like' ){//模糊匹配
+                
+                }else{//普通
 
-                    $con[$elem[0]] = ' like "%' . $request[$elem[0]] . '%"';
+                    //     'name'                     'name'
+                    $con[$elem[0]] = '="' . $request[$elem[0]] . '"';
                 }
+            }
+        }elseif ($type==2) {
             
-            }else{//普通
-
-                //     'name'                     'name'
-                $con[$elem[0]] = '="' . $request[$elem[0]] . '"';
+            foreach( $request as $k=>$v){
+                if(strpos($v, '=')){
+                    $con[$k] = '"' . $v . '"';
+                }else{
+                    $con[$k] = '="' . $v . '"';
+                }
             }
         }
+        
         return $con;
     }
 

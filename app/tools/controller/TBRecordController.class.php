@@ -717,7 +717,7 @@ WHERE id IN (1,2,3)
                     if(!isset($data['has_special_field'])) $data['has_special_field'] = 1;
                 }
             }
-
+            // var_dump($tmp_relate_fields);
             if(!empty($tmp_relate_fields)){
 
                 $tmp_fields = implode(',', array_keys($tmp_relate_fields[0]));
