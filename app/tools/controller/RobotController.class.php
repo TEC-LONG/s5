@@ -40,7 +40,8 @@ class RobotController extends Controller {
 
                 $this->_datas['list_search_rule'] = ['like', 'equal', 'mul'];
                 $this->_datas['list_search_form_type'] = ['text-normal'=>'text-normal', 'text-numb'=>'text-numb', 'text-phone'=>'text-phone', 'text-pwd'=>'text-pwd', 'text-email'=>'text-email', 'select'=>'select', 'radio'=>'radio', 'checkbox'=>'checkbox'];
-                $this->_datas['field_list_form_type'] = ['text-normal', 'text-numb', 'text-phone', 'text-pwd', 'text-email', 'select', 'radio', 'checkbox', 'file', 'txt-area'];
+
+                // $this->_datas['field_list_form_type'] = ['text-normal', 'text-numb', 'text-phone', 'text-pwd', 'text-email', 'select', 'radio', 'checkbox', 'file', 'txt-area'];
             break;
         }
     }
@@ -73,7 +74,7 @@ class RobotController extends Controller {
         $controller_adh = '';
         $templ_ad = '';
         if( in_array('1', $request['major_acts']) ){
-            $controller_add = $this->controller_add($request);
+            $controller_ad = $this->controller_ad($request);
             // $controller_adh = $this->controller_adh($request);
             // $templ_add = $this->templ_add($request);
         }
@@ -135,8 +136,31 @@ class RobotController extends Controller {
         }
     }
 
-    protected function controller_add($request){
+    protected function controller_ad($request){
     
+        $templ_ad_url_info = $this->handler_get_jump_url('添加页');
+        $display_template = strtolower($request['controller_name']) . '/'.$templ_ad_url_info['index'].'.tpl';
+
+        $templ = '
+        public function '.$templ_ad_url_info['index'].'(){ 
+
+            $this->assign($this->_datas);
+
+            $this->display(\''.$display_template.'\');
+        }
+        ';
+
+        return $templ;
+
+        /*E
+        最终形成：
+        public function ad(){ 
+
+            $this->assign($this->_datas);
+
+            $this->display('Chifan/ad.tpl');
+        }
+        */
     }
 
     protected function search_td($form_name, $form_type, $save_key_val, $ch_title=''){
@@ -632,7 +656,7 @@ class RobotController extends Controller {
     
         #列表页方法模板合成
         $templ = '
-        public function index(){ 
+        public function '.$templ_index_url_info['index'].'(){ 
 
             $request = $_REQUEST;
     
@@ -899,7 +923,7 @@ class RobotController extends Controller {
 
         //init_ad
         #将前面功能使用后记录下的，但本次功能却不需要用到的数据清空，避免前面产生的数据对本次功能产生影响
-        $this->handler_save_url = [];
+        // $this->handler_save_url = [];
 
         $init_ad = '';
         if( in_array('1', $request['major_acts']) ){//1表示添加页
@@ -915,41 +939,110 @@ class RobotController extends Controller {
                 ';
             }
         }
+        /*E
+        最终形成：
+        if(ACT=='ad'){
+            $this->_datas['url'] = [
+                'adh' => L(PLAT, MOD, 'adh')
+            ];
+        }
+        */
 
         //init_adh
         $init_adh = '';
         if( in_array('1', $request['major_acts']) ){//1表示添加页
         
+            $tmp_elem = [];
+            foreach( $request['ad_form_elem_name'] as $k=>$v){
+            
+                $tmp_elem[$k] = "'" . $v . "'=>['ch'=>'".$request['ad_form_elem_ch_title'][$k]."'";
+                #rule
+                if( !empty($request['ad_form_elem_rule'][$k]) ){
 
+                    $tmp_elem[$k] .= ", 'rule'=>'".$request['ad_form_elem_rule'][$k]."'";
+                }
+                #rule msg
+                $tmp_arr_rule_msg = [];
+                // required:xxx必须填写！||mul-int|>|<:xx值必须在0到9之间
+                if( !empty($request['ad_form_elem_rule_msg'][$k]) ){
+                
+                    ##是否有||
+                    $tmp_is_multi_rule = 0;
+                    if(strpos($request['ad_form_elem_rule_msg'][$k], '||')){
+                        $tmp_is_multi_rule = 1;
+                    }
+
+                    if( $tmp_is_multi_rule ){//多规则
+                    
+                        // ['required:xxx必须填写！', 'mul-int|>|<:xx值必须在0到9之间']
+                        $tmp_arr = explode('||', $request['ad_form_elem_rule_msg'][$k]);
+
+                        foreach( $tmp_arr as $k1=>$v1){
+                            
+                            $tmp_arr_msg = explode(':', $v1);
+                            $tmp_arr_rule_msg[] = "'".$tmp_arr_msg[0]."'=>'".$tmp_arr_msg[1]."'";//最终得到：//'required'=> 'xxx必须填写！'
+                        }
+                        
+
+                    }else{//单规则
+
+                        $tmp_arr_msg = explode(':', $v1);
+                        $tmp_arr_rule_msg[] = "'".$tmp_arr_msg[0]."'=>'".$tmp_arr_msg[1]."'";//最终得到：//'required'=> 'xxx必须填写！'
+                    }
+                }
+
+                if( !empty($tmp_arr_rule_msg) ){
+
+                    $tmp_elem[$k] .= ", 'msg'=>[" . implode(','.PHP_EOL, $tmp_arr_rule_msg) . "]" . PHP_EOL;
+                }
+
+                $tmp_elem[$k] .= "]";
+            }
+
+            if(!empty($tmp_elem)){
+
+                $init_adh .= '
+                if(ACT==\'adh\'){
+                    $this->_extra[\'form-elems\'] = [
+                    '.implode(','.PHP_EOL, $tmp_elem).'
+                    ];
+                }
+                ';
+            }
         }
 
-        /*
-        case 'ad':
-            $this->_datas['url'] = [
-                'adh' => L(PLAT, MOD, 'adh')
-            ];
-        break;
-        case 'adh':
-        case 'updh':
-            //rule:  required  int  int:min0:max10   int:min0  int:max10   int:regex@xxx  mul-int  mul-int:min0:max10  mul-int:max10  mul-int:min0  mul-mixd   mul-mixd:regex@xxx   regex@xxx
+        /*E
+        最终形成：
+        if(ACT=='adh'){
             $this->_extra['form-elems'] = [
                 'cai' => ['ch'=>'菜品', 'rule'=>'required'], 
-                'food_types' => ['ch'=>'食物类型', 'rule'=>'required|mul-int:min0:max9', 'msg'=>[
+                'food_types' => ['ch'=>'食物类型', 'rule'=>'required||mul-int|>:0|<:9', 'msg'=>[
                     'required'=> 'xxx必须填写！',
                     'mul-int'=> 'xxx所有值必须为数字！',
-                    // 'mul-int-min'=> 'xxx所有的值都不能小于0！',//单纯只有min规则时
-                    // 'mul-int-max'=> 'xxx所有的值都不能大于9！',//单纯只有max规则时
-                    'mul-int-min-max'=> 'xxx所有的值都需要在0~9之间！',//min和max同时存在时
+                    // 'mul-int|>'=> 'xxx所有的值都不能小于0！',//单纯只有min规则时
+                    // 'mul-int|<'=> 'xxx所有的值都不能大于9！',//单纯只有max规则时
+                    'mul-int|>|<'=> 'xxx所有的值都需要在0~9之间！',//min和max同时存在时
                 ]], 
-                'types' => ['ch'=>'适用场景', 'rule'=>'required|mul'],
-                'taste' => ['ch'=>'口味', 'rule'=>'mul'], 
-                'mouthfeel' => ['ch'=>'口感', 'rule'=>'mul'],
-                'effects' => ['ch'=>'功效', 'rule'=>'mul'],
-                'effects_comm' => ['ch'=>'功效描述'],
-                'descr' => ['ch'=>'描述'],
-                'byeffect' => ['ch'=>'副作用']
+                'types' => ['ch'=>'适用场景', 'rule'=>'required||int|>=:0'],
+                'taste' => ['ch'=>'口味'], 
+                'mouthfeel' => ['ch'=>'口感']
             ];
-        break;
+        }
+
+
+        单独规则：required  email  cell  phone
+        主：int  mul-int  regex
+        副：>:0  >=:0  <:10  <=:10  =:6  @:正则规则
+
+        互斥项：int与mul-int互斥
+
+        使用方法：
+        1) 多重规则使用"||"连接，主副规则使用"|"连接，如： required||int|>:0|<=:10||regex|@:\d
+        2) 单独规则与主规则除了regex外，均可独立使用，regex必须配合副规则同时使用；
+
+
+        //rule:  required  int  int:min0:max10   int:min0  int:max10   int:regex@xxx  mul-int  mul-int:min0:max10  mul-int:max10  mul-int:min0  mul-mixd   mul-mixd:regex@xxx   regex@xxx
+        rule:  required  int  int|min:0  int|max:10  int|min:0|max:10  mul-int  mul-int|min:0  mul-int|max:10  mul-int|min:0|max:10  maxlength:10  regex@xxxx   
         */
 
         //init_upd
@@ -996,11 +1089,12 @@ class RobotController extends Controller {
             $tmp_plat = ($plat==='PLAT') ? $plat : '\''.$plat.'\'';//不等于PLAT则需要加上引号
             $tmp_mod = ($url_mod[$k]==='MOD') ? $url_mod[$k] : '\''.$url_mod[$k].'\'';//不等于MOD则需要加上引号
             $tmp_act = '\''.$url_act[$k].'\'';
-
+            
             #额外记录下链接相关信息，供之后的处理功能使用
-            $this->handler_save_url[$k]['ch_name'] = $url_name[$k];
-            $this->handler_save_url[$k]['descr_name'] = $url_descr_name[$k];
-            $this->handler_save_url[$k]['index'] = $url_act[$k];
+            $tmp_handler_save_url_key = count($this->handler_save_url)+1;
+            $this->handler_save_url[$tmp_handler_save_url_key]['ch_name'] = $url_name[$k];
+            $this->handler_save_url[$tmp_handler_save_url_key]['descr_name'] = $url_descr_name[$k];
+            $this->handler_save_url[$tmp_handler_save_url_key]['index'] = $url_act[$k];
 
             if( !empty($url_navtab[$k]) ){//跳转链接项若是填写了navtab则需要额外包含navtab
                 
@@ -1008,12 +1102,12 @@ class RobotController extends Controller {
 
                     $init_ad_url[] = $tmp_act.' => [\'url\'=>L('.$tmp_plat.', '.$tmp_mod.', '.$tmp_act.'), \'rel\'=>\''.$navtab_main.'_'.$url_act[$k].'\']';
 
-                    $this->handler_save_url[$k]['navtab'] = $navtab_main.'_'.$url_act[$k];
+                    $this->handler_save_url[$tmp_handler_save_url_key]['navtab'] = $navtab_main.'_'.$url_act[$k];
                 }else {//非default则直接使用
 
                     $init_ad_url[] = $tmp_act.' => [\'url\'=>L('.$tmp_plat.', '.$tmp_mod.', '.$tmp_act.'), \'rel\'=>\''.$url_navtab[$k].'\']';
 
-                    $this->handler_save_url[$k]['navtab'] = $url_navtab[$k];
+                    $this->handler_save_url[$tmp_handler_save_url_key]['navtab'] = $url_navtab[$k];
                 }
                 
             }else{
@@ -1078,7 +1172,7 @@ class RobotController extends Controller {
                             
         }elseif ( $request['type']==3 ) {
             
-            $enumHtml = T_createSelectHtml($this->_datas['field_list_form_type'], $request['name'].'[]', 2);
+            // $enumHtml = T_createSelectHtml($this->_datas['field_list_form_type'], $request['name'].'[]', 2);
         }elseif ( $request['type']==4 ) {
             
             $enumHtml = T_createSelectHtml($this->_datas['list_search_form_type'], $request['name'].'[]', 2);

@@ -1,23 +1,32 @@
 <?php
 namespace tools\controller;
 use \core\controller;
-
+use \Overtrue\Pinyin\Pinyin;
 class TestController extends Controller {
 
     public function t(){
     
         // 小内存型
         $pinyin = M('\Overtrue\Pinyin\Pinyin'); // 默认
+        // $pinyin1 = new Pinyin();
+        // var_dump($pinyin1);
         var_dump($pinyin);
         // 内存型
         // $pinyin = new Pinyin('Overtrue\Pinyin\MemoryFileDictLoader');
         // I/O型
         // $pinyin = new Pinyin('Overtrue\Pinyin\GeneratorFileDictLoader');
 
-        // $pinyin->convert('带着希望去旅行，比到达终点更美好');
+        $re = $pinyin->convert('带着希望去旅行，比到达终点更美好');
+        echo '<pre>';
+        
+        var_dump($re);
+        echo '<pre>';
         // ["dai", "zhe", "xi", "wang", "qu", "lyu", "xing", "bi", "dao", "da", "zhong", "dian", "geng", "mei", "hao"]
 
-        // $pinyin->convert('带着希望去旅行，比到达终点更美好', PINYIN_TONE);
+        $re = $pinyin->convert('带着希望去旅行，比到达终点更美好', PINYIN_TONE);
+        echo '<pre>';
+        var_dump($re);
+        echo '<pre>';
         // ["dài","zhe","xī","wàng","qù","lǚ","xíng","bǐ","dào","dá","zhōng","diǎn","gèng","měi","hǎo"]
 
         // $pinyin->convert('带着希望去旅行，比到达终点更美好', PINYIN_ASCII_TONE);

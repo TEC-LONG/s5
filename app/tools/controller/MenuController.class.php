@@ -22,10 +22,6 @@ class MenuController extends Controller {
         
     
             
-                $this->_init['level'] = '0:大栏目级|1:小栏目级|2:选项卡级';
-                
-            handler_init_special_fields($this->_init);
-            
             
             
                 if(ACT=='index'){
@@ -38,16 +34,31 @@ class MenuController extends Controller {
                     ];
                 
                     
-                    $this->_datas['mustShow'] = [
-                        'id'=>['ch'=>'ID', 'width'=>70],
-'post_date'=>['ch'=>'添加数据时间', 'width'=>70],
-'name'=>['ch'=>'栏目名称', 'width'=>70],
-'level'=>['ch'=>'层级', 'width'=>70]
-                    ];
-                
                 }
                 
             
+                if(ACT=='ad'){
+                    
+                $this->_datas['url'] = [
+                    'adh' => ['url'=>L(PLAT, MOD, 'adh'), 'rel'=>'Menu_adh']
+                ];
+            
+                }
+                
+            
+                if(ACT=='adh'){
+                    $this->_extra['form-elems'] = [
+                    'name'=>['ch'=>'栏目名称', 'rule'=>'required'],
+'parent_id'=>['ch'=>'父级id', 'rule'=>'required||mul-int|>:0|<:9', 'msg'=>['required'=>'xxx必须填写！',
+'mul-int|>|<'=>'xx值必须在0到9之间']
+],
+'plat'=>['ch'=>'平台', 'rule'=>'regex|@:\d', 'msg'=>['mul-int|>|<'=>'xx值必须在0到9之间']
+],
+'module'=>['ch'=>'模块'],
+'act'=>['ch'=>'动作']
+                    ];
+                }
+                
             
             
     
@@ -65,10 +76,7 @@ class MenuController extends Controller {
 
             //查询字段
             $form_elems = [
-                ['id', 'equal'],
-['post_date', 'equal'],
-['name', 'like'],
-['level', 'equal']
+                ['', 'like']
             ];
             
             //将条件数组数据转换为条件字符串
@@ -105,6 +113,13 @@ class MenuController extends Controller {
         
 
     
+        public function ad(){ 
+
+            $this->assign($this->_datas);
+
+            $this->display('menu/ad.tpl');
+        }
+        
 
     
 
