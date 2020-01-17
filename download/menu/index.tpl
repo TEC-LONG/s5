@@ -4,7 +4,8 @@
     <div class="searchBar">
         <table class="searchContent">
             <tr>
-                <td>栏目名称：<input type="text" name="name" value="{if isset($search.name)}{$search.name}{/if}" /></td><td>层级：<select class="combox" name="level">
+                <td>添加数据时间：<input type="text" name="post_date" value="{if isset($search.post_date)}{$search.post_date}{/if}" /></td><td>栏目名称：<input type="text" name="name" value="{if isset($search.name)}{$search.name}{/if}" /></td><td><select class="combox" name="level">
+<option value="">层级</option>
 <option value="0" {if isset($search.level)&&$search.level=="0"}selected{/if}>大栏目级</option>
 <option value="1" {if isset($search.level)&&$search.level=="1"}selected{/if}>小栏目级</option>
 <option value="2" {if isset($search.level)&&$search.level=="2"}selected{/if}>选项卡级</option>
@@ -24,6 +25,15 @@
 </div>
             <div class="pageContent">
 
+            <div class="panelBar">
+                <ul class="toolBar">
+                    <li><a class="add" href="{$url.ad.url}" target="navTab" rel="Menu_ad"><span>添加菜单栏目</span></a></li>
+<li><a class="delete" href="{$url.del.url}&id={ldelim}sid_{$navTab}}" target="ajaxTodo" title="确定要删除吗?"><span>删除</span></a></li>
+<li><a class="edit" href="{$url.upd.url}&id={ldelim}sid_{$navTab}}" target="navTab"  rel="Menu_upd"><span>编辑菜单栏目</span></a></li>
+
+                </ul>
+            </div>
+            
             <table class="table" width="100%" layoutH="138">
                 
             <thead>
@@ -32,6 +42,7 @@
                     <th width="30">序号</th>
             <th width="70">添加数据时间</th>
 <th width="70">栏目名称</th>
+<th width="70">ID</th>
 <th width="70">层级</th>
 
                 </tr>
@@ -48,6 +59,8 @@
                 
                 <td>{$row.name}</td>
                 
+                <td>{$row.id}</td>
+                
                 <td>{$row.level}</td>
                 
             </tr>
@@ -59,6 +72,8 @@
         <form id="pagerForm" method="post" action="{$url.index.url}">
             <input type="hidden" name="pageNum" value="1" />
             <input type="hidden" name="numPerPage" value="{$page.numPerPage}" />
+            
+            <input type="hidden" name="post_date" value="{$search.post_date}" />
             
             <input type="hidden" name="name" value="{$search.name}" />
             

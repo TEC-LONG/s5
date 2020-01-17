@@ -36,6 +36,7 @@ $('input[name="controller_name"]').keyup(function(){
 				{foreach $major_acts as $key=>$val}
 				<input type="checkbox" name="major_acts[]" value="{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
 				{/foreach}
+				<span class="info">勾选的生成页面与列表页中的部分按钮有直接关系，比如勾选了“添加页”，在列表页中才有“添加XXX”的按钮，否则没有该按钮</span>
 			</dd>
 		</dl>
 		
@@ -309,22 +310,55 @@ $('input[name="controller_name"]').keyup(function(){
 
 					<div class="divider"></div>
 
-					<table class="list nowrap itemDetail" addButton="初始化添加页所需的跳转链接" width="100%">
+					<table class="list nowrap itemDetail" addButton="添加页所需的链接" width="100%">
 						<thead>
 							<tr>
-								<th type="text" name="add_url_plat[]" defaultVal="PLAT" size="12">平台参数</th>
-								<th type="text" name="add_url_mod[]" defaultVal="MOD" size="12">模块参数</th>
-								<th type="text" name="add_url_act[]" size="12">动作参数</th>
-								<th type="text" name="add_url_navtab[]" size="12">本条链接对应的navtab</th>
+								<th type="text" name="ad_url_plat[]" defaultVal="PLAT" size="12">平台参数</th>
+								<th type="text" name="ad_url_mod[]" defaultVal="MOD" size="12">模块参数</th>
+								<th type="text" name="ad_url_act[]" size="12">动作参数</th>
+								<th type="text" name="ad_url_navtab[]" size="12" defaultVal="default">本条链接对应的navtab</th>
+								<th type="enum" name="ad_url_name[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=5&name=list_url_name" size="12">链接名</th>
+								<th type="text" name="ad_url_descr_name[]" size="12">链接描述名（用于跳转显示）</th>
+								<th type="del" width="60">操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							{foreach $ad_url_acts_default as $k=>$v}
+							<tr class="unitBox">
+								<td><input type="text" name="ad_url_plat[]" value="PLAT" size="12"></td>
+								<td><input type="text" name="ad_url_mod[]" value="MOD" size="12"></td>
+								<td><input type="text" name="ad_url_act[]" value="{$k}" size="12"></td>
+								<td><input type="text" name="ad_url_navtab[]" value="default" size="12"></td>
+								<td>{T_createSelectHtml($list_url_acts, 'ad_url_name[]', 1, {$v})}</td>
+								<td><input type="text" name="ad_url_descr_name[]" value="{$v}" size="12"></td>
+								<td><a href="javascript:void(0)" class="btnDel ">删除</a></td>
+							</tr>
+							{/foreach}
+						</tbody>
+					</table>
+
+					<div class="divider"></div>
+
+					<table class="list nowrap itemDetail add_list_search" addButton="增加新增页表单元素" width="100%">
+						<thead>
+							<tr>
+								<th type="text" name="ad_form_elem_name[]" size="12">字段英文名</th>
+								<th type="text" name="ad_form_elem_name_ch_title[]" size="12">表单元素中文标题</th>
+								<th type="text" name="ad_form_elem_name_form_name[]" size="12">表单name值（通常与英文名相同）</th>
+								<th type="enum" name="ad_form_elem_name_form_type[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=4&name=list_search_form_type" size="12">表单类型</th>
+								<th type="text" name="ad_form_elem_name_rule[]" size="70">字段数据过滤规则</th>
+								<th type="text" name="ad_form_elem_name_rule_msg[]" size="70">过滤规则对应的提示信息</th>
 								<th type="del" width="60">操作</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr class="unitBox">
-								<td><input type="text" name="add_url_plat[]" value="PLAT" size="12"></td>
-								<td><input type="text" name="add_url_mod[]" value="MOD" size="12"></td>
-								<td><input type="text" name="add_url_act[]" value="adh" size="12"></td>
-								<td><input type="text" name="add_url_navtab[]" value="" size="12"></td>
+								<td><input type="text" name="list_search_name[]" value="" size="12" maxlength="30"></td>
+								<td><input type="text" name="list_search_ch_title[]" value="" size="12" maxlength="30"></td>
+								<td><input type="text" name="list_search_form_name[]" value="" size="12" maxlength="30"></td>
+								<td>{T_createSelectHtml($list_search_form_type, 'list_search_form_type[]', 2)}</td>
+								<td><input type="text" name="ad_form_elem_name_rule[]" value="" size="70"></td>
+								<td><input type="text" name="ad_form_elem_name_rule_msg[]" value="" size="70"></td>
 								<td><a href="javascript:void(0)" class="btnDel ">删除</a></td>
 							</tr>
 						</tbody>
@@ -386,7 +420,7 @@ var Robot_init = function (){
 
 	$('.Robot_major_acts').find('input').each(function(i){
 
-		if(i==0){ //列表页 按钮选中；同时相关的tab要显示
+		if(i==0||i==1||i==2||i==4){ //列表页,添加页,编辑页,删除功能 按钮选中；同时相关的tab要显示
 			$($('.Robot_major_acts').find('input')[i]).prop("checked",true);
 			$('.Robot_major_acts_tab_'+i).show();
 			$('.Robot_major_acts_info_'+i).show();

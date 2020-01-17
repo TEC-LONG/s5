@@ -130,6 +130,9 @@ class Controller extends \Smarty{
                     }elseif( $elem[1]==='like' ){//模糊匹配
 
                         $con[$elem[0]] = ' like "%' . $request[$elem[0]] . '%"';
+                    }elseif ( $elem[1]==='equal' ) {
+                        
+                        $con[$elem[0]] = '="' . $request[$elem[0]] . '"';
                     }
                 
                 }else{//普通
