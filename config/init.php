@@ -26,6 +26,9 @@ if( $plat=='tools' ){
 include CORE_PATH . 'App.class.php';
 spl_autoload_register('\\core\\App::autoload');//注册自动加载静态成员方法
 
+//引入composer自动加载文件
+include VENDOR_PATH . 'autoload.php';
+
 //引入SMARTY核心类文件
 include SMARTY_DIR . 'Smarty.class.php';//       mvc/plugins/smarty/Smarty.class.php
 

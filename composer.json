@@ -1,1 +1,6 @@
-﻿http://s5.home.com/index.php?p=admin&m=Index&a=index
+{
+    
+    "require": {
+        "overtrue/pinyin": "~4.0"
+    }
+}
