@@ -9,6 +9,7 @@ define('CORE_PATH', ROOT . '/core/');
 define('PLUGINS_PATH', ROOT . '/plugins/');
 define('CONFIG_PATH', ROOT . '/config/');
 define('PUBLIC_PATH', ROOT . '/public/');
+define('VENDOR_PATH', ROOT . '/vendor/');
 define('DOWNLOAD_PATH', ROOT . '/download/');
 
 define('SMARTY_DIR', PLUGINS_PATH.'smarty/');//定义SMARTY目录常量

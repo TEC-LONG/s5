@@ -36,6 +36,7 @@ $('input[name="controller_name"]').keyup(function(){
 				{foreach $major_acts as $key=>$val}
 				<input type="checkbox" name="major_acts[]" value="{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
 				{/foreach}
+				<span class="info">勾选的生成页面与列表页中的部分按钮有直接关系，比如勾选了“添加页”，在列表页中才有“添加XXX”的按钮，否则没有该按钮</span>
 			</dd>
 		</dl>
 		
@@ -87,7 +88,7 @@ $('input[name="controller_name"]').keyup(function(){
 					<th type="enum" name="field_list_is_search[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=1&name=field_list_is_search" size="12">是否为搜索条件</th>
 					<th type="enum" name="field_list_is_add[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=1&name=field_list_is_add" size="12">是否可添加</th>
 					<th type="enum" name="field_list_is_upd[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=1&name=field_list_is_upd" size="12">是否可编辑</th>
-					<th type="enum" name="field_list_form_type[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=3&name=field_list_form_type" size="12" type="text" name="field_list_form_type[]" size="12">表单类型</th>
+					<!-- <th type="enum" name="field_list_form_type[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=3&name=field_list_form_type" size="12" type="text" name="field_list_form_type[]" size="12">表单类型</th> -->
 					<th type="del" width="60">操作</th>
 				</tr>
 			</thead>
@@ -99,7 +100,7 @@ $('input[name="controller_name"]').keyup(function(){
 					<td>{T_createSelectHtml(['否', '是'], 'field_list_is_search[]', 2)}</td>
 					<td>{T_createSelectHtml(['否', '是'], 'field_list_is_add[]', 2)}</td>
 					<td>{T_createSelectHtml(['否', '是'], 'field_list_is_upd[]', 2)}</td>
-					<td>{T_createSelectHtml($field_list_form_type, 'field_list_form_type[]', 2)}</td>
+					<!-- <td>{T_createSelectHtml($field_list_form_type, 'field_list_form_type[]', 2)}</td> -->
 					<td><a href="javascript:void(0)" class="btnDel ">删除</a></td>
 				</tr>
 			</tbody>
@@ -309,22 +310,55 @@ $('input[name="controller_name"]').keyup(function(){
 
 					<div class="divider"></div>
 
-					<table class="list nowrap itemDetail" addButton="初始化添加页所需的跳转链接" width="100%">
+					<table class="list nowrap itemDetail" addButton="添加页所需的链接" width="100%">
 						<thead>
 							<tr>
-								<th type="text" name="add_url_plat[]" defaultVal="PLAT" size="12">平台参数</th>
-								<th type="text" name="add_url_mod[]" defaultVal="MOD" size="12">模块参数</th>
-								<th type="text" name="add_url_act[]" size="12">动作参数</th>
-								<th type="text" name="add_url_navtab[]" size="12">本条链接对应的navtab</th>
+								<th type="text" name="ad_url_plat[]" defaultVal="PLAT" size="12">平台参数</th>
+								<th type="text" name="ad_url_mod[]" defaultVal="MOD" size="12">模块参数</th>
+								<th type="text" name="ad_url_act[]" size="12">动作参数</th>
+								<th type="text" name="ad_url_navtab[]" size="12" defaultVal="default">本条链接对应的navtab</th>
+								<th type="enum" name="ad_url_name[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=5&name=list_url_name" size="12">链接名</th>
+								<th type="text" name="ad_url_descr_name[]" size="12">链接描述名（用于跳转显示）</th>
+								<th type="del" width="60">操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							{foreach $ad_url_acts_default as $k=>$v}
+							<tr class="unitBox">
+								<td><input type="text" name="ad_url_plat[]" value="PLAT" size="12"></td>
+								<td><input type="text" name="ad_url_mod[]" value="MOD" size="12"></td>
+								<td><input type="text" name="ad_url_act[]" value="{$k}" size="12"></td>
+								<td><input type="text" name="ad_url_navtab[]" value="default" size="12"></td>
+								<td>{T_createSelectHtml($list_url_acts, 'ad_url_name[]', 1, {$v})}</td>
+								<td><input type="text" name="ad_url_descr_name[]" value="{$v}" size="12"></td>
+								<td><a href="javascript:void(0)" class="btnDel ">删除</a></td>
+							</tr>
+							{/foreach}
+						</tbody>
+					</table>
+
+					<div class="divider"></div>
+
+					<table class="list nowrap itemDetail add_ad_form_elem" addButton="增加新增页表单元素" width="100%">
+						<thead>
+							<tr>
+								<th type="text" name="ad_form_elem_name[]" size="12">字段英文名</th>
+								<th type="text" name="ad_form_elem_ch_title[]" size="12">表单元素中文标题</th>
+								<th type="text" name="ad_form_elem_form_name[]" size="12">表单name值（通常与英文名相同）</th>
+								<th type="enum" name="ad_form_elem_form_type[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=4&name=list_search_form_type" size="12">表单类型</th>
+								<th type="text" name="ad_form_elem_rule[]" size="70">字段数据过滤规则</th>
+								<th type="text" name="ad_form_elem_rule_msg[]" size="70">过滤规则对应的提示信息</th>
 								<th type="del" width="60">操作</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr class="unitBox">
-								<td><input type="text" name="add_url_plat[]" value="PLAT" size="12"></td>
-								<td><input type="text" name="add_url_mod[]" value="MOD" size="12"></td>
-								<td><input type="text" name="add_url_act[]" value="adh" size="12"></td>
-								<td><input type="text" name="add_url_navtab[]" value="" size="12"></td>
+								<td><input type="text" name="ad_form_elem_name[]" value="" size="12" maxlength="30"></td>
+								<td><input type="text" name="ad_form_elem_ch_title[]" value="" size="12" maxlength="30"></td>
+								<td><input type="text" name="ad_form_elem_form_name[]" value="" size="12" maxlength="30"></td>
+								<td>{T_createSelectHtml($list_search_form_type, 'ad_form_elem_name_form_type[]', 2)}</td>
+								<td><input type="text" name="ad_form_elem_rule[]" value="" size="70"></td>
+								<td><input type="text" name="ad_form_elem_rule_msg[]" value="" size="70"></td>
 								<td><a href="javascript:void(0)" class="btnDel ">删除</a></td>
 							</tr>
 						</tbody>
@@ -386,7 +420,7 @@ var Robot_init = function (){
 
 	$('.Robot_major_acts').find('input').each(function(i){
 
-		if(i==0){ //列表页 按钮选中；同时相关的tab要显示
+		if(i==0||i==1||i==2||i==4){ //列表页,添加页,编辑页,删除功能 按钮选中；同时相关的tab要显示
 			$($('.Robot_major_acts').find('input')[i]).prop("checked",true);
 			$('.Robot_major_acts_tab_'+i).show();
 			$('.Robot_major_acts_info_'+i).show();
@@ -470,7 +504,7 @@ var robot_field_list = function (){
 		tr_html += '<td>{T_createSelectHtml(["否", "是"], "field_list_is_search[]", 2)}</td>';
 		tr_html += '<td>{T_createSelectHtml(["否", "是"], "field_list_is_add[]", 2)}</td>';
 		tr_html += '<td>{T_createSelectHtml(["否", "是"], "field_list_is_upd[]", 2)}</td>';
-		tr_html += '<td>{T_createSelectHtml($field_list_form_type, "field_list_form_type[]", 2)}</td>';
+		// tr_html += '<td>{T_createSelectHtml($field_list_form_type, "field_list_form_type[]", 2)}</td>';
 		tr_html += '<td><a href="javascript:void(0)" class="btnDel ">删除</a></td>';
 		tr_html += '</tr>';
 	}
@@ -478,8 +512,66 @@ var robot_field_list = function (){
 	$('.field_list').find('tbody').append(tr_html);
 	$('select[name="field_list_is_mustShow[]"]').bind('change', field_list_is_mustShow);
 	$('select[name="field_list_is_search[]"]').bind('change', field_list_is_search);
+	$('select[name="field_list_is_add[]"]').bind('change', field_ad_form_elem);
 
 	doChangeColorOfRow(".field_list tr:even:not(.hder)", ".field_list tr:odd:not(.hder)");//生成表内容后调整表内行交替颜色
+	doChangeColorOfRow(".add_ad_form_elem tr:even:not(.hder)", ".add_ad_form_elem tr:odd:not(.hder)");//生成表内容后调整表内行交替颜色
+};
+
+//设置添加页表单元素字段
+var field_ad_form_elem = function () {
+	
+	//当前选中行的数据
+	var en_name = $(this).parents('tr').find('input[name="field_list_en_name[]"]').val();
+	var ch_name = $(this).parents('tr').find('input[name="field_list_ch_name[]"]').val();
+
+	//清掉没有内容的tr
+	$('.add_ad_form_elem').find('tbody tr').each(function(i){
+
+		var en = $(this).find('input[name="ad_form_elem_name[]"]').val();
+
+		if(en===''){
+			$(this).find('.btnDel').click();
+		}
+	});
+
+	if( $(this).val()==='1' ){ //选择了“是”
+
+		//查找是否已经存在一样的数据，如果存在则不再额外增加
+		var is_has = false;
+		$('.add_ad_form_elem').find('tbody tr').each(function(i){
+
+			var en = $(this).find('input[name="ad_form_elem_name[]"]').val();
+			if(en===en_name){
+				is_has = true;
+				return false;
+			}
+		});
+
+		if(!is_has){ //不存在相同的，才增加一条
+
+			//新增一条tr
+			$('.add_ad_form_elem').prev().prev().find('button').click();
+
+			//给新增的tr填充数据
+			$('.add_ad_form_elem').find('tbody tr').last().find('input[name="ad_form_elem_name[]"]').val(en_name);//字段英文名
+			$('.add_ad_form_elem').find('tbody tr').last().find('input[name="ad_form_elem_ch_title[]"]').val(ch_name);//表单中文标题
+			$('.add_ad_form_elem').find('tbody tr').last().find('input[name="ad_form_elem_form_name[]"]').val(en_name);//表单name值（通常与英文名相同）
+		}
+
+	}else if( $(this).val()==='0' ){ //选择了“否”
+		
+		//删除与当前内容一致的行
+		$('.add_ad_form_elem').find('tbody tr').each(function(i){
+
+			var en = $(this).find('input[name="ad_form_elem_name[]"]').val();
+
+			if(en===en_name){
+				$(this).find('.btnDel').click();
+				return false;
+			}
+		});
+	}
 };
 
 //设置搜索字段

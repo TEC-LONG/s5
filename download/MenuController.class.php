@@ -24,7 +24,7 @@ class MenuController extends Controller {
             
                 $this->_init['level'] = '0:大栏目级|1:小栏目级|2:选项卡级';
                 
-            $this->JD($this->_init);
+            handler_init_special_fields($this->_init);
             
             
             
@@ -41,6 +41,7 @@ class MenuController extends Controller {
                     $this->_datas['mustShow'] = [
                         'post_date'=>['ch'=>'添加数据时间', 'width'=>70],
 'name'=>['ch'=>'栏目名称', 'width'=>70],
+'id'=>['ch'=>'ID', 'width'=>70],
 'level'=>['ch'=>'层级', 'width'=>70]
                     ];
                 
@@ -64,7 +65,8 @@ class MenuController extends Controller {
 
             //查询字段
             $form_elems = [
-                ['name', 'like'],
+                ['post_date', 'like'],
+['name', 'like'],
 ['level', 'like']
             ];
             

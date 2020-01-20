@@ -1,7 +1,7 @@
 <?php
 
 namespace core;
-//有些地方也把封装好的这个App类叫框架类
+
 class App{
 
     private static $_objs=array();

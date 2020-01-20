@@ -116,7 +116,7 @@ function M($className='Common', $params=array()){
         $className = '\\model\\' . $t_className;
     }elseif( substr($t_className, -4)=='Tool' ){
         $className = '\\plugins\\' . $t_className;
-    }else{//针对Common的情况
+    }elseif( $className=='Common' ){//针对Common的情况
         $className = '\\model\\' . $t_className . 'Model';
     }
 

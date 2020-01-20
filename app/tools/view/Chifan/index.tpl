@@ -1,14 +1,3 @@
-<form id="pagerForm" method="post" action="{$url.index}">
-	<input type="hidden" name="pageNum" value="1" />
-	<input type="hidden" name="numPerPage" value="{$page.numPerPage}" />
-	<input type="hidden" name="cai" value="{$search.cai}" />
-	{foreach $search.types as $val}
-	<input type="hidden" name="types[]" value="{$val}"/>
-	{/foreach}
-	{foreach $search.food_types as $val}
-	<input type="hidden" name="food_types[]" value="{$val}"/>
-	{/foreach}
-</form>
 
 <div class="pageHeader">
 	<form onsubmit="return navTabSearch(this);" action="{$url.index}" method="post" onreset="$(this).find('select.combox').comboxReset()">
@@ -90,6 +79,18 @@
 			{$tbhtml}
 		</tbody>
 	</table>
+
+	<form id="pagerForm" method="post" action="{$url.index}">
+		<input type="hidden" name="pageNum" value="1" />
+		<input type="hidden" name="numPerPage" value="{$page.numPerPage}" />
+		<input type="hidden" name="cai" value="{$search.cai}" />
+		{foreach $search.types as $val}
+		<input type="hidden" name="types[]" value="{$val}"/>
+		{/foreach}
+		{foreach $search.food_types as $val}
+		<input type="hidden" name="food_types[]" value="{$val}"/>
+		{/foreach}
+	</form>
 	<div class="panelBar">
 		<div class="pages">
 			<span>显示</span>

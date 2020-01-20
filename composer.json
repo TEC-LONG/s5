@@ -1,0 +1,6 @@
+{
+    
+    "require": {
+        "overtrue/pinyin": "~4.0"
+    }
+}

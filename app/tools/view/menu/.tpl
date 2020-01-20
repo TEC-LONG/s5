@@ -35,7 +35,7 @@
             
             </table>
             
-        <form id="pagerForm" method="post" action="{$url.index.url}">
+        <form id="pagerForm" method="post" action="">
             <input type="hidden" name="pageNum" value="1" />
             <input type="hidden" name="numPerPage" value="{$page.numPerPage}" />
             
