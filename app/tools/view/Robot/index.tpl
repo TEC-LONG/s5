@@ -345,9 +345,9 @@ $('input[name="controller_name"]').keyup(function(){
 								<th type="text" name="ad_form_elem_name[]" size="12">字段英文名</th>
 								<th type="text" name="ad_form_elem_ch_title[]" size="12">表单元素中文标题</th>
 								<th type="text" name="ad_form_elem_form_name[]" size="12">表单name值（通常与英文名相同）</th>
-								<th type="enum" name="ad_form_elem_form_type[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=4&name=list_search_form_type" size="12">表单类型</th>
-								<th type="text" name="ad_form_elem_rule[]" size="70">字段数据过滤规则</th>
-								<th type="text" name="ad_form_elem_rule_msg[]" size="70">过滤规则对应的提示信息</th>
+								<th type="enum" name="ad_form_elem_form_type[]" enumUrl="{L(PLAT, MOD, 'enum')}&type=6&name=ad_form_elem_form_type[]" size="12">表单类型</th>
+								<th type="text" name="ad_form_elem_rule[]" size="70">字段数据过滤规则<a href="{L(PLAT, MOD, 'robot_get_notice')}&type=1" target="dialog" rel="robot_dlg_ad_elem_rule" mask="true" title="字段数据过滤规则"><span>【规则详情？】</span></a></th>
+								<th type="text" name="ad_form_elem_rule_msg[]" size="70">过滤规则对应的提示信息<a href="{L(PLAT, MOD, 'robot_get_notice')}&type=2" target="dialog" rel="robot_dlg_ad_elem_rule" mask="true" title="过滤规则对应的提示信息"><span>【提示信息格式？】</span></a></th>
 								<th type="del" width="60">操作</th>
 							</tr>
 						</thead>
@@ -356,7 +356,7 @@ $('input[name="controller_name"]').keyup(function(){
 								<td><input type="text" name="ad_form_elem_name[]" value="" size="12" maxlength="30"></td>
 								<td><input type="text" name="ad_form_elem_ch_title[]" value="" size="12" maxlength="30"></td>
 								<td><input type="text" name="ad_form_elem_form_name[]" value="" size="12" maxlength="30"></td>
-								<td>{T_createSelectHtml($list_search_form_type, 'ad_form_elem_name_form_type[]', 2)}</td>
+								<td>{T_createSelectHtml($ad_or_upd_form_type, 'ad_form_elem_form_type[]', 1)}</td>
 								<td><input type="text" name="ad_form_elem_rule[]" value="" size="70"></td>
 								<td><input type="text" name="ad_form_elem_rule_msg[]" value="" size="70"></td>
 								<td><a href="javascript:void(0)" class="btnDel ">删除</a></td>

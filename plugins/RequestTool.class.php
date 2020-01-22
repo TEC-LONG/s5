@@ -13,7 +13,7 @@ class RequestTool{
 
     public function all($mod='s'){
     
-        //虽然这么写，代码冗余了，但是很好回看，知道有两种模式
+        //虽然这么写，代码冗余了，但是很好回看，知道有模式的区分
         if( $mod==='s' ){//strict 模式
 
             $this->_request = $this->str_trim($this->_request);

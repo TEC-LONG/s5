@@ -15,7 +15,7 @@ $plat = isset($_GET['p']) ? $_GET['p'] : $GLOBALS['configs']['dweb']['p'];//平�
 
 if( $plat=='tools' ){
     include TOOLS_CONF_PATH . 'define.conf.php';
-    include TOOLS_CONF_PATH . 'menu.conf.php';
+    // include TOOLS_CONF_PATH . 'menu.conf.php';
     include TOOLS_CONF_PATH . 'AutoTb.conf.php';
 }else{
     //引入模板配置文件

@@ -92,22 +92,34 @@
 //];
 var expressP, expressC, expressD, expressArea, areaCont;
 var arrow = " <font>&gt;</font> ";
+// if (typeof(navtab)=='undefined') {
+// 		var navtab = '';
+// }
+var navtab = '';
+if (typeof(get_child_url)=='undefined') {
+	var get_child_url = '/index.php?p=tools&m=expcat&a=getChild';
+}
 
 /*初始化一级目录*/
 function intProvince() {
+	if (province==null) {
+		return false;
+	}
 	areaCont = "";
 	for (var i=0; i<province.length; i++) {
 		areaCont += '<li onClick="selectP(' + i + ');"><a href="javascript:void(0)">' + province[i] + '</a></li>';
 	}
-	$("#sort1").html(areaCont);
-	$("#sort2").hide();
-	$("#sort3").hide();
-	$("#selectedSort").html('无');
-	$("#FIRE_parent_id").val("0");
-	$("#FIRE_parent_level").val("0");
-	$("#FIRE_parent_child_num").val("0");
-	$(".FIRE_this_cat_name").val("");
-	$(".FIRE_show_cat_name").html("EXP分类");
+	$("#"+navtab+"sort1").html(areaCont);
+	$("#"+navtab+"sort2").hide();
+	$("#"+navtab+"sort3").hide();
+	$("#"+navtab+"selectedSort").html('无');
+	$("#"+navtab+"FIRE_parent_id").val("0");
+	$("#"+navtab+"FIRE_parent_level").val("0");
+	if (typeof(province_child_nums)!='undefined') {
+		$("#"+navtab+"FIRE_parent_child_num").val("0");
+	}
+	$("."+navtab+"FIRE_this_cat_name").val("");
+	$("."+navtab+"FIRE_show_cat_name").html("EXP分类");
 }
 intProvince();
 
@@ -118,18 +130,20 @@ function showC(p){//显示二级分类
 	for (var j=0; j<city[p].length; j++) {
 		areaCont += '<li onClick="selectC(' + p + ',' + j + ');"><a href="javascript:void(0)">' + city[p][j] + '</a></li>';
 	}
-	$("#sort2").html(areaCont).show();
-	$("#sort3").hide();
-	$("#sort1 li").eq(p).addClass("active").siblings("li").removeClass("active");
+	$("#"+navtab+"sort2").html(areaCont).show();
+	$("#"+navtab+"sort3").hide();
+	$("#"+navtab+"sort1 li").eq(p).addClass("active").siblings("li").removeClass("active");
 	expressP = province[p];
-	$("#selectedSort").html(expressP);
-	$("#releaseBtn").removeAttr("disabled");
-	$("#FIRE_parent_id").val(province_ids[p]);
-	$("#FIRE_parent_level").val(province_levels[p]);
-	$("#FIRE_parent_child_num").val(province_child_nums[p]);
-	$(".FIRE_this_cat_id").val(province_ids[p]);
-	$(".FIRE_this_cat_name").val(province[p]);
-	$(".FIRE_show_cat_name").html(province[p]);
+	$("#"+navtab+"selectedSort").html(expressP);
+	$("#"+navtab+"releaseBtn").removeAttr("disabled");
+	$("#"+navtab+"FIRE_parent_id").val(province_ids[p]);
+	$("#"+navtab+"FIRE_parent_level").val(province_levels[p]);
+	if (typeof(province_child_nums)!='undefined') {
+		$("#"+navtab+"FIRE_parent_child_num").val(province_child_nums[p]);
+	}
+	$("."+navtab+"FIRE_this_cat_id").val(province_ids[p]);
+	$("."+navtab+"FIRE_this_cat_name").val(province[p]);
+	$("."+navtab+"FIRE_show_cat_name").html(province[p]);
 }
 function selectP(p) {
 	//b.wxg.2018/6/18.ad.取得当前一级分类所属的二级分类
@@ -138,7 +152,7 @@ function selectP(p) {
 			type:'POST',
 			data:{p_id:province_ids[p]},
 			dataType:'json',
-			url:init.url.main+'/index.php?p=tools&m=expcat&a=getChild',
+			url:init.url.main+get_child_url,
 			async:true,
 			success:function (re){
 				if ( re.length==0 ){
@@ -165,19 +179,26 @@ function showD(p,c){//显示三级分类
 
 	areaCont = "";
 	expressC = "";
+
 	for (var k=0; k<district[p][c].length; k++) {
 		areaCont += '<li onClick="selectD(' + p + ',' + c + ',' + k + ');"><a href="javascript:void(0)">' + district[p][c][k] + '</a></li>';
 	}
-	$("#sort3").html(areaCont).show();
-	$("#sort2 li").eq(c).addClass("active").siblings("li").removeClass("active");
+	
+	$("#"+navtab+"sort3").html(areaCont).show();
+	$("#"+navtab+"sort2 li").eq(c).addClass("active").siblings("li").removeClass("active");
 	expressC = expressP + arrow + city[p][c];
-	$("#selectedSort").html(expressC);
-	$("#FIRE_parent_id").val(city_ids[p][c]);
-	$("#FIRE_parent_level").val(city_levels[p][c]);
-	$("#FIRE_parent_child_num").val(city_child_nums[p][c]);
-	$(".FIRE_this_cat_id").val(city_ids[p][c]);
-	$(".FIRE_this_cat_name").val(city[p][c]);
-	$(".FIRE_show_cat_name").html(city[p][c]);
+	$("#"+navtab+"selectedSort").html(expressC);
+	$("#"+navtab+"FIRE_parent_id").val(city_ids[p][c]);
+	$("#"+navtab+"FIRE_parent_level").val(city_levels[p][c]);
+	if (typeof(province_child_nums)!='undefined') {
+		$("#"+navtab+"FIRE_parent_child_num").val(city_child_nums[p][c]);
+	}
+	$("."+navtab+"FIRE_this_cat_id").val(city_ids[p][c]);
+	$("."+navtab+"FIRE_this_cat_name").val(city[p][c]);
+	$("."+navtab+"FIRE_show_cat_name").html(city[p][c]);
+	if (district[p][c].length==0) {
+		return false;
+	}
 }
 function selectC(p,c) {
 	//b.wxg.2018/6/18.ad.取得当前二级分类所属的三级分类
@@ -186,7 +207,7 @@ function selectC(p,c) {
 			type:'POST',
 			data:{p_id:city_ids[p][c]},
 			dataType:'json',
-			url:init.url.main+'/index.php?p=tools&m=expcat&a=getChild',
+			url:init.url.main+get_child_url,
 			async:true,
 			success:function (re){
 				if ( re.length==0 ){
@@ -217,10 +238,10 @@ function selectC(p,c) {
 
 /*选择三级目录*/
 function selectD(p,c,d) {
-	$("#sort3 li").eq(d).addClass("active").siblings("li").removeClass("active");
-	$(".FIRE_this_cat_id").val(district_ids[p][c][d]);
-	$(".FIRE_this_cat_name").val(district[p][c][d]);
-	$(".FIRE_show_cat_name").html(district[p][c][d]);
+	$("#"+navtab+"sort3 li").eq(d).addClass("active").siblings("li").removeClass("active");
+	$("."+navtab+"FIRE_this_cat_id").val(district_ids[p][c][d]);
+	$("."+navtab+"FIRE_this_cat_name").val(district[p][c][d]);
+	$("."+navtab+"FIRE_show_cat_name").html(district[p][c][d]);
 	//expressD = expressC + arrow + district[p][c][d];
 	//$("#selectedSort").html(expressD);
 }

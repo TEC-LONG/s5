@@ -42,13 +42,14 @@ class RobotController extends Controller {
                 $this->_datas['list_search_form_type'] = ['text-normal'=>'text-normal', 'text-numb'=>'text-numb', 'text-phone'=>'text-phone', 'text-pwd'=>'text-pwd', 'text-email'=>'text-email', 'select'=>'select', 'radio'=>'radio', 'checkbox'=>'checkbox'];
 
                 // $this->_datas['field_list_form_type'] = ['text-normal', 'text-numb', 'text-phone', 'text-pwd', 'text-email', 'select', 'radio', 'checkbox', 'file', 'txt-area'];
+                $this->_datas['ad_or_upd_form_type'] = ['text-normal', 'text-numb', 'text-phone', 'text-pwd', 'text-email', 'date', 'date-time', 'select', 'checkbox', 'textarea', 'textarea-editor', 'file', 'file-mul'];
             break;
         }
     }
 
     public function adh(){
         //接收数据
-        $request =$this->_requ->all('l');
+        $request = $this->_requ->all('l');
         // var_dump($request);
         // exit;
 
@@ -76,7 +77,7 @@ class RobotController extends Controller {
         if( in_array('1', $request['major_acts']) ){
             $controller_ad = $this->controller_ad($request);
             // $controller_adh = $this->controller_adh($request);
-            // $templ_add = $this->templ_add($request);
+            $templ_ad = $this->templ_ad($request);
         }
 
         #编辑页部分
@@ -111,7 +112,7 @@ class RobotController extends Controller {
         // exit;
 
         // 生成文件
-        if(!empty($templ_index)||!empty($templ_ad)){//生成模板目录
+        if(!empty($templ_index)||!empty($templ_ad)||!empty($templ_upd)){//生成模板目录
 
             // $templ_dir = DOWNLOAD_PATH . strtolower($request['controller_name']);
             $templ_dir = TOOLS_VIEW_PATH . strtolower($request['controller_name']);
@@ -134,6 +135,175 @@ class RobotController extends Controller {
             $templ_index_name = $templ_dir . '/'.$templ_index_url_info['index'].'.tpl';
             file_put_contents($templ_index_name, $templ_index);
         }
+
+        if( !empty($templ_ad) ){
+            $templ_index_url_info = $this->handler_get_jump_url('添加页');
+            $templ_ad_name = $templ_dir . '/'.$templ_index_url_info['index'].'.tpl';
+            file_put_contents($templ_ad_name, $templ_ad);
+        }
+    }
+
+    protected function templ_ad($request){
+
+
+        $templ_ad_html = '';
+        if( isset($request['ad_form_elem_name'])&&!empty($request['ad_form_elem_name']) ){
+
+            $tmp_html = '';
+            foreach ($request['ad_form_elem_name'] as $k => $elem_name) {
+                
+                switch ($request['ad_form_elem_form_type'][$k]) {
+                    case 'text-normal':
+                        $tmp_html .= '
+<p>
+    <label>'.$request['ad_form_elem_ch_title'][$k].'：</label>
+    <input name="'.$request['ad_form_elem_form_name'][$k].'" type="text" />
+</p>
+                        ';
+                    break;
+                    case 'text-numb':
+                        $tmp_html .= '
+<p>
+    <label>'.$request['ad_form_elem_ch_title'][$k].'：</label>
+    <input name="'.$request['ad_form_elem_form_name'][$k].'" type="text" class="digits" />
+</p>
+                        ';
+                    break;
+                    case 'text-phone':
+                        $tmp_html .= '
+<p>
+    <label>'.$request['ad_form_elem_ch_title'][$k].'：</label>
+    <input name="'.$request['ad_form_elem_form_name'][$k].'" type="text" class="phone" />
+</p>
+                        ';
+                    break;
+                    case 'text-pwd':
+                        $tmp_html .= '
+<p>
+    <label>'.$request['ad_form_elem_ch_title'][$k].'：</label>
+    <input name="'.$request['ad_form_elem_form_name'][$k].'" type="text" class="alphanumeric" minlength="6" maxlength="20" />
+</p>
+                        ';
+                    break;
+                    case 'text-email':
+                        $tmp_html .= '
+<p>
+    <label>'.$request['ad_form_elem_ch_title'][$k].'：</label>
+    <input name="'.$request['ad_form_elem_form_name'][$k].'" type="text" class="email" />
+</p>
+                        ';
+                    break;
+                    case 'date':
+                        $tmp_html .= '
+<p>
+    <label>'.$request['ad_form_elem_ch_title'][$k].'：</label>
+    <input type="text" name="'.$request['ad_form_elem_form_name'][$k].'" class="date" readonly="true"/>
+    <a class="inputDateButton" href="javascript:;">选择</a>
+    <span class="info">格式：yyyy-MM-dd</span>
+</p>
+                        ';
+                    break;
+                    case 'date-time':
+                        $tmp_html .= '
+<p>
+    <label>'.$request['ad_form_elem_ch_title'][$k].'：</label>
+    <input type="text" name="'.$request['ad_form_elem_form_name'][$k].'" class="date" dateFmt="yyyy-MM-dd HH:mm" readonly="true"/>
+    <a class="inputDateButton" href="javascript:;">选择</a>
+    <span class="info">格式：yyyy-MM-dd HH:mm</span>
+</p>
+                        ';
+                    break;
+                    case 'select':
+                        $tmp_html .= '
+<p>
+    <label>'.$request['ad_form_elem_ch_title'][$k].'：</label>
+    {T_createSelectHtml($'.$request['ad_form_elem_form_name'][$k].', "'.$request['ad_form_elem_form_name'][$k].'", 2)}
+</p>
+                        ';
+                    break;
+                    case 'checkbox':
+                        $tmp_html .= '
+<div class="divider"></div>
+<p class="nowrap">
+    <label>'.$request['ad_form_elem_ch_title'][$k].'：</label>
+    {foreach $types as $key=>$val}
+    <input type="checkbox" name="'.$request['ad_form_elem_form_name'][$k].'[]" value="{$key}" />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
+    {/foreach}
+</p>
+<div class="divider"></div>
+                        ';
+                    break;
+                    case 'textarea':
+                        $tmp_html .= '
+<div class="divider"></div>
+<p class="nowrap">
+    <label>'.$request['ad_form_elem_ch_title'][$k].'：</label>
+    <textarea name="'.$request['ad_form_elem_form_name'][$k].'" cols="80" rows="2"></textarea>
+</p>
+<div class="divider"></div>
+                        ';
+                    break;
+                    case 'textarea-editor':
+                        $tmp_html .= '
+
+                        ';
+                    break;
+                    case 'file':
+                        $tmp_html .= '
+<div class="divider"></div>
+<p class="nowrap">
+    <label>上传单个文件：</label>
+
+    <div class="upload-wrap">
+        <input type="file" name="pic[]" accept="image/*" class="valid" style="left: 0px;">
+        <div class="thumbnail">
+            <img src="themes/default/images/wx.png" style="max-width: 80px; max-height: 80px">
+            <a class="del-icon" href="demo/common/ajaxDone.html"></a>
+        </div>
+    </div>
+    <div class="upload-wrap">
+        <input type="file" name="file1" accept="image/*">
+    </div>
+</p>
+<div class="divider"></div>
+                        ';
+                    break;
+                    case 'file-mul':
+                        $tmp_html .= '
+<div class="divider"></div>
+<p class="nowrap">
+    <label>上传多个文件：</label>
+    <ul id="upload-preview" class="upload-preview"></ul>
+    <div class="upload-wrap" rel="#upload-preview">
+        <input type="file" name="file2" accept="image/*" multiple="multiple">
+    </div>
+</p>
+<div class="divider"></div>
+                        ';
+                    break;
+                }
+            }
+        
+            $templ_ad_html = '
+<div class="pageContent">
+	<form method="post" action="{$url.adh}" class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
+        <div class="pageFormContent" layoutH="56">
+            '.$tmp_html.'
+		</div>
+		<div class="formBar">
+			<ul>
+				<li><div class="buttonActive"><div class="buttonContent"><button type="submit">保存</button></div></div></li>
+				<li>
+					<div class="button"><div class="buttonContent"><button type="button" class="close">取消</button></div></div>
+				</li>
+			</ul>
+		</div>
+	</form>
+</div>
+        ';
+        }
+
+        return $templ_ad_html;
     }
 
     protected function controller_ad($request){
@@ -801,6 +971,8 @@ class RobotController extends Controller {
         if(!empty($init)){
             $init .= '
             handler_init_special_fields($this->_init);
+            //扔进模板
+            $this->_datas = $this->_init;
             ';
         }
         #处理并记录key_val数据，供之后处理过程使用
@@ -985,8 +1157,7 @@ class RobotController extends Controller {
                         
 
                     }else{//单规则
-
-                        $tmp_arr_msg = explode(':', $v1);
+                        $tmp_arr_msg = explode(':', $request['ad_form_elem_rule_msg'][$k]);
                         $tmp_arr_rule_msg[] = "'".$tmp_arr_msg[0]."'=>'".$tmp_arr_msg[1]."'";//最终得到：//'required'=> 'xxx必须填写！'
                     }
                 }
@@ -1079,6 +1250,53 @@ class RobotController extends Controller {
         ';
 
         return $templ;
+    }
+
+    public function robot_get_notice(){
+
+
+        $request =$this->_requ->all();
+
+        if( $request['type']==1 ){//字段数据过滤规则
+        
+            echo '
+<textarea style="width:95%;height:200px">
+单独规则：required  email  cell  phone
+主：int  mul-int  regex
+副：>:0  >=:0  <:10  <=:10  =:6  @:正则规则
+
+互斥项：int与mul-int互斥
+
+使用方法：
+1) 多重规则使用"||"连接，主副规则使用"|"连接，如： required||int|>:0|<=:10||regex|@:\d
+2) 单独规则与主规则除了regex外，均可独立使用，regex必须配合副规则同时使用；
+
+最终形成：
+$this->_extra"form-elems"] = [
+    "cai" => ["ch"=>"菜品", "rule"=>"required"], 
+    "food_types" => ["ch"=>"食物类型", "rule"=>"required||mul-int|>:0|<:9", "msg"=>[
+        "required"=> "xxx必须填写！",
+        "mul-int"=> "xxx所有值必须为数字！",
+        // "mul-int|>"=> "xxx所有的值都不能小于0！",//单纯只有min规则时
+        // "mul-int|<"=> "xxx所有的值都不能大于9！",//单纯只有max规则时
+        "mul-int|>|<"=> "xxx所有的值都需要在0~9之间！",//min和max同时存在时
+    ]], 
+    "types" => ["ch"=>"适用场景", "rule"=>"required||int|>=:0"],
+    "taste" => ["ch"=>"口味"], 
+    "mouthfeel" => ["ch"=>"口感"]
+];
+</textarea>
+            ';
+        }elseif( $request['type']==2 ) {
+            echo '
+<textarea style="width:95%;height:200px">
+提示信息格式：主规则|副规则:提示信息||主规则|副规则:提示信息
+如：required:xxx必须填写||int|>:xxx不能小于n!
+</textarea>          
+            ';
+        }
+
+
     }
 
     protected function get_construct_url_html($url_plat, $url_mod, $url_act, $url_name, $url_descr_name, $url_navtab, $navtab_main){
@@ -1179,6 +1397,9 @@ class RobotController extends Controller {
         }elseif ( $request['type']==5 ) {
             
             $enumHtml = T_createSelectHtml($this->_datas['list_url_acts'], $request['name'].'[]', 1);
+        }elseif ($request['type']==6) {
+            
+            $enumHtml = T_createSelectHtml($this->_datas['ad_or_upd_form_type'], $request['name'], 1);
         }
 
         echo $enumHtml;

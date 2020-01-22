@@ -4,128 +4,126 @@ use \core\controller;
 
 class MenuController extends Controller {
 
-    ##标准预定义属性
-    protected $_datas = [];
-    private $_init=[];
-    private $_extra=[];
-    
-    private $_m;
+    private $_datas=[];
     private $_navTab;
+    private $_requ;
 
-    
-        public function __construct(){
+    public function __construct(){
 
-            parent::__construct();
-    
-            
-            $this->_navTab = 'Menu';
-        
-    
-            
-            
-            
-                if(ACT=='index'){
-                    
-                    $this->_datas['url'] = [
-                        'index' => ['url'=>L(PLAT, MOD, 'index'), 'rel'=>'Menu_index'],
-'ad' => ['url'=>L(PLAT, MOD, 'ad'), 'rel'=>'Menu_ad'],
-'upd' => ['url'=>L(PLAT, MOD, 'upd'), 'rel'=>'Menu_upd'],
-'del' => ['url'=>L(PLAT, MOD, 'del'), 'rel'=>'Menu_del']
-                    ];
-                
-                    
-                }
-                
-            
-                if(ACT=='ad'){
-                    
-                $this->_datas['url'] = [
-                    'adh' => ['url'=>L(PLAT, MOD, 'adh'), 'rel'=>'Menu_adh']
-                ];
-            
-                }
-                
-            
-                if(ACT=='adh'){
-                    $this->_extra['form-elems'] = [
-                    'name'=>['ch'=>'栏目名称', 'rule'=>'required'],
-'parent_id'=>['ch'=>'父级id', 'rule'=>'required||mul-int|>:0|<:9', 'msg'=>['required'=>'xxx必须填写！',
-'mul-int|>|<'=>'xx值必须在0到9之间']
-],
-'plat'=>['ch'=>'平台', 'rule'=>'regex|@:\d', 'msg'=>['mul-int|>|<'=>'xx值必须在0到9之间']
-],
-'module'=>['ch'=>'模块'],
-'act'=>['ch'=>'动作']
-                    ];
-                }
-                
-            
-            
-    
-            $this->_datas['navTab'] = $this->_navTab;
+        parent::__construct();
+
+        $this->_navTab = 'menu';
+        $this->_requ = M('RequestTool');
+
+        $this->_datas['navTab'] = $this->_navTab;
+        $this->_datas['url'] = [
+            'index' => L(PLAT, MOD, 'index'),
+            'adh' => L(PLAT, MOD, 'adh'),
+            'updh' => L(PLAT, MOD, 'updh'),
+            'del' => L(PLAT, MOD, 'del')
+        ];
+    }
+
+    public function index(){ 
+
+        #查询列表页数据
+        $rows = M()->table('menu')->select('*')
+        ->where([['parent_id', 0], ['level', 1], ['is_del', 0]])
+        ->get();
+
+        $this->_datas['first'] = [];
+        foreach( $rows as $k=>$row ){
+            $this->_datas['first']['p_names'][$k] = $row['name'];
+            $this->_datas['first']['p_ids'][$k] = $row['id'];
+            $this->_datas['first']['p_levels'][$k] = $row['level'];
         }
-        
 
-    
-        public function index(){ 
+        //分配模板变量&渲染模板
+        $this->assign($this->_datas);
+        $this->display('Menu/index.tpl');
+    }
 
-            $request = $_REQUEST;
-    
-            //初始条件
-            $con_arr = ['is_del'=>'0'];
+    //列表页ajax获得子分类
+    public function getChild(){ 
 
-            //查询字段
-            $form_elems = [
-                ['', 'like']
-            ];
-            
-            //将条件数组数据转换为条件字符串
-            $con = $this->_condition_string($request, $form_elems, $con_arr);
-    
-            //将搜索的原始数据扔进模板
-            $this->_datas['search'] = $this->_get_ori_search_datas($request, $form_elems);
-    
-            //分页参数
-            $this->_datas['page'] = $page = $this->_page('menu', $con, 3);
-    
-            //查询数据
-            $rows = M()->table('menu')
-                    ->select('*')
-                    ->where($con)
-                    ->limit($page['limitM'] . ',' . $page['numPerPage'])
-                    ->get();
-    
-            /*if( $rows ){
-                foreach( $rows as &$row ){ 
-                    if( !empty($row['expnew_ids']) ){
-                        $row['expnew_titles'] = explode('|', $row['expnew_titles']);
-                        $row['expnew_ids'] = explode('|', $row['expnew_ids']);
-                    }
-                    $row['has_descr'] = !empty($row['descr']) ? '是' : '否';
-                }
-            }*/
-            $this->_datas['rows'] = $rows;//扔到模板中
-    
-            //分配模板变量&渲染模板
-            $this->assign($this->_datas);
-            $this->display('menu/index.tpl');
+        $request = $this->_requ->all();
+
+        //查询数据
+        $rows = M()->table('menu')->select('id,name,level,plat,module,act,navtab')->where([['parent_id', $request['p_id']], ['is_del', 0]])->get();
+
+        $child = [];
+
+        if( !empty($rows) ){
+            foreach( $rows as $row_key=>$row ){ 
+                $child['child_names'][$row_key] = $row['name'];
+                $child['child_ids'][$row_key] = $row['id'];
+                $child['child_levels'][$row_key] = $row['level'];
+                $child['plat'][$row_key] = $row['plat'];
+                $child['module'][$row_key] = $row['module'];
+                $child['act'][$row_key] = $row['act'];
+                $child['navtab'][$row_key] = $row['navtab'];
+            }
         }
-        
 
-    
-        public function ad(){ 
+        echo json_encode($child); 
+        exit;
+    }
 
-            $this->assign($this->_datas);
+    public function adh(){ 
 
-            $this->display('menu/ad.tpl');
+        $request = $this->_requ->all();
+
+        $datas = [
+            'name' => $request['name'],
+            'parent_id' => $request['pid'],
+            'post_date' => time(),
+            'plat' => $request['plat'],
+            'module' => $request['module'],
+            'act' => $request['act'],
+            'navtab' => $request['navtab'],
+            'level' => $request['plevel']+1
+        ];
+
+        if ( M()->table('menu')->insert($datas)->exec() ){ 
+
+            $re = AJAXre();
+            $re->navTabId = $this->_navTab.'_index';
+            $re->message = '添加成功！';
+        }else{ 
+            $re = AJAXre(1);
         }
+
+        echo json_encode($re);
+        exit;
+    }
+
+
+    public function updh(){ 
+
+        $request = $this->_requ->all();
         
+        $datas = [];
+        if( $request['name']!==$request['ori_name'] ) $datas['name'] = $request['name'];
+        if( $request['plat']!==$request['ori_plat'] ) $datas['plat'] = $request['plat'];
+        if( $request['module']!==$request['ori_module'] ) $datas['module'] = $request['module'];
+        if( $request['act']!==$request['ori_act'] ) $datas['act'] = $request['act'];
+        if( $request['navtab']!==$request['ori_navtab'] ) $datas['navtab'] = $request['navtab'];
 
-    
+        if(empty($datas)){
+            $re = AJAXre(1);
+            echo json_encode($re);
+            exit;
+        }
 
-    
+        if ( M()->table('menu')->fields(array_keys($datas))->update($datas)->where(['id', $request['id']])->exec() ){ 
+            $re = AJAXre();
+            $re->navTabId = $this->_navTab.'_index';
+            $re->message = '修改EXP分类成功！';
+        }else{ 
+            $re = AJAXre(1);
+        }
 
-    
-
-    
+        echo json_encode($re);
+        exit;
+    }
 }      

@@ -49,43 +49,28 @@
 			<div id="sidebar">
 				<div class="toggleCollapse"><h2>主菜单</h2><div>收缩</div></div>
 				<div class="accordion" fillSpace="sidebar">
-				{foreach $menu[0] as $k=>$v}
+				{foreach $menu1 as $k1=>$v1}
 					<div class="accordionHeader">
-						<h2><span>Folder</span>{$v}</h2>
+						<h2><span>Folder</span>{$v1.name}</h2>
 					</div>
 					<div class="accordionContent">
-					{foreach $menu[1][$k] as $k1=>$v1}
-						<ul class="tree <php>if($k1!=0) echo 'collapse';</php>">
-							<li><a>{$v1}</a>
+						<ul class="tree">
+							{foreach $menu2 as $k2=>$v2}
+							{if $v1.id==$v2.parent_id}
+							<li><a>{$v2.name}</a>
 								<ul>
-								{foreach $menu[2][$k][$k1] as $k2=>$v2}
-									<li><a href="{L($menu[3][$k][$k1][$k2]['plat'], $menu[3][$k][$k1][$k2]['module'], $menu[3][$k][$k1][$k2]['act'])}" target="navTab" rel="{$menu[3][$k][$k1][$k2]['rel']}">{$v2}</a></li>
+								{foreach $menu3 as $k3=>$v3}
+								{if $v2.id==$v3.parent_id}
+									<li><a href="{L($v3['plat'], $v3['module'], $v3['act'])}" target="navTab" rel="{$v3['navtab']}">{$v3.name}</a></li>
+								{/if}
 								{/foreach}
 								</ul>
 							</li>
+							{/if}
+							{/foreach}
 						</ul>
-					{/foreach}
 					</div>
 				{/foreach}
-
-					<!-- <div class="accordionHeader"> -->
-						<!-- <h2><span>Folder</span>典型页面</h2> -->
-					<!-- </div> -->
-					<!-- <div class="accordionContent"> -->
-						<!-- <ul class="tree treeFolder treeCheck"> -->
-							<!-- <li><a href="#" target="navTab" rel="demo_page1">查询我的客户</a></li> -->
-							<!-- <li><a href="#" target="navTab" rel="demo_page2">表单查询页面</a></li> -->
-							<!-- <li><a href="#" target="navTab" rel="demo_page4">表单录入页面</a></li> -->
-							<!-- <li><a href="#" target="navTab" rel="demo_page5">有文本输入的表单</a></li> -->
-							<!-- <li><a href="javascript:;">有提示的表单输入页面</a> -->
-								<!-- <ul> -->
-									<!-- <li><a href="javascript:;">页面一</a></li> -->
-									<!-- <li><a href="javascript:;">页面二</a></li> -->
-								<!-- </ul> -->
-							<!-- </li> -->
-						<!-- </ul> -->
-					<!-- </div> -->
-
 				</div>
 			</div>
 		</div>
