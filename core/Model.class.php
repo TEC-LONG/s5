@@ -7,6 +7,7 @@ class Model extends NiceModel{
 
     protected $table;
     protected $select;
+    protected $orderby;
     protected $limit;
     protected $where=[];
     protected $left_join=[];
@@ -29,6 +30,12 @@ class Model extends NiceModel{
 
     protected function init(){
     
+        $this->e = '';
+        $this->limit = '';
+        $this->select = '';
+        $this->orderby = '';
+        $this->fields = '';
+
         $this->where = [];
         $this->insert = [];
         $this->update = [];
@@ -110,6 +117,17 @@ class Model extends NiceModel{
         return $this;
     }
 
+    /**
+     * method:指定order by条件
+     * @param $orderby string order by条件，仅支持字符串类型
+                如：$orderby='post_date' 或 $orderby='post_date desc'
+     * @return object
+     */
+    public function orderby($orderby){
+    
+        $this->orderby = ' order by ' . $orderby;
+        return $this;
+    }
     /**
      * method:指定limit条件
      * @param $limit string limit条件，仅支持字符串类型
@@ -216,6 +234,7 @@ class Model extends NiceModel{
             $sql = 'select %s from %s%s where %s';
             $sql = sprintf($sql, $this->select, $this->table, implode(' ', $this->left_join), implode(' and ', $this->where));
 
+            if(!empty($this->orderby)) $sql .= ' ' . $this->orderby;
             if(!empty($this->limit)) $sql .= ' ' . $this->limit;
 
             // $sql = 'select ' . $this->select . ' from ' . $this->table . implode(' ', $this->left_join) . ' where ' . implode(' and ', $this->where);
@@ -421,10 +440,15 @@ class Model extends NiceModel{
      */
     public function exec(){
 
-        if( $this->query(2) )
+        if( $this->query(2) ){
+
+            $this->init();
             return true;
-        else
+        }else{
+
+            $this->init();
             return false;
+        }
     }
 
     /**
@@ -435,6 +459,9 @@ class Model extends NiceModel{
     public function get($type='relate'){
         
         $re = $this->query();
+        
+        $this->init();
+
         if( $re ){
             if( $type==='index' ){
                 return $this->pdostatement->fetchAll(\PDO::FETCH_NUM);
@@ -454,6 +481,8 @@ class Model extends NiceModel{
         $this->limit('1');
         $re = $this->query();
 
+        $this->init();
+
         if( $re )
             return $this->pdostatement->fetch(\PDO::FETCH_ASSOC);
         else
@@ -462,6 +491,11 @@ class Model extends NiceModel{
 
     public function replace(){
     
+    }
+
+    public function last_insert_id(){
+        
+        return $this->_pdo->lastInsertId();
     }
 
     /**
@@ -488,18 +522,17 @@ class Model extends NiceModel{
             echo '错误程序文件名称：'.$this->e->getFile();echo '<br/>';
             echo '错误代码在文件中的行号：'.$this->e->getLine();echo '<br/>';
             echo 'SQL语句：' . $sql;echo '<br/>';
+
             // exit;
         elseif ($flag==='err.log')://记录错误到日志文件
 
-            $log = "-----------------------------------------------------------------\n";
-            $log .= '时间：' . date('Y-m-d H:i:s') . "\n";
-            $log .= '错误消息内容：'.$this->e->getMessage() . "\n";
-            $log .= '错误代码：'.$this->e->getCode() . "\n";
-            $log .= '错误程序文件名称：'.$this->e->getFile() . "\n";
-            $log .= '错误代码在文件中的行号：'.$this->e->getLine() . "\n";
-            $log .= 'SQL语句：'.$sql . "\n";
-            $log .= "=================================================================\n";
-            $log .= "\n";
+            $log .= '时间：' . date('Y-m-d H:i:s') . PHP_EOL;
+            $log .= '错误消息内容：'.$this->e->getMessage() . PHP_EOL;
+            $log .= '错误代码：'.$this->e->getCode() . PHP_EOL;
+            $log .= '错误程序文件名称：'.$this->e->getFile() . PHP_EOL;
+            $log .= '错误代码在文件中的行号：'.$this->e->getLine() . PHP_EOL;
+            $log .= 'SQL语句：'.$sql;
+            R()->set('type', 'database')->msg($log)->go();
         endif;
     }
 

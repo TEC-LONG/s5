@@ -36,15 +36,15 @@ a { text-decoration: none; color: #333; }
 
 
 	<div class="wareSort clearfix">
-		<ul id="{$navtab}sort1"></ul>
-		<ul id="{$navtab}sort2" style="display: none;"></ul>
-		<ul id="{$navtab}sort3" style="display: none;"></ul>
+		<ul id="{$navTab}sort1"></ul>
+		<ul id="{$navTab}sort2" style="display: none;"></ul>
+		<ul id="{$navTab}sort3" style="display: none;"></ul>
 	</div>
-	<div class="selectedSort"><b>您当前选择的菜单栏目是：</b><i id="{$navtab}selectedSort"></i></div>
+	<div class="selectedSort"><b>您当前选择的菜单栏目是：</b><i id="{$navTab}selectedSort"></i></div>
 
 <script type="text/javascript">
 /*初始化参数*/
-var navtab = '{$navtab}';
+var navtab = '{$navTab}';
 var get_child_url = '/index.php?p=tools&m=menu&a=getChild';
 var province = {json_encode($first['p_names'])};//一级分类集合
 var province_ids = {json_encode($first['p_ids'])};//一级分类对应的id集合
@@ -52,7 +52,7 @@ var province_levels = {json_encode($first['p_levels'])};//一级分类对应的l
 var city = [];//二级分类集合
 var city_ids = [];
 var city_levels = [];
-var city_child_nums = [];
+// var city_child_nums = [];
 var district = [];//三级分类集合
 var district_ids = [];
 //var district_levels = [];
@@ -60,6 +60,8 @@ var plat = [];
 var mod = [];
 var act = [];
 var url_navtab = [];
+var level3_type = [];
+var level3_href = [];
 </script>
 
 
@@ -70,10 +72,10 @@ var url_navtab = [];
 	<fieldset>
 		<legend>添加菜单栏目</legend>
 		<dl>
-			<dt><div class="button"><div class="buttonContent"><button  id="{$navtab}FIRE_resetCatPid">重置菜单栏目到顶级</button></div></div></dt>
+			<dt><div class="button"><div class="buttonContent"><button  id="{$navTab}FIRE_resetCatPid">重置菜单栏目到顶级</button></div></div></dt>
 			<dd>
-				<input type="hidden" id="{$navtab}FIRE_parent_id" name="pid" value="0">
-				<input type="hidden" id="{$navtab}FIRE_parent_level" name="plevel" value="0">
+				<input type="hidden" id="{$navTab}FIRE_parent_id" name="pid" value="0">
+				<input type="hidden" id="{$navTab}FIRE_parent_level" name="plevel" value="0">
 			</dd>
 		</dl>
 		<dl>
@@ -97,6 +99,14 @@ var url_navtab = [];
 			<dt>主navtab：</dt>
 			<dd><input name="navtab" type="text" /></dd>
 		</dl>
+		<dl>
+			<dt>3级菜单跳转类型：</dt>
+			<dd>{T_createSelectHtml($level3_type, 'level3_type', 2)}</dd>
+		</dl>
+		<dl>
+			<dt>外部跳转链接：</dt>
+			<dd><input name="level3_href" type="text" /></dd>
+		</dl>
 		<dl class="nowrap"></dl>
 		<dl></dl>
 		<dl>
@@ -107,17 +117,20 @@ var url_navtab = [];
 	{literal}
 <script type="text/javascript">
 $('#'+navtab+'FIRE_resetCatPid').click(function (){
-	intProvince();
+	tools_menu_intProvince();
 	return false;
 });
-
+$('.menu_ad').find('input[name="plat"]').bind('keyup', function () {
+	
+	$('.menu_ad').find('input[name="navtab"]').val($(this).val()+'_'+$('.menu_ad').find('input[name="module"]').val()+'_'+$('.menu_ad').find('input[name="act"]').val());
+});
 $('.menu_ad').find('input[name="module"]').bind('keyup', function () {
 	
-	$('.menu_ad').find('input[name="navtab"]').val($(this).val()+'_'+$('.menu_ad').find('input[name="act"]').val());
+	$('.menu_ad').find('input[name="navtab"]').val($('.menu_ad').find('input[name="plat"]').val()+'_'+$(this).val()+'_'+$('.menu_ad').find('input[name="act"]').val());
 });
 $('.menu_ad').find('input[name="act"]').bind('keyup', function () {
 	
-	$('.menu_ad').find('input[name="navtab"]').val($('.menu_ad').find('input[name="module"]').val()+'_'+$(this).val());
+	$('.menu_ad').find('input[name="navtab"]').val($('.menu_ad').find('input[name="plat"]').val()+'_'+$('.menu_ad').find('input[name="module"]').val()+'_'+$(this).val());
 });
 </script>
 	{/literal}
@@ -127,13 +140,13 @@ $('.menu_ad').find('input[name="act"]').bind('keyup', function () {
 	<!-- 编辑 -->
 	<form method="post" action="{$url.updh}"  class="pageForm required-validate menu_upd" onsubmit="return validateCallback(this, navTabAjaxDone);">
 		<fieldset>
-			<legend>编辑【<strong class="{$navtab}FIRE_show_cat_name">菜单栏目</strong>】</legend>
+			<legend>编辑【<strong class="{$navTab}FIRE_show_cat_name">菜单栏目</strong>】</legend>
 			<dl class="nowrap">
 				<dt>新菜单栏目名称：</dt>
 				<dd>
-					<input type="hidden" class="{$navtab}FIRE_this_cat_id" name="id">
-					<input type="hidden" class="{$navtab}FIRE_this_cat_name" name="ori_name">
-					<input class="required {$navtab}FIRE_this_cat_name" id="{$navtab}FIRE_this_cat_name" name="name" type="text" />
+					<input type="hidden" class="{$navTab}FIRE_this_cat_id" name="id">
+					<input type="hidden" class="{$navTab}FIRE_this_cat_name" name="ori_name">
+					<input class="required {$navTab}FIRE_this_cat_name" id="{$navTab}FIRE_this_cat_name" name="name" type="text" />
 				</dd>
 			</dl>
 			<dl class="nowrap"></dl>
@@ -153,6 +166,14 @@ $('.menu_ad').find('input[name="act"]').bind('keyup', function () {
 				<dt>主navtab：</dt>
 				<dd><input name="navtab" type="text" /><input name="ori_navtab" type="hidden" /></dd>
 			</dl>
+			<dl>
+				<dt>3级菜单跳转类型：</dt>
+				<dd>{T_createSelectHtml($level3_type, 'level3_type', 2)}<input name="ori_level3_type" type="hidden" /></dd>
+			</dl>
+			<dl>
+				<dt>外部跳转链接：</dt>
+				<dd><input name="level3_href" type="text" /><input name="ori_level3_href" type="hidden" /></dd>
+			</dl>
 			<dl></dl>
 			<dl>
 				<dt><div class="buttonActive"><div class="buttonContent"><button type="submit">执行修改</button></div></div></dt>
@@ -164,26 +185,30 @@ $('.menu_ad').find('input[name="act"]').bind('keyup', function () {
 </div>
 {literal}
 <script>
+$('.menu_upd').find('input[name="plat"]').bind('keyup', function () {
+	
+	$('.menu_upd').find('input[name="navtab"]').val($(this).val()+'_'+$('.menu_upd').find('input[name="module"]').val()+'_'+$('.menu_upd').find('input[name="act"]').val());
+});
 $('.menu_upd').find('input[name="module"]').bind('keyup', function () {
 	
-	$('.menu_upd').find('input[name="navtab"]').val($(this).val()+'_'+$('.menu_upd').find('input[name="act"]').val());
+	$('.menu_upd').find('input[name="navtab"]').val($('.menu_upd').find('input[name="plat"]').val()+'_'+$(this).val()+'_'+$('.menu_upd').find('input[name="act"]').val());
 });
 $('.menu_upd').find('input[name="act"]').bind('keyup', function () {
 	
-	$('.menu_upd').find('input[name="navtab"]').val($('.menu_upd').find('input[name="module"]').val()+'_'+$(this).val());
+	$('.menu_upd').find('input[name="navtab"]').val($('.menu_upd').find('input[name="plat"]').val()+'_'+$('.menu_upd').find('input[name="module"]').val()+'_'+$(this).val());
 });
 
 var expressP, expressC, expressD, expressArea, areaCont;
 var arrow = " <font>&gt;</font> ";
 
 /*初始化一级目录*/
-function intProvince() {
+function tools_menu_intProvince() {
 	if (province==null) {
 		return false;
 	}
 	areaCont = "";
 	for (var i=0; i<province.length; i++) {
-		areaCont += '<li onClick="selectP(' + i + ');"><a href="javascript:void(0)">' + province[i] + '</a></li>';
+		areaCont += '<li onClick="tools_menu_selectP(' + i + ');"><a href="javascript:void(0)">' + province[i] + '</a></li>';
 	}
 	$("#"+navtab+"sort1").html(areaCont);
 	$("#"+navtab+"sort2").hide();
@@ -197,14 +222,14 @@ function intProvince() {
 	$("."+navtab+"FIRE_this_cat_name").val("");
 	$("."+navtab+"FIRE_show_cat_name").html("菜单栏目");
 }
-intProvince();
+tools_menu_intProvince();
 
 /*选择一级目录*/
-function showC(p){//显示二级分类
+function tools_menu_showC(p){//显示二级分类
 
 	areaCont = "";
 	for (var j=0; j<city[p].length; j++) {
-		areaCont += '<li onClick="selectC(' + p + ',' + j + ');"><a href="javascript:void(0)">' + city[p][j] + '</a></li>';
+		areaCont += '<li onClick="tools_menu_selectC(' + p + ',' + j + ');"><a href="javascript:void(0)">' + city[p][j] + '</a></li>';
 	}
 	$("#"+navtab+"sort2").html(areaCont).show();
 	$("#"+navtab+"sort3").hide();
@@ -229,7 +254,7 @@ function showC(p){//显示二级分类
 	$('.menu_upd').find('input[name="navtab"]').val('');
 	$('.menu_upd').find('input[name="ori_navtab"]').val('');
 }
-function selectP(p) {
+function tools_menu_selectP(p) {
 	//b.wxg.2018/6/18.ad.取得当前一级分类所属的二级分类
 	if ( typeof(city[p])==='undefined' ){
 		$.ajax({
@@ -247,24 +272,24 @@ function selectP(p) {
 					city_levels[p] = re['child_levels'];
 				}
 				//b.ori
-				showC(p);
+				tools_menu_showC(p);
 				//e.ori
 			}
 		});
 	}else{
-		showC(p);
+		tools_menu_showC(p);
 	}
 	//e.wxg.2018/6/18
 }
 
 /*选择二级目录*/
-function showD(p,c){//显示三级分类
+function tools_menu_showD(p,c){//显示三级分类
 
 	areaCont = "";
 	expressC = "";
 
 	for (var k=0; k<district[p][c].length; k++) {
-		areaCont += '<li onClick="selectD(' + p + ',' + c + ',' + k + ');"><a href="javascript:void(0)">' + district[p][c][k] + '</a></li>';
+		areaCont += '<li onClick="tools_menu_selectD(' + p + ',' + c + ',' + k + ');"><a href="javascript:void(0)">' + district[p][c][k] + '</a></li>';
 	}
 	
 	$("#"+navtab+"sort3").html(areaCont).show();
@@ -273,9 +298,9 @@ function showD(p,c){//显示三级分类
 	$("#"+navtab+"selectedSort").html(expressC);
 	$("#"+navtab+"FIRE_parent_id").val(city_ids[p][c]);
 	$("#"+navtab+"FIRE_parent_level").val(city_levels[p][c]);
-	if (typeof(province_child_nums)!='undefined') {
-		$("#"+navtab+"FIRE_parent_child_num").val(city_child_nums[p][c]);
-	}
+	// if (typeof(province_child_nums)!='undefined') {
+	// 	$("#"+navtab+"FIRE_parent_child_num").val(city_child_nums[p][c]);
+	// }
 	$("."+navtab+"FIRE_this_cat_id").val(city_ids[p][c]);
 	$("."+navtab+"FIRE_this_cat_name").val(city[p][c]);
 	$("."+navtab+"FIRE_show_cat_name").html(city[p][c]);
@@ -291,7 +316,7 @@ function showD(p,c){//显示三级分类
 		return false;
 	}
 }
-function selectC(p,c) {
+function tools_menu_selectC(p,c) {
 	//b.wxg.2018/6/18.ad.取得当前二级分类所属的三级分类
 	if ( typeof(district[p])==='undefined'||typeof(district[p][c])==='undefined' ){
 		$.ajax({
@@ -331,20 +356,28 @@ function selectC(p,c) {
 						url_navtab[p] = [];
 					}
 					url_navtab[p][c] = re['navtab'];
+					if ( typeof(level3_type[p])==='undefined' ){
+						level3_type[p] = [];
+					}
+					level3_type[p][c] = re['level3_type'];
+					if ( typeof(level3_href[p])==='undefined' ){
+						level3_href[p] = [];
+					}
+					level3_href[p][c] = re['level3_href'];
 				}
 				//b.ori
-				showD(p,c);
+				tools_menu_showD(p,c);
 				//e.ori
 			}
 		});
 	}else{
-		showD(p,c);
+		tools_menu_showD(p,c);
 	}
 	//e.wxg.2018/6/18
 }
 
 /*选择三级目录*/
-function selectD(p,c,d) {
+function tools_menu_selectD(p,c,d) {
 	$("#"+navtab+"sort3 li").eq(d).addClass("active").siblings("li").removeClass("active");
 	$("."+navtab+"FIRE_this_cat_id").val(district_ids[p][c][d]);
 	$("."+navtab+"FIRE_this_cat_name").val(district[p][c][d]);
@@ -357,6 +390,19 @@ function selectD(p,c,d) {
 	$('.menu_upd').find('input[name="ori_act"]').val(act[p][c][d]);
 	$('.menu_upd').find('input[name="navtab"]').val(url_navtab[p][c][d]);
 	$('.menu_upd').find('input[name="ori_navtab"]').val(url_navtab[p][c][d]);
+	$('.menu_upd').find('select[name="level3_type"]').find('option').attr("selected", false);
+	// console.log($('.menu_upd').find('select[name="level3_type"]').html());
+	$('.menu_upd').find('select[name="level3_type"]').find("option").each(function(){
+		if($(this).val()==level3_type[p][c][d]){
+			$(this).attr('selected', true);
+			$(this).parent().siblings('a').attr('value', level3_type[p][c][d]);
+			$(this).parent().siblings('a').text($(this).text());
+		}
+	});
+	// console.log($('.menu_upd').find('select[name="level3_type"]').html());
+	//$('.menu_upd').find('input[name="ori_level3_type"]').val(level3_type[p][c][d]);
+	$('.menu_upd').find('input[name="level3_href"]').val(level3_href[p][c][d]);
+	$('.menu_upd').find('input[name="ori_level3_href"]').val(level3_href[p][c][d]);
 }
 </script>
 {/literal}

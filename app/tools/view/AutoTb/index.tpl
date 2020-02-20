@@ -1,7 +1,7 @@
 <h2 class="contentTitle">MYSQL</h2>
 
 
-<div class="pageContent">
+<div class="pageContent tools_AutoTb_index">
 	
 	<!-- <form method="post" id="mysql" action="http://www.adm.com/index.php/Admin/CAutotb/index" class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone, '第一步操作成功');"> -->
 	<form method="post" id="mysql" action="{$url.index}" class="pageForm required-validate">
@@ -93,12 +93,12 @@
 	//if ($(element).val() == "xxx") return false;
 	//return true;
 //}
-function navTabAjaxDone(json){
+function tools_AutoTb_index_navTabAjaxDone(json){
 	
 	//DWZ.ajaxDone(json);//s.WangXin2016/1/7.提示框(成功提示成功，错误提示报错)
 	//console.log(DWZ.ajaxDone(json));
 
-	//console.log(json);
+	console.log(json);
 
 	if (json.statusCode == DWZ.statusCode.ok){
 
@@ -143,9 +143,10 @@ function navTabAjaxDone(json){
 var mysqlSubmit = function (){
 
 	var confirmMsg = '确定要执行'+$('select[name="step"]').val()+'?';
-	return validateCallback(this, navTabAjaxDone, confirmMsg);
+	return validateCallback(this, tools_AutoTb_index_navTabAjaxDone, confirmMsg);
+	
 }
 ////s.js.WangXin2016/1/8.执行部分...............................e
-$('#mysql').bind('submit', mysqlSubmit);
+$('.tools_AutoTb_index').find('#mysql').bind('submit', mysqlSubmit);
 </script>
 {/literal}

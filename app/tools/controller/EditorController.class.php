@@ -28,6 +28,94 @@ class EditorController extends Controller {
         }
     }
 
+    public function imgupmd(){ 
+        ///跨域传输
+        //header( 'Access-Control-Allow-Origin:*' ); 
+
+        // $fileIMG = isset($_FILES['editormd-image-file']) ? $_FILES['editormd-image-file'] : 'none';
+        //$token = isset($_GET['tk']) ? $_GET['tk'] : '';
+        // $re = [];
+
+        //没有令牌则需要记录到日志中
+        //if ( !$token ) return;
+
+        ///以年份和月份分别来创建保存editor图片的一级和二级目录
+        $first_folder = date('Y');
+        $first_folder_path = EDITORMD_IMG . $first_folder;
+
+        if(!is_dir($first_folder_path)){
+            mkdir($first_folder_path);
+            chmod($first_folder_path, 0757);
+        }
+
+        $second_folder = date('m');
+        $path = $first_folder_path . '/' . $second_folder;
+
+        if ( !is_dir($path) ){
+            mkdir($path, 0757);
+            chmod($path, 0757);
+        }
+
+        ///构建新图片的数据id
+        $arr_maxid = M()->table('editormd_img')->select('max(id) as maxid')->where('1')->find();
+        if(!$arr_maxid) $arr_maxid=['maxid'=>0];
+        #图片的命名规则：前缀_随机字符串年月日时分秒.editormd_img表ID.jpg
+        $imgName = uniqid('editormd_') . date('YmdHis') . '.' . ($arr_maxid['maxid']+1);
+
+        if ( $file=F()->file('editormd-image-file', $path)->up('editormd_', $imgName) ){
+            //$img = 'http://xx.xxxx.com/upload/editormdimg/2019/11/xx.jpg';
+            $img = 'upload/editormdimg/' . $first_folder . '/' . $second_folder . '/' . $file->getNameWithExtension();
+
+            #存储入editormd_img表
+            M()->table('editormd_img')->insert([
+                'id'=>($arr_maxid['maxid']+1), 
+                'img'=>$img,
+                'post_date'=>time()
+            ])->exec();
+
+            JSON()->arr()->vars([
+                ['url', '/'.$img],
+                ['success', 1],
+                ['message', '上传成功！']
+            ])->exec();
+        }else{
+            JSON()->arr([
+                'success'=>0,
+                'message'=>'上传失败！'
+            ])->exec();
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public function editormd(){ 
 
         $this->assign([
@@ -58,52 +146,7 @@ class EditorController extends Controller {
         $this->display('Editor/editormdupd.tpl');
     }
 
-    public function imgupmd(){ 
-        #跨域传输
-        //header( 'Access-Control-Allow-Origin:*' ); 
-
-        $fileIMG = isset($_FILES['editormd-image-file']) ? $_FILES['editormd-image-file'] : 'none';
-        //$token = isset($_GET['tk']) ? $_GET['tk'] : '';
-        $re = [];
-
-        //没有令牌则需要记录到日志中
-        //if ( !$token ) return;
-
-        #以月份来创建保存editor图片的目录
-        $path = EDITORMD_IMG . date('Ym') . '/';
-
-        if ( !is_dir($path) ){
-            mkdir($path, 0757);
-            chmod($path, 0757);
-        }
-
-        #构建新图片的数据id
-        $sql = 'select max(id) as maxid from editormd_img where 1 limit 1';
-        $arr_maxid = M()->getRow($sql);
-        if(!$arr_maxid = M()->getRow($sql)) $arr_maxid=['maxid'=>0];
-
-        $imgName = uniqid('editormd_') . date('YmdHis') . '.' . ($arr_maxid['maxid']+1) . '.jpg';
-        $path = $path . $imgName;
-
-        if ( $isUp = move_uploaded_file($fileIMG['tmp_name'], $path) ){
-            //$img = 'http://xx.xxxx.com/public/tools/editormdimg/201911/'.$imgName;
-            $img = 'public/tools/editormdimg/' . date('Ym') . '/' . $imgName;
-
-            #存储入库
-            $sql = 'insert into editormd_img (`id`, `img`, `token`, `post_date`) values ('.($arr_maxid['maxid']+1).', "'.$img.'", "'.$token.'", "'.time().'")';
-            M()->setData1($sql);
-
-            //$re['sql'] = $query;
-            $re['url'] = '/' . $img;
-            $re['success'] = 1;
-            $re['message'] = '上传成功！';
-        }else{
-            $re['success'] = 0;
-            $re['message'] = '上传失败！';
-        }
-        echo json_encode($re);
-        exit;
-    }
+    
 
 
 

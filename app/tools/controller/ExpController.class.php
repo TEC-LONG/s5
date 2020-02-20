@@ -17,7 +17,7 @@ class ExpController extends Controller {
         parent::__construct();
 
         #当前模块的导航标识前缀，用于拼接各页面完整的导航标识
-        $this->_navTab = 'exp';
+        $this->_navTab = 'tools_exp';
         
         #执行各动作的初始化方法
         switch ( ACT ){
@@ -25,10 +25,16 @@ class ExpController extends Controller {
                 $this->_index();
             break;
             case 'ad':
-                $this->_ad();
+                $this->_datas['url'] = [
+                    'adh' => ['url'=>L(PLAT, MOD, 'adh')],
+                    'imgupmd' => ['url'=>L(PLAT, 'editor', 'imgupmd')]
+                ];
             break;
             case 'upd':
-                $this->_upd();
+                $this->_datas['url'] = [
+                    'updh' => ['url'=>L(PLAT, MOD, 'updh')],
+                    'imgupmd' => ['url'=>L(PLAT, 'editor', 'imgupmd')]
+                ];
             break;
             case 'editormd'://这个部分待优化，需要分离老的非markdown的富文本编辑器部分
                 $this->_url = [
@@ -57,11 +63,14 @@ class ExpController extends Controller {
         // if( !empty($_POST) ){
         //     var_dump($_POST);
         // }
+        //接收数据
+        $request = REQUEST()->all();
+
         #分页参数
-        $page = $this->_page('expnew', ['is_del'=>0]);
+        $page = $this->_page('expnew', ['is_del', 0], $request);
         
         //查询数据
-        $sql = 'select id, title, tags, crumbs_expcat_names, post_date from expnew where is_del=0 limit ' . $page['limitM'] . ',' . $page['numPerPage'];
+        $sql = 'select id, title, tags, crumbs_expcat_names, post_date from expnew where is_del=0 order by post_date desc limit ' . $page['limitM'] . ',' . $page['numPerPage'];
         $exps = M()->getRows($sql);
 
         //分配模板变量&渲染模板
@@ -75,136 +84,143 @@ class ExpController extends Controller {
 
     ###info综合  包括: info()
     public function info(){ 
-        #接收数据
-        $id = $_GET['id'];
+        ///接收数据
+        $request = REQUEST()->all();
         
-        #查询数据
-        $sql = 'select * from expnew where id=' . $id;
-        $exp = M()->getRow($sql);
+        ///查询数据
+        $this->_datas['row'] = $row = M()->table('expnew')->select('*')->where(['id', $request['id']])->find();
 
-        #将内容数据写入editormd读取的文件中
-        file_put_contents(PUBLIC_PATH . 'tools/editor_md/examples/test.md', htmlspecialchars_decode($exp['content']));
+        ///获取md文件url
+        $this->_datas['url_edmd_file'] =  M('EditorTool')->mkname(PLAT.'_'.MOD.'_'.ACT.'_'.$request['id'])->getfurl();
 
-        $this->assign('exp', $exp);
-        
+        ///如果md文件不在，还是需要创建出来
+        $md_file =  M('EditorTool')->mkname(PLAT.'_'.MOD.'_'.ACT.'_'.$request['id'])->mkpath(STORAGE_PATH.'edmd')->getwname();
+        if( !file_exists($md_file) ){
+
+            file_put_contents($md_file, htmlspecialchars_decode($row['content']));
+            $md_file_last_upd_time = filemtime($md_file);//获取文件最后修改时间
+            M()->table('expnew')->fields('upd_time')->update([$md_file_last_upd_time])->where(['id', $row['id']])->exec();
+        }else{
+
+            $md_file_last_upd_time = filemtime($md_file);//获取文件最后修改时间
+            if( $md_file_last_upd_time!=$row['upd_time'] ){
+
+                file_put_contents($md_file, htmlspecialchars_decode($row['content']));
+                clearstatcache();//PHP会缓存之前的filemtime时间，所以要清除一下缓存
+                $md_file_last_upd_time = filemtime($md_file);//重新获取文件最后修改时间
+                M()->table('expnew')->fields('upd_time')->update([$md_file_last_upd_time])->where(['id', $row['id']])->exec();
+            }
+        }
+
+        $this->assign($this->_datas);
         $this->display('Exp/info.tpl');
     }
 
-    ###ad综合  包括: _ad(),ad(),adh()
-    ##_ad初始化方法，只服务于ad
-    private function _ad(){
-        // $this->_url = [
-        //     'adh' => L(PLAT, MOD, 'adh'),
-        //     'editormdImgUp' => L(PLAT, 'editor', 'imgupmd'),
-        //     'editormd' => L(PLAT, 'editor', 'editormd'),
-        //     'editorImgUp' => L(PLAT, MOD, 'imgup'),
-        //     'editorImgDel' => L(PLAT, MOD, 'imgdel'),
-        //     'editorImgLoad' => L(PLAT, MOD, 'imgload'),
-        //     'catLookup' => L(PLAT, 'expcat', 'catLookup')
-        // ];
-        $this->_url = [
-            'adh' => L(PLAT, MOD, 'adh'),
-            'editormdImgUp' => L(PLAT, 'editor', 'imgupmd'),
-            'editormd' => L(PLAT, 'editor', 'editormd'),
-            'catLookup' => L(PLAT, 'expcat', 'catLookup')
-        ];
+    private function get_expcat_lv1(){
+    
+        return M()->table('expcat')->select('id, name, level')->where(['pid', 0])->get();
     }
-    /* public function ad(){ 
-
-        $editor = isset($_GET['editor']) ? $_GET['editor'] : 'coding';//coding表示使用带markdown的editor;normal表示使用普通editor
-        $token = isset($_COOKIE['tk']) ? $_COOKIE['tk'] : uniqid('bjq_') . mt_rand(0, 1000);
-        setcookie('tk', $token, time()+3600);
-
-        #每次进入都清掉未使用且过期的图片(1.清掉实际图片；2.清掉数据表中的记录)
-        #这个操作应该使用额外的进程来执行，不要放在这里操作（当前我一个人使用就无所谓）
-        //1. 清掉实际图片；
-        $sql = 'select img from froala_edit_img where has_use=0 and post_date<='.(time()-7200);
-        $arr_clearImgs = M()->getRows($sql);
-
-        foreach( $arr_clearImgs as $arr_clearImg ){ 
-            $t_path = ROOT . '/' . $arr_clearImg['img'];
-            @unlink($t_path);
-        }
-        //2.清掉数据表中的记录
-        $sql = 'delete from froala_edit_img where has_use=0 and post_date<='.(time()-7200);
-        $re = M()->setData1($sql);
-
-        $this->assign([
-            'url'=>$this->_url,
-            'tk'=>$token
-        ]);
-
-        if($editor=='coding') $this->display('Exp/ad1.tpl');
-        elseif($editor=='normal') $this->display('Exp/ad.tpl');
-    } */
-
     public function ad(){
 
-        $this->assign([
-            'url'=>$this->_url
-        ]);
+        //获得所有的一级分类
+        $this->_datas['expcat_lv1'] = $this->get_expcat_lv1();
 
-        $this->display('Exp/ad1.tpl');
+        $this->assign($this->_datas);
+        $this->display('Exp/ad.tpl');
     }
 
     public function adh(){ 
+
+        $request = REQUEST()->all('n');
+        // F()->print_r($request);
+
+        #个别数据处理
+        $expcat1_arr = explode('|', $request['expcat1']);
+        $expcat2_arr = explode('|', $request['expcat2']);
+        $expcat3_arr = explode('|', $request['expcat3']);
+
         #接收数据
         $datas = [];
-        $datas['title'] = $_POST['title'];
-        $datas['tags'] = $_POST['tags'];
+        $datas['title'] = $request['title'];
+        $datas['tags'] = $request['tags'];
         $datas['post_date'] = time();
-        $datas['content'] = str_replace('\\', '\\\\', $_POST['content_ad']);
-        $datas['content'] = str_replace('"', '&quot;', $datas['content']);
-        $datas['expcat__id'] = $_POST['expcat_cat1id'];
-        $datas['expcat__name'] = $_POST['expcat_cat1name'];
-        $datas['crumbs_expcat_ids'] = $_POST['expcat_cat1id'] . '|' . $_POST['expcat_cat2id'] . '|' . $_POST['expcat_cat3id'];
-        $datas['crumbs_expcat_names'] = $_POST['expcat_cat1name'] . '|' . $_POST['expcat_cat2name'] . '|' . $_POST['expcat_cat3name'];
+        $datas['content'] = str_replace('"', '&quot;',str_replace('\\', '\\\\', $request['content']));
+        $datas['expcat__id'] = $expcat3_arr[0];
+        $datas['expcat__name'] = $expcat3_arr[1];
+        $datas['crumbs_expcat_ids'] = $expcat1_arr[0] . '|' . $expcat2_arr[0] . '|' . $expcat3_arr[0];
+        $datas['crumbs_expcat_names'] = $expcat1_arr[1] . '|' . $expcat2_arr[1] . '|' . $expcat3_arr[1];
 
         #录入数据
-        if( M()->setData('expnew', $datas) ){
-            $re = AJAXre();
-            $re->navTabId = $this->_navTab.'_ad';
-            $re->message = '添加成功！';
+        if( M()->table('expnew')->insert($datas)->exec() ){
+
+            $this->jump('添加成功！', 'p=tools&m=exp&a=ad');
         }else{
-            $re = AJAXre(1);
+            $this->jump('添加失败！', 'p=tools&m=exp&a=ad');
         }
-        
-        #返回结果
-        echo json_encode($re); 
-        exit;
     }
 
-    ###ad综合  包括: _upd(),upd(),updh()
-    ##_upd初始化方法，只服务于upd
-    public function _upd(){
-        $this->_url = [
-            'updh' => L(PLAT, MOD, 'updh'),
-            'editormdImgUp' => L(PLAT, 'editor', 'imgupmd'),
-            'editormd' => L(PLAT, 'editor', 'editormdupd'),
-            'catLookup' => L(PLAT, 'expcat', 'catLookup')
-        ];
-    }
-
+    ###ad综合  包括:upd(),updh()
     public function upd(){
-        //接收参数
-        $id = $_GET['id'];
+        ///接收参数
+        $request = REQUEST()->all('n');
 
-        //查询数据
-        $sql = 'select id, title, tags, crumbs_expcat_ids, crumbs_expcat_names from expnew where id=' . $id;
-        
-        if( $exp = M()->getRow($sql) ){
-            $exp['crumbs_expcat_ids'] = explode('|', $exp['crumbs_expcat_ids']);
-            $exp['crumbs_expcat_names'] = explode('|', $exp['crumbs_expcat_names']);
-        }
-        $this->assign([
-            'url'=>$this->_url,
-            'exp'=>$exp
-        ]);
+        ///查询数据
+        $this->_datas['row'] = M()->table('expnew')->select('id, title, tags, crumbs_expcat_ids, crumbs_expcat_names, content')->where(['id', $request['id']])->find();
 
+        $this->_datas['row']['crumbs_expcat_ids'] = explode('|', $this->_datas['row']['crumbs_expcat_ids']);
+        $this->_datas['row']['crumbs_expcat_names'] = explode('|', $this->_datas['row']['crumbs_expcat_names']);
+
+        ///获得所有的一级分类
+        $this->_datas['expcat_lv1'] = $this->get_expcat_lv1();
+
+        $this->assign($this->_datas);
         $this->display('Exp/upd.tpl');
     }
 
     public function updh(){ 
+
+        $request = REQUEST()->all('n');
+        // F()->print_r($request);
+
+        ///个别数据处理
+        $expcat1_arr = explode('|', $request['expcat1']);
+        $expcat2_arr = explode('|', $request['expcat2']);
+        $expcat3_arr = explode('|', $request['expcat3']);
+
+        $request['expcat__id'] = $expcat3_arr[0];
+        $request['expcat__name'] = $expcat3_arr[1];
+        $request['content'] = str_replace('"', '&quot;',str_replace('\\', '\\\\', $request['content']));
+        $request['crumbs_expcat_ids'] = $expcat1_arr[0] . '|' . $expcat2_arr[0] . '|' . $expcat3_arr[0];
+        $request['crumbs_expcat_names'] = $expcat1_arr[1] . '|' . $expcat2_arr[1] . '|' . $expcat3_arr[1];
+
+        ///取出修改了的数据
+        #查询已有数据
+        $row = M()->table('expnew')->select('*')->where(['id', $request['id']])->find();
+        $update_data = F()->compare($request, $row, ['title', 'tags', 'content', 'crumbs_expcat_names', 'crumbs_expcat_ids', 'expcat__id', 'expcat__name']);
+
+        if( empty($update_data) ){
+            $this->jump('您还没有修改任何数据！请先修改数据。', 'p=tools&m=exp&a=upd&id='.$request['id']);
+        }
+
+        $update_data['upd_time'] = time();
+        ///更新数据
+        $re = M()->table('expnew')
+        ->fields(array_keys($update_data))
+        ->update($update_data)
+        ->where(['id', $request['id']])
+        ->exec();
+
+        if( $re ){
+
+            $this->jump('修改成功！', 'p=tools&m=exp&a=upd&id='.$request['id']);
+        }else{
+            $this->jump('修改失败！', 'p=tools&m=exp&a=upd&id='.$request['id']);
+        }
+
+        
+
+
+        
         #接收数据
         //条件
         $con = ['id'=>$_GET['id']];

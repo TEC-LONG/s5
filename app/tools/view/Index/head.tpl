@@ -1,7 +1,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>fires工具管理系统</title>
-
+<link rel="shortcut icon" href="{$smarty.const.PUBLIC_TOOLS}image/ico.ico" type="image/x-icon" />
 <link href="{$smarty.const.PUBLIC_TOOLS_JUI}themes/default/style.css" rel="stylesheet" type="text/css" media="screen"/>
 <link href="{$smarty.const.PUBLIC_TOOLS_JUI}themes/css/core.css" rel="stylesheet" type="text/css" media="screen"/>
 <link href="{$smarty.const.PUBLIC_TOOLS_JUI}themes/css/print.css" rel="stylesheet" type="text/css" media="print"/>
@@ -21,8 +21,8 @@
 <script src="{$smarty.const.PUBLIC_TOOLS_JUI}uploadify/scripts/jquery.uploadify.js" type="text/javascript"></script>
 
 <script type="text/javascript" src="{$smarty.const.PUBLIC_TOOLS_JUI}chart/echarts.min.js"></script>
-<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=6PYkS1eDz5pMnyfO0jvBNE0F"></script>
-<script type="text/javascript" src="http://api.map.baidu.com/library/Heatmap/2.0/src/Heatmap_min.js"></script>
+<!-- <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=6PYkS1eDz5pMnyfO0jvBNE0F"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/library/Heatmap/2.0/src/Heatmap_min.js"></script> -->
 
 <script src="{$smarty.const.PUBLIC_TOOLS_JUI}js/dwz.core.js" type="text/javascript"></script>
 <script src="{$smarty.const.PUBLIC_TOOLS_JUI}js/dwz.util.date.js" type="text/javascript"></script>

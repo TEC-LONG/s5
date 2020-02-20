@@ -1,27 +1,32 @@
-<form id="pagerForm" method="post" action="#rel#">
-	<input type="hidden" name="pageNum" value="{$pagination.now_page}" />
-	<input type="hidden" name="numPerPage" value="{$pagination.numPerPage}" />
-</form>
-
 <div class="pageHeader">
 	<form rel="pagerForm" onsubmit="return navTabSearch(this);" action="{$url.index}" method="post">
 	<div class="searchBar">
 		<ul class="searchContent">
 			<li>
-				<label>我的客户：</label>
-				<input type="text" name="keywords" value=""/>
+				<label>表中文名：</label>
+				<input type="text" name="ch_name" value="{$search.ch_name}"/>
 			</li>
 			<li>
-			<select class="combox" name="province">
-				<option value="">所有省市</option>
-				<option value="北京">北京</option>
+				<label>表英文名：</label>
+				<input type="text" name="en_name" value="{$search.en_name}"/>
+			</li>
+			<li>
+				<label>包含字段：</label>
+				<input type="text" name="en_fields" value="{$search.en_fields}"/>
+			</li>
+			<li>
+			<select class="combox" name="belong_db">
+				<option value="">所属库名称</option>
+				{foreach $belong_db as $k=>$v}
+				<option value="{$k}" {if $search.belong_db==(string)$k}selected{/if}>{$v}</option>
+				{/foreach}
 			</select>
 			</li>
 		</ul>
 		<div class="subBar">
 			<ul>
 				<li><div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div></li>
-				<li><a class="button" href="demo_page6.html" target="dialog" mask="true" title="查询框"><span>高级检索</span></a></li>
+				<!-- <li><a class="button" href="demo_page6.html" target="dialog" mask="true" title="查询框"><span>高级检索</span></a></li> -->
 			</ul>
 		</div>
 	</div>
@@ -32,7 +37,6 @@
 	<div class="panelBar">
 		<ul class="toolBar">
 			<li><a class="add" href="{$url.ad}" target="navTab" rel="{$navTab}_add"><span>添加基础表结构</span></a></li>
-			{* <li><a class="add" href="{$url.robot}" target="navTab" rel="{$navTab}_robot"><span>后台机器人</span></a></li> *}
 			<li class="line">line</li>
 			<li><a class="icon" href="demo/common/dwz-team.xls" target="dwzExport" targetType="navTab" title="确实要导出这些记录吗?"><span>导出EXCEL</span></a></li>
 		</ul>
@@ -68,24 +72,31 @@
 				{/foreach}
 				<td>
 					<a title="确实要删除？" target="ajaxTodo" href="{$url.del}&id={$row['id']}" class="btnDel">删除</a>
-					<a title="表信息编辑【{$row['id']}】" target="navTab" href="{$url.upd}&id={$row['id']}" class="btnEdit" rel="{$navTab}_upd{$row['id']}">表信息编辑</a>
+					<a title="表信息编辑" target="navTab" href="{$url.upd}&id={$row['id']}" class="btnEdit" rel="{$navTab}_upd">表信息编辑</a>
 				</td>
 			</tr>
 			{/foreach}
 		</tbody>
 	</table>
+	<form id="pagerForm" method="post" action="#rel#">
+		<input type="hidden" name="pageNum" value="1" />
+		<input type="hidden" name="numPerPage" value="{$page.numPerPage}" />
+	</form>
 	<div class="panelBar">
 		<div class="pages">
 			<span>显示</span>
-			{literal}
-			<select class="combox" name="numPerPage" onchange="navTabPageBreak({numPerPage:this.value})">
-			{/literal}
-			{$pagehtml}
+			<select class="combox" name="numPerPage" {literal}onchange="navTabPageBreak({numPerPage:this.value})"{/literal}>
+				<option value="{$page.numPerPage}">{$page.numPerPage}</option>
+				{foreach $page.numPerPageList as $thisNumPerPage}
+					{if $thisNumPerPage!=$page.numPerPage}
+				<option value="{$thisNumPerPage}">{$thisNumPerPage}</option>
+					{/if}
+				{/foreach}
 			</select>
-			<span>条，共{$pagination.total_rows}条，{$pagination.total_num_pagination}页</span>
+			<span>条，总共{$page.totalNum}条记录，合计{$page.totalPageNum}页</span>
 		</div>
-		
-		<div class="pagination" targetType="navTab" totalCount="{$pagination.total_rows}" numPerPage="{$pagination.numPerPage}" pageNumShown="4" currentPage="{$pagination.now_page}"></div>
+
+		<div class="pagination" targetType="navTab" totalCount="{$page.totalNum}" numPerPage="{$page.numPerPage}" pageNumShown="10" currentPage="{$page.pageNum}"></div>
 
 	</div>
 </div>

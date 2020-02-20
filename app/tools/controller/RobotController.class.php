@@ -261,9 +261,6 @@ class RobotController extends Controller {
             <a class="del-icon" href="demo/common/ajaxDone.html"></a>
         </div>
     </div>
-    <div class="upload-wrap">
-        <input type="file" name="file1" accept="image/*">
-    </div>
 </p>
 <div class="divider"></div>
                         ';

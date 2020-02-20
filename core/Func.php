@@ -1,69 +1,4 @@
 <?php
-/**
-  * --------------------s.WangXin2016/1/7
-  *@FUNC    FN_AR    返回指定的ajax需要的return
-  *@PARAMS    string    $tifa_n_args    参数数组，顺序固定array();
-  *@RETURN     string   $re
-  * ----------------------------------------------------------------------------e
-  */
- function AJAXre($case=0, $tifa_n_args=[]){ 
-
-    $re = json_decode('{}');
-
-    //if ( !empty($tifa_n_args) ){ 
-        //$case = 1;
-    //}
-
-    switch ( $case ){
-        
-        case 1:
-            $re->statusCode = 300;
-            $re->message = "操作失败";
-        break;
-        default:
-            $re->statusCode = 200;
-            $re->message = "操作成功";
-        break;
-    }
-
-    return $re;
- }
- /**
-  * --------------------s.WangXin2016/1/7
-  *@FUNC    T_createSelectHtml    
-  *@PARAMS    array    $a_options    选项键值对
-  *@PARAMS    string    $name    下拉列表的name属性名
-  *@PARAMS    num    $type    1：以$a_options的value为option的value  2：以$a_options的key为option的value
-  *@PARAMS    string    $selectTarget    选中目标option的value
-  *@RETURN     string   $select    完整的select下拉列表
-  * ----------------------------------------------------------------------------e
-  */
- function T_createSelectHtml($a_options, $name='', $type=1, $selectTarget=''){ 
-
-    $select = '<select class="combox" name="'.$name.'">';
-
-    foreach( $a_options as $k=>$v ){ 
-    
-        //value值
-        if ( $type==1 ){ 
-            $s_value = $v;
-        }elseif ( $type==2 ){ 
-            $s_value = $k;
-        }
-        //是否选中
-        if ( $s_value==$selectTarget ){ 
-            $s_selected = 'selected="selected"';
-        }else{ 
-            $s_selected = '';
-        }
-        
-        $select .= '<option value="'.$s_value.'" '.$s_selected.'>'.$v.'</option>';
-    }
-
-    $select .= '</select>';
-
-    return $select;
-}
 
 /**
  * 函数名: L
@@ -101,10 +36,12 @@ function C($str){
  * 函数名: M
  * 函数作用: 返回单例对象
  * 参数
- * @param  string    $className   包含命名空间的类名，控制器类名和模型类名可以不包含命名空间，例：$className = '\plugins\CaptchaTool';
+ * @param  string    $className   包含命名空间的类名，控制器类名、模型类名和系统工具类名可以不包含命名空间，例：$className = '\plugins\CaptchaTool';或$className = 'CaptchaTool';
  * @param  array    $params
+ * @param  int    $type    $type='single'表示走单例，为默认值；$type='no_single'表示不走单例
+ * @return    object    单例或非单例对象
  */
-function M($className='Common', $params=array()){ 
+function M($className='Common', $params=array(), $type='single'){ 
     //Linux下不认“\”做目录分隔符，basename无效
     $t_className = explode('\\', $className);
     $arrNums = count($className);
@@ -116,12 +53,201 @@ function M($className='Common', $params=array()){
         $className = '\\model\\' . $t_className;
     }elseif( substr($t_className, -4)=='Tool' ){
         $className = '\\plugins\\' . $t_className;
-    }elseif( $className=='Common' ){//针对Common的情况
+    }elseif( $className=='Common'||$className=='AutoTb' ){//针对Common的情况 和 老的AutoTbModel的情况
         $className = '\\model\\' . $t_className . 'Model';
     }
 
-    return \core\App::single($className, $params);
+    return \core\App::single($className, $params, $type);
 }
+
+function F(){
+
+    return M('FuncTool');
+}
+
+function JSON(){
+
+    return M('JsonTool');
+}
+
+function REQUEST(){
+
+    return M('RequestTool');
+}
+
+function R(){
+
+    return M('LogTool');
+}
+
+/**
+ * 排除数组元素
+ * @param
+ */
+function AP($arr, $popKeys){ 
+    
+    $arr_keys = array_keys($arr);//所有元素下标组成的数组集合
+
+    $newArr = array();
+    foreach( $arr_keys as $keyName ){ //遍历需要排除的下标名称
+         
+        if( !in_array($keyName, $popKeys) ){//如果数组下标不在被排除的目标数组中，则保存
+            $newArr[$keyName] = $arr[$keyName];
+        }
+    }
+    return $newArr;//将排除元素后的数组返回
+}
+
+function handler_init_special_fields(&$init){
+    
+    /*
+    $init = [
+        'level'=>'0:大栏目级|1:小栏目级|2:选项卡级',
+        'type'=>'0:否|1:是'
+    ]
+    */
+    $init_bak = $init;
+    $init = [];
+    foreach( $init_bak as $k=>$v){
+
+        $tmp_arr_1 = explode('|', trim($v));
+        /*
+        $tmp_arr_1 = ['0:大栏目级', '1:小栏目级', '2:选项卡级']
+        */
+        foreach( $tmp_arr_1 as $k1=>$v1){
+
+            $tmp_arr_2 = explode(':', trim($v1));// $tmp_arr_2=['0', '大栏目级']
+            $init[$k][$tmp_arr_2[0]] = $tmp_arr_2[1];
+        }
+    }
+    /*
+    最终形成：
+    $init = [
+        'level'=>[0=>'大栏目级', 1=>'小栏目级', 2=>'选项卡级'],
+        'type'=>[0=>'否', 1=>'是']
+    ]
+    */
+}
+
+/**
+  *@FUNC    T_createSelectHtml    
+  *@PARAMS    array    $a_options    选项键值对
+  *@PARAMS    string    $name    下拉列表的name属性名
+  *@PARAMS    num    $type    1：以$a_options的value为option的value  2：以$a_options的key为option的value
+  *@PARAMS    string    $selectTarget    选中目标option的value
+  *@RETURN     string   $select    完整的select下拉列表
+  */
+ function T_createSelectHtml($a_options, $name='', $type=1, $selectTarget=''){ 
+
+    $select = '<select class="combox" name="'.$name.'">';
+
+    foreach( $a_options as $k=>$v ){ 
+    
+        //value值
+        if ( $type==1 ){ 
+            $s_value = $v;
+        }elseif ( $type==2 ){ 
+            $s_value = $k;
+        }
+        //是否选中
+        if ( $s_value==$selectTarget ){ 
+            $s_selected = 'selected="selected"';
+        }else{ 
+            $s_selected = '';
+        }
+        
+        $select .= '<option value="'.$s_value.'" '.$s_selected.'>'.$v.'</option>';
+    }
+
+    $select .= '</select>';
+
+    return $select;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+  * --------------------s.WangXin2016/1/7
+  *@FUNC    FN_AR    返回指定的ajax需要的return
+  *@PARAMS    string    $tifa_n_args    参数数组，顺序固定array();
+  *@RETURN     string   $re
+  * ----------------------------------------------------------------------------e
+  */
+ function AJAXre($case=0, $tifa_n_args=[]){ 
+
+    $re = json_decode('{}');
+
+    //if ( !empty($tifa_n_args) ){ 
+        //$case = 1;
+    //}
+
+    switch ( $case ){
+        
+        case 1:
+            $re->statusCode = 300;
+            $re->message = "操作失败";
+        break;
+        default:
+            $re->statusCode = 200;
+            $re->message = "操作成功";
+        break;
+    }
+
+    return $re;
+ }
+
+ /**
+ * 函数名: randStr    已转移到系统工具类FuncTool中
+ * 函数作用: 生成指定个数的随机字符串
+ * 参数
+ * @param    int    $num    需要生成随机字符串的个数，$num默认值为6
+ */
+// function randStr($num=6){ 
+    
+//     $str = '';
+//     for($i=0; $i<$num; $i++ ):
+        
+//         $seed = mt_rand(1, 10);
+//         if( $seed<4 ){
+//             $str .= chr(mt_rand(48, 57));
+//         }elseif( $seed<7 ){
+//             $str .= chr(mt_rand(65, 90));
+//         }else{
+//             $str .= chr(mt_rand(97, 122));
+//         }
+//     endfor;
+
+//     return str_shuffle($str);
+// }
+
 
 /**
  *  过滤检查函数
@@ -140,36 +266,6 @@ function T(&$target){
         break;
     }
 }
-
-function handler_init_special_fields(&$init){
-    
-        /*
-        $init = [
-            'level'=>'0:大栏目级|1:小栏目级|2:选项卡级',
-            'type'=>'0:否|1:是'
-        ]
-        */
-        foreach( $init as $k=>$v){
-
-            $tmp_arr_1 = explode('|', trim($v));
-            
-            /*
-            $tmp_arr_1 = ['0:大栏目级', '1:小栏目级', '2:选项卡级']
-            */
-            foreach( $tmp_arr_1 as $k1=>$v1){
-
-                $tmp_arr_2 = explode(':', trim($v));// $tmp_arr_2=['0', '大栏目级']
-                $init[$k][$tmp_arr_2[0]] = $tmp_arr_2[1];
-            }
-        }
-        /*
-        最终形成：
-        $init = [
-            'level'=>[0=>'大栏目级', 1=>'小栏目级', 2=>'选项卡级'],
-            'type'=>[0=>'否', 1=>'是']
-        ]
-        */
-    }
 
 /**
  *  过滤检查是否为空函数
@@ -221,30 +317,6 @@ function TE($target, $url='', $checkEmptyElements=1, $msg='您填写的参数不
             }
         break;
     }
-}
-
-/**
- * 函数名: randStr
- * 函数作用: 生成指定个数的随机字符串
- * 参数
- * @param    int    $num    需要生成随机字符串的个数，$num默认值为6
- */
-function randStr($num=6){ 
-    
-    $str = '';
-    for($i=0; $i<$num; $i++ ):
-        
-        $seed = mt_rand(1, 10);
-        if( $seed<4 ){
-            $str .= chr(mt_rand(48, 57));
-        }elseif( $seed<7 ){
-            $str .= chr(mt_rand(65, 90));
-        }else{
-            $str .= chr(mt_rand(97, 122));
-        }
-    endfor;
-
-    return str_shuffle($str);
 }
 
 /**
@@ -308,21 +380,5 @@ function pageHtml($nowPage, $totalPage, $url){
     return $pageHtml;
 }
 
-/**
- * 排除数组元素
- * @param
- */
-function AP($arr, $popKeys){ 
-    
-    $arr_keys = array_keys($arr);//所有元素下标组成的数组集合
 
-    $newArr = array();
-    foreach( $arr_keys as $keyName ){ //遍历需要排除的下标名称
-         
-        if( !in_array($keyName, $popKeys) ){//如果数组下标不在被排除的目标数组中，则保存
-            $newArr[$keyName] = $arr[$keyName];
-        }
-    }
-    return $newArr;//将排除元素后的数组返回
-}
 

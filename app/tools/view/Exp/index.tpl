@@ -2,15 +2,6 @@
 	<input type="hidden" name="pageNum" value="1" />
 	<input type="hidden" name="numPerPage" value="{$page.numPerPage}" />
 </form>
-{* {literal}
-<form id="pagerForm" method="post" action="{$url.index}}">
-	<input type="hidden" name="status" value="${param.status}">
-	<input type="hidden" name="keywords" value="${param.keywords}" />
-	<input type="hidden" name="pageNum" value="1" />
-	<input type="hidden" name="numPerPage" value="${model.numPerPage}" />
-	<input type="hidden" name="orderField" value="${param.orderField}" />
-</form>
-{/literal} *}
 
 <div class="pageHeader">
 	<form onsubmit="return navTabSearch(this);" action="{$page.index}" method="post" onreset="$(this).find('select.combox').comboxReset()">
@@ -48,9 +39,7 @@
 <div class="pageContent">
 	<div class="panelBar">
 		<ul class="toolBar">
-			<li><a class="add" href="{$url.ad.url}" target="navTab" rel="{$url.ad.rel}"><span>添加EXP</span></a></li>
-			<li><a class="delete" href="{$url.del}&id={ldelim}sid_user}" target="ajaxTodo" title="确定要删除吗?"><span>删除</span></a></li>
-			<li><a class="edit" href="{$url.upd.url}&id={ldelim}sid_user}" target="navTab" rel="$url.upd.rel"><span>修改EXP</span></a></li>
+			<li><a class="add" href="{$url.ad.url}" target="_blank"><span>添加EXP</span></a></li>
 			<li class="line">line</li>
 			<li><a class="icon" href="demo/common/dwz-team.xls" target="dwzExport" targetType="navTab" title="实要导出这些记录吗?"><span>导出EXCEL</span></a></li>
 		</ul>
@@ -64,6 +53,7 @@
 				<th width="100">标签</th>
 				<th width="100">所属分类</th>
 				<th width="150">文章id</th>
+				<th width="150">操作</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -75,6 +65,10 @@
 				<td>{$exp.tags}</td>
 				<td>{str_replace('|', ' >> ', $exp.crumbs_expcat_names)}</td>
 				<td>{$exp.id}</td>
+				<td>
+					<a title="确实要删除？" target="ajaxTodo" href="{$url.del}&id={$exp['id']}" class="btnDel">删除</a>
+					<a title="编辑EXP" target="_blank" href="{$url.upd.url}&id={$exp['id']}" class="btnEdit">编辑</a>
+				</td>
 			</tr>
 		{/foreach}
 		</tbody>

@@ -4,6 +4,67 @@ use \core\controller;
 use \Overtrue\Pinyin\Pinyin;
 class TestController extends Controller {
 
+    private $_datas=[];
+    public function t2(){
+    
+        $this->_datas['row'] = $row = M()->table('prorecord')->select('*')->where(['id', 10])->find();
+        // F()->print_r($this->_datas['row']['content_html']);
+        $this->assign($this->_datas);
+        $this->display('test/t2.tpl');
+    }
+    public function log(){
+    
+        // R()->msg('错误码：00x62')
+        // ->msg('出错的行：235')
+        // ->msg('文件路径：X/xx/xxxx/xxxxx/xx.xx')
+        // ->msg('错误信息：阿发的手法都是谁打的舒服的')
+        // ->go();
+
+        M()->table('aabb')->select('*')->where(['id', '>', 1])->get();
+    }
+
+    public function upfile(){
+
+        $this->display('test/upfile_index.tpl');
+    
+    }
+    public function upfileh(){
+    
+        // echo '<pre>';
+        
+        // var_dump($_FILES);
+        // echo '<pre>';
+
+        // $storage = new \Upload\Storage\FileSystem(UPLOAD_PATH);
+        // $storage = M('\Upload\Storage\FileSystem', UPLOAD_PATH);
+        // $file = new \Upload\File('img', $storage);
+        // $file = M('\Upload\File', ['img', $storage]);
+
+        // $file_input_name_arr = F()->file_arrange('img');
+        // var_dump($file_input_name_arr);
+        // echo '<pre>';
+        // print_r($_FILES);
+        // echo '<pre>';
+
+        // $file = [];
+        // foreach( $file_input_name_arr as $k=>$v){
+        //     $file[$k] = F()->file($v)->up('img_');
+        //     var_dump($file[$k]->getNameWithExtension());
+        //     echo '<hr/>';
+            
+        // }
+
+        // echo '<pre>';
+        // print_r($file);
+        // echo '<pre>';
+
+        $file = F()->file('img')->up('img_');
+        echo '<pre>';
+        
+        var_dump($file->getErrors());
+        echo '<pre>';
+    }
+
     public function t(){
     
         // 小内存型

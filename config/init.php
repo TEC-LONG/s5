@@ -10,14 +10,14 @@ include CORE_PATH . 'Func.php';
 //引入配置常量文件
 include CONFIG_PATH . 'D.php';
 
+include CONFIG_PATH . 'define.conf.php';
 
 $plat = isset($_GET['p']) ? $_GET['p'] : $GLOBALS['configs']['dweb']['p'];//平台参数
 
 if( $plat=='tools' ){
-    include TOOLS_CONF_PATH . 'define.conf.php';
     // include TOOLS_CONF_PATH . 'menu.conf.php';
     include TOOLS_CONF_PATH . 'AutoTb.conf.php';
-}else{
+}elseif( $plat=='admin' ){
     //引入模板配置文件
     include CONFIG_PATH . 'template_conf.php';
 }

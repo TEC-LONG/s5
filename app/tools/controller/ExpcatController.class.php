@@ -12,7 +12,7 @@ class ExpcatController extends Controller {
 
         parent::__construct();
 
-        $this->_navTab = 'expcat';
+        $this->_navTab = 'tools_expcat';
         
         $this->_url = [
             'index' => L(PLAT, MOD, 'index'),

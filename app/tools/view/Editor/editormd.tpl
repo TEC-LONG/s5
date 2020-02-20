@@ -25,6 +25,7 @@
 			width: "90%",
 			height: 720,
 			markdown : "",
+			watch : false,
 			path : '{$smarty.const.PUBLIC_TOOLS}editor_md/lib/',
 			//dialogLockScreen : false,   // 设置弹出层对话框不锁屏，全局通用，默认为 true
 			//dialogShowMask : false,     // 设置弹出层对话框显示透明遮罩层，全局通用，默认为 true
@@ -34,9 +35,12 @@
 			imageUpload : true,
 			imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
 			imageUploadURL : "{$url.editormdImgUp}",
+			saveHTMLToTextarea : true,
 			onchange : function() {
 				
 				var con = $('#content').html();
+				console.log(con);
+				console.log(testEditor.getValue());
 				parent.setEditorMdConad(con);
 			}
 

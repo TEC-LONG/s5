@@ -6,16 +6,31 @@ class App{
 
     private static $_objs=array();
 
-    public static function single($className, $params){
+    public static function single($className, $params, $type='single'){//$type='single'表示走单例；$type='no_single'表示不走单例
+
         if( empty(self::$_objs[$className]) ){
             if( empty($params) ):
                 self::$_objs[$className] = new $className;
             else:
-                self::$_objs[$className] = new $className($params);
+                if( $className==='\Upload\File' ){
+                    self::$_objs[$className] = new $className($params[0], $params[1]);
+                }else{
+                    self::$_objs[$className] = new $className($params);
+                }
             endif;
         }
 
-        return self::$_objs[$className];
+        if( $type=='no_single' ){
+        
+            $tmp_obj = self::$_objs[$className];
+            unset(self::$_objs[$className]);
+            return $tmp_obj;
+
+        }elseif ( $type=='single' ) {
+            
+            return self::$_objs[$className];
+        }
+        
     }
 
     public static function autoload($className){ 
@@ -26,7 +41,6 @@ class App{
         $className = $t_className[$arrNums-1];
 
         if( substr($className, -10)=='Controller' ){//如果包含了Controller关键字，则表示是一个控制器类文件
-            
             //           mvc/app/admin/controller/
             //include APP_ADMIN_CONTROLLER_PATH . $className . '.class.php';
             //         mvc/app/     admin[/home]               /controller/xxxController.class.php

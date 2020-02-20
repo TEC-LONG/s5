@@ -66,8 +66,8 @@ class MenuController extends Controller {
             //查询字段
             $form_elems = [
                 ['post_date', 'like'],
-['name', 'like'],
-['level', 'like']
+                ['name', 'like'],
+                ['level', 'like']
             ];
             
             //将条件数组数据转换为条件字符串
@@ -77,7 +77,7 @@ class MenuController extends Controller {
             $this->_datas['search'] = $this->_get_ori_search_datas($request, $form_elems);
     
             //分页参数
-            $this->_datas['page'] = $page = $this->_page('menu', $con, 3);
+            $this->_datas['page'] = $page = $this->_page('menu', $con, $request);
     
             //查询数据
             $rows = M()->table('menu')

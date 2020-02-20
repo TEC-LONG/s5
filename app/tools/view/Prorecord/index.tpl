@@ -39,9 +39,7 @@
 <div class="pageContent">
 	<div class="panelBar">
 		<ul class="toolBar">
-			<li><a class="add" href="{$url.ad.url}" target="navTab" rel="{$url.ad.rel}"><span>添加</span></a></li>
-			<li><a class="delete" href="{$url.del}&id={ldelim}sid_user}" target="ajaxTodo" title="确定要删除吗?"><span>删除</span></a></li>
-			<li><a class="edit" href="{$url.upd.url}&id={ldelim}sid_user}" target="navTab" rel="{$url.upd.rel}"><span>修改</span></a></li>
+			<li><a class="add" href="{$url.ad.url}" target="_blank"><span>添加</span></a></li>
 			<li class="line">line</li>
 			<li><a class="icon" href="demo/common/dwz-team.xls" target="dwzExport" targetType="navTab" title="实要导出这些记录吗?"><span>导出EXCEL</span></a></li>
 		</ul>
@@ -50,9 +48,10 @@
 		<thead>
 			<tr>
 				<th width="80">#</th>
-				<th width="120">标题</th>
+				<th width="240">标题</th>
 				<th width="100">所属工程</th>
 				<th width="150">ID</th>
+				<th width="150">操作</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -62,6 +61,10 @@
 				<td><a href="{$url.info}&id={$prorecord.id}" target="_blank">{$prorecord.title}</a></td>
 				<td>{$belong_pro[$prorecord.belong_pro]}</td>
 				<td>{$prorecord.id}</td>
+				<td>
+					<a title="确实要删除？" target="ajaxTodo" href="{$url.del}&id={$prorecord['id']}" class="btnDel">删除</a>
+					<a title="编辑工程信息" target="_blank" href="{$url.upd.url}&id={$prorecord['id']}" class="btnEdit">编辑</a>
+				</td>
 			</tr>
 		{/foreach}
 		</tbody>

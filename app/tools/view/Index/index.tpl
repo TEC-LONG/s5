@@ -8,7 +8,7 @@
 			<div class="headerNav">
 				<a class="logo" href="http://j-ui.com">标志</a>
 				<ul class="nav">
-					<li id="switchEnvBox"><a href="javascript:">（<span>北京</span>）切换城市</a>
+					<!-- <li id="switchEnvBox"><a href="javascript:">（<span>北京</span>）切换城市</a>
 						<ul>
 							<li><a href="sidebar_1.html">北京</a></li>
 							<li><a href="sidebar_2.html">上海</a></li>
@@ -18,21 +18,22 @@
 							<li><a href="sidebar_2.html">天津</a></li>
 							<li><a href="sidebar_2.html">杭州</a></li>
 						</ul>
-					</li>
-					<li><a href="donation.html" target="dialog" height="400" title="捐赠 & DWZ学习视频">捐赠</a></li>
+					</li> -->
+					<!-- <li><a href="donation.html" target="dialog" height="400" title="捐赠 & DWZ学习视频">捐赠</a></li>
 					<li><a href="changepwd.html" target="dialog" rel="changepwd" width="600">设置</a></li>
 					<li><a href="http://www.cnblogs.com/dwzjs" target="_blank">博客</a></li>
-					<li><a href="http://weibo.com/dwzui" target="_blank">微博</a></li>
-					<li><a href="login.html">退出</a></li>
+					<li><a href="http://weibo.com/dwzui" target="_blank">微博</a></li> -->
+					<li><a href="http://www.cnblogs.com/dwzjs" target="_blank">博客</a></li>
+					<li><a href="{$url.login_out.url}">退出</a></li>
 				</ul>
-				<ul class="themeList" id="themeList">
+				<!-- <ul class="themeList" id="themeList">
 					<li theme="default"><div class="selected">蓝色</div></li>
 					<li theme="green"><div>绿色</div></li>
-					<!--<li theme="red"><div>红色</div></li>-->
+					<li theme="red"><div>红色</div></li>
 					<li theme="purple"><div>紫色</div></li>
 					<li theme="silver"><div>银色</div></li>
 					<li theme="azure"><div>天蓝</div></li>
-				</ul>
+				</ul> -->
 			</div>
 
 			<!-- navMenu -->
@@ -61,7 +62,7 @@
 								<ul>
 								{foreach $menu3 as $k3=>$v3}
 								{if $v2.id==$v3.parent_id}
-									<li><a href="{L($v3['plat'], $v3['module'], $v3['act'])}" target="navTab" rel="{$v3['navtab']}">{$v3.name}</a></li>
+									<li><a href="{if $v3.level3_type!=0}{$v3.level3_href}{else}{L($v3['plat'], $v3['module'], $v3['act'])}{/if}" target="navTab" rel="{$v3['navtab']}">{$v3.name}</a></li>
 								{/if}
 								{/foreach}
 								</ul>

@@ -1,129 +1,119 @@
 <!DOCTYPE html>
-<html lang="zh">
-    <head>
-        <meta charset="utf-8" />
-        <title>[ID:{$exp.id}].{$exp.title}</title>
-        <link rel="stylesheet" href="{$smarty.const.PUBLIC_TOOLS}editor_md/examples/css/style.css" />
-        <link rel="stylesheet" href="{$smarty.const.PUBLIC_TOOLS}editor_md/css/editormd.preview.css" />
-		<script type="text/javascript" src="{$smarty.const.PUBLIC_TOOLS_PRETTIFY}src/run_prettify.js?autoload=true&amp;skin=sunburst&amp;lang=css"></script>
-		{literal}
-        <style>
-            body {padding: 40px;}
-            
-            #layout > header, .btns {
-                width: auto;
-            }
-            
-            #sidebar {
-                width: 400px;
-                height: 100%;
-                position: fixed;
-                top: 0;
-                right: 0;
-                overflow: hidden;
-                background: #fff;
-                z-index: 100;
-                padding: 18px; 
-                border: 1px solid #ddd;
-                border-top: none;
-                border-bottom: none;
-            }
-            
-            #sidebar:hover {
-                overflow: auto;
-            }
-            
-            #sidebar h1 {
-                font-size: 16px;
-            }
-            
-            #custom-toc-container {
-                padding-left: 0;
-            }
-            
-            #test-editormd-view, #test-editormd-view2 {
-                padding-left: 0;
-                padding-right: 430px;
-                margin: 0;
-            }
-			.operative { font-weight: bold; border: 1px solid yellow; }
-			pre { border: 4px solid #88c; }
-        </style>
-		{/literal}
-    </head>
-    <body>
-        <div id="layout">
-            <header>
-                <h1>{$exp.title}</h1> 
-                <p>所属分类： {str_replace('|', '  >>  ', $exp.crumbs_expcat_names)}</p>
-                <p>{date('Y-m-d H:i:s', $exp['post_date'])}</p>       
-            </header>
-            <div id="sidebar">
-                <h1>Table of Contents</h1>
-                <div class="markdown-body editormd-preview-container" id="custom-toc-container">#custom-toc-container</div>
-            </div>
-            <div id="test-editormd-view">
-               <textarea style="display:none;" name="test-editormd-markdown-doc"></textarea>               
-            </div>
-            <div id="test-editormd-view2">
-                <textarea id="append-test" style="display:none;"></textarea>          
-            </div>
-        </div>
-        <!-- <script src="/tempaltes/editor_md/examples/js/zepto.min.js"></script>
-		<script>		
-			var jQuery = Zepto;  // 为了避免修改flowChart.js和sequence-diagram.js的源码，所以使用Zepto.js时想支持flowChart/sequenceDiagram就得加上这一句
-		</script> -->
-        <script src="{$smarty.const.PUBLIC_TOOLS}editor_md/examples/js/jquery.min.js"></script>
-        <script src="{$smarty.const.PUBLIC_TOOLS}editor_md/lib/marked.min.js"></script>
-        <script src="{$smarty.const.PUBLIC_TOOLS}editor_md/lib/prettify.min.js"></script>
+<html lang="zh-cn">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>{$row.title}</title>
+	<link rel="shortcut icon" href="{$smarty.const.PUBLIC_TOOLS}image/ico.ico" type="image/x-icon" />
+	<link rel="stylesheet" href="{$smarty.const.BOOTSTRAP4}css/bootstrap.min.css"/>
+	<link rel="stylesheet" href="{$smarty.const.PUBLIC_TOOLS}edmd/css/editormd.css"/>
+	<script src="{$smarty.const.PUBLIC_TOOLS_JUI}js/jquery-2.1.4.min.js"></script>
+	<script src="{$smarty.const.PUBLIC_TOOLS_PRETTIFY}src/run_prettify.js?autoload=true&amp;skin=doxy&amp;lang=basic"></script>
+	<!-- <script src="{$smarty.const.PUBLIC_TOOLS}js/popper.min.js"></script> -->
+    <script src="{$smarty.const.BOOTSTRAP4}js/bootstrap.min.js"></script>
+{literal}
+<style>
+body {padding: 40px;}
 
-        <script src="{$smarty.const.PUBLIC_TOOLS}editor_md/lib/raphael.min.js"></script>
-        <script src="{$smarty.const.PUBLIC_TOOLS}editor_md/lib/underscore.min.js"></script>
-        <script src="{$smarty.const.PUBLIC_TOOLS}editor_md/lib/sequence-diagram.min.js"></script>
-        <script src="{$smarty.const.PUBLIC_TOOLS}editor_md/lib/flowchart.min.js"></script>
-        <script src="{$smarty.const.PUBLIC_TOOLS}editor_md/lib/jquery.flowchart.min.js"></script>
+#layout > header, .btns {
+    width: auto;
+}
 
-        <script src="{$smarty.const.PUBLIC_TOOLS}editor_md/editormd.js"></script>
-        <script type="text/javascript">
-            $(function() {
-                var testEditormdView, testEditormdView2;
+#sidebar {
+    width: 400px;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    right: 0;
+    overflow: hidden;
+    background: #fff;
+    z-index: 100;
+    padding: 18px; 
+    border: 1px solid #ddd;
+    border-top: none;
+    border-bottom: none;
+}
+
+#sidebar:hover {
+    overflow: auto;
+}
+
+#sidebar h1 {
+    font-size: 16px;
+}
+
+#custom-toc-container {
+    padding-left: 0;
+}
+
+#test-editormd-view, #test-editormd-view2 {
+    padding-left: 0;
+    padding-right: 430px;
+    margin: 0;
+}
+.operative { font-weight: bold; border: 1px solid yellow; }
+pre { border: 4px solid #88c; }
+</style>
+{/literal}
+</head>
+<body>
+
+<div id="layout">
+    <header>
+        <h1>{$row.title}</h1> 
+        <p>所属分类： {str_replace('|', '  >>  ', $row.crumbs_expcat_names)}</p>
+        <p>{date('Y-m-d H:i:s', $row.post_date)}</p>       
+    </header>
+    <div id="sidebar">
+        <h1>{$row.title}目录：</h1>
+        <div class="markdown-body editormd-preview-container" id="custom-toc-container">toc</div>
+    </div>
+    <div id="editormd-view1">
+        <textarea style="display:none;"></textarea>
+    </div>
+</div>
+<script src="{$smarty.const.PUBLIC_TOOLS}edmd/lib/marked.min.js"></script>
+<script src="{$smarty.const.PUBLIC_TOOLS}edmd/lib/prettify.min.js"></script>
+<script src="{$smarty.const.PUBLIC_TOOLS}edmd/lib/raphael.min.js"></script>
+<script src="{$smarty.const.PUBLIC_TOOLS}edmd/lib/underscore.min.js"></script>
+<script src="{$smarty.const.PUBLIC_TOOLS}edmd/lib/sequence-diagram.min.js"></script>
+<script src="{$smarty.const.PUBLIC_TOOLS}edmd/lib/flowchart.min.js"></script>
+<script src="{$smarty.const.PUBLIC_TOOLS}edmd/lib/jquery.flowchart.min.js"></script>
+<script src="{$smarty.const.PUBLIC_TOOLS}edmd/editormd.js"></script>
+<script>
+$(function() {
+
+    var testEditormdView;
                 
-                $.get("{$smarty.const.PUBLIC_TOOLS}editor_md/examples/test.md", function(markdown) {
-                    
-				    testEditormdView = editormd.markdownToHTML("test-editormd-view", {
-                        markdown        : markdown ,//+ "\r\n" + $("#append-test").text(),
-                        //htmlDecode      : true,       // 开启 HTML 标签解析，为了安全性，默认不开启
-                        htmlDecode      : "style,script,iframe",  // you can filter tags decode
-                        //toc             : false,
-                        tocm            : true,    // Using [TOCM]
-                        tocContainer    : "#custom-toc-container", // 自定义 ToC 容器层
-                        //gfm             : false,
-                        //tocDropdown     : true,
-                        // markdownSourceCode : true, // 是否保留 Markdown 源码，即是否删除保存源码的 Textarea 标签
-                        emoji           : true,
-                        taskList        : true,
-                        tex             : true,  // 默认不解析
-                        flowChart       : true,  // 默认不解析
-                        sequenceDiagram : true,  // 默认不解析
-                    });
-                    
-                    //console.log("返回一个 jQuery 实例 =>", testEditormdView);
-                    
-                    // 获取Markdown源码
-                    //console.log(testEditormdView.getMarkdown());
-                    
-                    //alert(testEditormdView.getMarkdown());
-                });
-                    
-                testEditormdView2 = editormd.markdownToHTML("test-editormd-view2", {
-                    htmlDecode      : "style,script,iframe",  // you can filter tags decode
-                    emoji           : true,
-                    taskList        : true,
-                    tex             : true,  // 默认不解析
-                    flowChart       : true,  // 默认不解析
-                    sequenceDiagram : true,  // 默认不解析
-                });
-            });
-        </script>
-    </body>
+    $.get("{$url_edmd_file}", function(markdown) {
+        
+        testEditormdView = editormd.markdownToHTML("editormd-view1", {
+            htmlDecode: "style,script,iframe",
+            markdown        : markdown ,//+ "\r\n" + $("#append-test").text(),
+            //htmlDecode      : true,       // 开启 HTML 标签解析，为了安全性，默认不开启
+            htmlDecode      : "style,script,iframe",  // you can filter tags decode
+            //toc             : false,
+            tocm            : true,    // Using [TOCM]
+            tocContainer    : "#custom-toc-container", // 自定义 ToC 容器层
+            //gfm             : false,
+            //tocDropdown     : true,
+            // markdownSourceCode : true, // 是否保留 Markdown 源码，即是否删除保存源码的 Textarea 标签
+            emoji           : true,
+            taskList        : true,
+            tex             : true,  // 默认不解析
+            flowChart       : true,  // 默认不解析
+            sequenceDiagram : true,  // 默认不解析
+        });
+        
+        //console.log("返回一个 jQuery 实例 =>", testEditormdView);
+        
+        // 获取Markdown源码
+        // console.log(testEditormdView.getMarkdown());
+        
+        //alert(testEditormdView.getMarkdown());
+    });
+});
+</script>
+</body>
 </html>

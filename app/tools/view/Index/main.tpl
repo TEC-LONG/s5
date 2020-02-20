@@ -1,5 +1,70 @@
 <!-- container -->
+
 <div class="navTab-panel tabsPageContent layoutBox">
+	<div class="page unitBox">
+
+		<h2 class="subTitle">常用链接</h2>
+		{foreach $nav_link as $k=>$v}
+		<div class="row" style="padding: 0 10px;">
+			{foreach $v as $k1=>$v1}
+			<div class="col-md-1 col-sm-12">
+				<a href="{$v1}" target="_blank">{$k1}</a>
+			</div>
+			{/foreach}
+		</div>
+		{/foreach}
+		<!-- <div class="row" style="padding: 0 10px;">
+			<div class="col-md-3 col-sm-12" style="border: 1px dashed #f00">
+				test1
+			</div>
+			<div class="col-md-3 col-sm-12" style="border: 1px dashed #f00;">
+				<p>test2</p>
+			</div>
+			<div class="col-md-3 col-sm-12" style="border: 1px dashed #f00">
+				test3
+			</div>
+			<div class="col-md-3 col-sm-12" style="border: 1px dashed #f00">
+				test4
+			</div>
+		</div>
+		<div class="row" style="padding: 0 10px;">
+			<div class="col-md-3 col-sm-12" style="border: 1px dashed #f00">
+				test1
+			</div>
+			<div class="col-md-3 col-sm-12" style="border: 1px dashed #f00;">
+				<p>test2</p>
+			</div>
+			<div class="col-md-3 col-sm-12" style="border: 1px dashed #f00">
+				test3
+			</div>
+			<div class="col-md-3 col-sm-12" style="border: 1px dashed #f00">
+				test4
+			</div>
+		</div> -->
+
+		<div class="row">
+<style>
+* {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	border: none;
+}
+#zzsc {
+	width: 920px;
+	margin: 100px auto;
+}
+</style>
+<script type="text/javascript" src="{$smarty.const.PUBLIC_TOOLS}zzsc.js"></script>
+			<div class="col-md-12 col-sm-12">
+				<div id="zzsc">
+					<canvas id="canvas" width="920" height="200"></canvas>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- <div class="navTab-panel tabsPageContent layoutBox">
 	<div class="page unitBox">
 
 		<div class="accountInfo">
@@ -16,22 +81,7 @@
 			<p><a href="#" target="_blank">fires.wang(blog)</a></p>
 		</div>
 
-		<div class="pageFormContent" layoutH="80" style="margin-right:230px">
-			<p style="color:red">
-				微博 <a href="#" target="_blank">...</a>
-				微博 <a href="#" target="_blank">...</a>
-			</p>
-			<p style="color:red">
-				微群 <a href="#" target="_blank">...</a>
-				微群 <a href="#" target="_blank">...</a>
-				微群 <a href="#" target="_blank">...</a>
-			</p>
-			<p style="color:red">
-				微博 <a href="#" target="_blank">...</a>
-			</p>
-			<p style="color:red">
-				微群 <a href="#" target="_blank">...</a>
-			</p>
+		<div class="pageFormContent" layoutH="120" style="margin-right:230px">
 			<div class="divider"></div>
 			<div class="sortDrag" style="width:32%;border:1px solid #e66;margin:5px;float:left;min-height:100px">
 				<div style="border:1px solid #B8D0D6;padding:5px;margin:5px">
@@ -70,4 +120,4 @@
 		</div>
 
 	</div>
-</div>
+</div> -->

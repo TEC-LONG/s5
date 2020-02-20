@@ -4,7 +4,8 @@ use \core\controller;
 
 class MenuController extends Controller {
 
-    private $_datas=[];
+    private $_datas = [];
+    private $_init = [];
     private $_navTab;
     private $_requ;
 
@@ -12,7 +13,13 @@ class MenuController extends Controller {
 
         parent::__construct();
 
-        $this->_navTab = 'menu';
+        $this->_navTab = 'tools_menu';
+        $this->_init['level3_type'] = '0:内部跳转链接|1:外部跳转链接';
+        handler_init_special_fields($this->_init);
+
+        //扔进模板
+        $this->_datas = $this->_init;
+
         $this->_requ = M('RequestTool');
 
         $this->_datas['navTab'] = $this->_navTab;
@@ -37,7 +44,6 @@ class MenuController extends Controller {
             $this->_datas['first']['p_ids'][$k] = $row['id'];
             $this->_datas['first']['p_levels'][$k] = $row['level'];
         }
-
         //分配模板变量&渲染模板
         $this->assign($this->_datas);
         $this->display('Menu/index.tpl');
@@ -49,7 +55,7 @@ class MenuController extends Controller {
         $request = $this->_requ->all();
 
         //查询数据
-        $rows = M()->table('menu')->select('id,name,level,plat,module,act,navtab')->where([['parent_id', $request['p_id']], ['is_del', 0]])->get();
+        $rows = M()->table('menu')->select('id,name,level,plat,module,act,navtab,level3_type,level3_href')->where([['parent_id', $request['p_id']], ['is_del', 0]])->get();
 
         $child = [];
 
@@ -62,6 +68,8 @@ class MenuController extends Controller {
                 $child['module'][$row_key] = $row['module'];
                 $child['act'][$row_key] = $row['act'];
                 $child['navtab'][$row_key] = $row['navtab'];
+                $child['level3_type'][$row_key] = $row['level3_type'];
+                $child['level3_href'][$row_key] = $row['level3_href'];
             }
         }
 
@@ -81,7 +89,9 @@ class MenuController extends Controller {
             'module' => $request['module'],
             'act' => $request['act'],
             'navtab' => $request['navtab'],
-            'level' => $request['plevel']+1
+            'level' => $request['plevel']+1,
+            'level3_type'=>$request['level3_type'],
+            'level3_href'=>$request['level3_href']
         ];
 
         if ( M()->table('menu')->insert($datas)->exec() ){ 
@@ -108,6 +118,8 @@ class MenuController extends Controller {
         if( $request['module']!==$request['ori_module'] ) $datas['module'] = $request['module'];
         if( $request['act']!==$request['ori_act'] ) $datas['act'] = $request['act'];
         if( $request['navtab']!==$request['ori_navtab'] ) $datas['navtab'] = $request['navtab'];
+        if( $request['level3_type']!==$request['ori_level3_type'] ) $datas['level3_type'] = $request['level3_type'];
+        if( $request['level3_href']!==$request['ori_level3_href'] ) $datas['level3_href'] = $request['level3_href'];
 
         if(empty($datas)){
             $re = AJAXre(1);

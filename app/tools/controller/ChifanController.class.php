@@ -15,7 +15,7 @@ class ChifanController extends Controller {
 
         parent::__construct();
 
-        $this->_navTab = 'chifan';
+        $this->_navTab = 'tools_chifan';
 
         //非标准预定义属性赋值与转换
         $this->_init['types'] = '{"0":"早餐", "1":"午餐", "2":"晚餐", "3":"睡前", "4":"休闲"}';
@@ -103,7 +103,7 @@ class ChifanController extends Controller {
         $request = $_REQUEST;
 
         //查询条件(融合搜索条件)
-        $con_arr = ['is_del'=>'=0'];
+        $con_arr = ['is_del', '=0'];
 
         $form_elems = [
             ['cai', 'like'],
@@ -121,7 +121,7 @@ class ChifanController extends Controller {
         $this->_datas['search'] = $this->_get_ori_search_datas($request, $form_elems);
 
         //分页参数
-        $this->_datas['page'] = $page = $this->_page('chifan', $con, 3);
+        $this->_datas['page'] = $page = $this->_page('chifan', $con, $request);
 
         //查询数据
         $cais = M()->table('chifan')
