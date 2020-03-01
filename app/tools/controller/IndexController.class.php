@@ -36,7 +36,8 @@ class IndexController extends Controller {
             ],
             [
                 '慕课网' => 'https://www.imooc.com/',
-                'runoob菜鸟' => 'https://www.runoob.com/'
+                'runoob菜鸟' => 'https://www.runoob.com/',
+                '树莓派' => 'https://shumeipai.nxez.com/'
             ],
             [
                 '博客园' => 'https://www.cnblogs.com/',

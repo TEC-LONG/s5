@@ -46,8 +46,9 @@ class ProrecordController extends Controller {
             break;
             case 'everyday':
             case 'edad':
+            case 'edupd':
                 $this->_init['stat'] = '0:未完成|2:已完成';
-                $this->_init['character'] = '0:不紧急-不重要(灰色)|1:不紧急-重要(蓝色)|2:紧急-不重要(橙色)|3:紧急-重要(红色)';
+                $this->_init['characte'] = '0:不紧急-不重要|1:不紧急-重要|2:紧急-不重要|3:紧急-重要';
                 $this->_init['type'] = '0:工作|1:学习|2:生活';
                 handler_init_special_fields($this->_init);
                 $this->_datas = $this->_init;
@@ -58,7 +59,20 @@ class ProrecordController extends Controller {
                     'ad' => ['url'=>L(PLAT, MOD, 'edad'), 'rel'=>$this->_navTab.'_edad'],
                     'adh' => ['url'=>L(PLAT, MOD, 'edadh')],
                     'upd' => ['url'=>L(PLAT, MOD, 'edupd'), 'rel'=>$this->_navTab.'_edupd'],
+                    'updh' => ['url'=>L(PLAT, MOD, 'edupdh')],
                     'del' => ['url'=>L(PLAT, MOD, 'eddel')]
+                ];
+            break;
+            case 'details':
+            case 'detad':
+            case 'detupd':
+                $this->_datas['url'] = [
+                    'details' => ['url'=>L(PLAT, MOD, 'details'), 'rel'=>$this->_navTab.'_details'],
+                    'ad' => ['url'=>L(PLAT, MOD, 'detad'), 'rel'=>$this->_navTab.'_detad'],
+                    'adh' => ['url'=>L(PLAT, MOD, 'detadh')],
+                    'upd' => ['url'=>L(PLAT, MOD, 'detupd'), 'rel'=>$this->_navTab.'_detupd'],
+                    'updh' => ['url'=>L(PLAT, MOD, 'detupdh')],
+                    'del' => ['url'=>L(PLAT, MOD, 'detdel')]
                 ];
             break;
         }
@@ -213,33 +227,89 @@ class ProrecordController extends Controller {
 
     public function everyday(){
         
-       ///接收数据
+        ///接收数据
         $request = REQUEST()->all();
+        $tmp_today_b_time = strtotime(date('Y-m-d').' 0:0:0');
+        $tmp_today_e_time = strtotime(date('Y-m-d').' 23:59:59');
+
+        ///打卡
+        if( isset($request['id']) ){
+            
+            ///查询今天打卡数据
+            $tmp_today = M()->table('everyday_clockin')->select('*')->where([
+                ['everyday_things__id', $request['id']],
+                ['clock_in_time', 'between', strtotime(date('Y-m-d').' 0:0:0').' and '.strtotime(date('Y-m-d').' 23:59:59')]
+            ])->find();
+
+            ///没打卡，则打卡
+            if( !$tmp_today ){
+                M()->table('everyday_clockin')->insert(['clock_in_time'=>time(), 'everyday_things__id'=>$request['id']])->exec();
+            }
+
+            ///完全做完状态
+            if( isset($request['stat'])&&$request['stat']==1 ){
+                M()->table('everyday_things')->fields('stat')->update(['1'])->where(['id', $request['id']])->exec();
+            }
+        }
 
         ///查询条件(融合搜索条件)
-        $con_arr = [
-            ['id', '>', 0],
-            ['b_time', '<=', strtotime(date('Y-m-d').' 0:0:0')],
-            ['e_time', '>=', strtotime(date('Y-m-d').' 23:59:59')]
+        $con = [
+            ['everyday_things.id', '>', 0],
+            ['everyday_things.e_time', '>=', $tmp_today_b_time],
+            ['stat', 0]
         ];
 
         #需要搜索的字段
-        $form_elems = [
-            ['name', 'like']
-        ];
+        // $form_elems = [
+        //     ['name', 'like']
+        // ];
 
-        $con = $this->_condition_string($request, $form_elems, $con_arr);//将条件数组数据转换为条件字符串
+        // $con = $this->_condition_string($request, $form_elems, $con_arr);//将条件数组数据转换为条件字符串
 
         ///将搜索的原始数据扔进模板
-        $this->_datas['search'] = $this->_get_ori_search_datas($request, $form_elems);
+        // $this->_datas['search'] = $this->_get_ori_search_datas($request, ['title', 'b_time', 'e_time']);
 
         ///分页参数
         $this->_datas['page'] = $page = $this->_page('everyday_things', $con, $request);
 
         ///查询数据
+        #核心数据
         $this->_datas['things'] = M()->table('everyday_things')->select('*')->where($con)
-                // ->limit($page['limitM'] . ',' . $page['numPerPage'])
-                ->get();
+        // ->limit($page['limitM'] . ',' . $page['numPerPage'])
+        ->orderby('everyday_things.characte desc')
+        ->get();
+
+        if( !empty($this->_datas['things']) ){
+
+            $arr_ids = [];
+            foreach( $this->_datas['things'] as $k=>$v){
+                $arr_ids[$k] = $v['id'];
+            }
+            $str_ids = implode(',', $arr_ids);
+
+            $tmp_everyday_clockin = M()->table('everyday_clockin')->select('everyday_things__id,max(clock_in_time) as clock_in_time')->where(['everyday_things__id', 'in', '('.$str_ids.')'])
+            ->groupby('everyday_things__id')
+            ->get();
+
+            $everyday_clockin = [];
+            foreach( $tmp_everyday_clockin as $k=>$v){
+                $everyday_clockin[$v['everyday_things__id']] = $v['clock_in_time'];
+            }
+
+            foreach( $this->_datas['things'] as $k=>$v){
+                
+                if( isset($everyday_clockin[$v['id']]) ){
+                    if( !($everyday_clockin[$v['id']]>=$tmp_today_b_time&&$everyday_clockin[$v['id']]<=$tmp_today_e_time) ){//今日未打开则清除打卡时间，因为这个打卡时间是以前的
+                        $this->_datas['things'][$k]['clock_in_time'] = 0;
+                    }else{//今日已打卡，则保留打卡时间
+                        $this->_datas['things'][$k]['clock_in_time'] = $everyday_clockin[$v['id']];
+                    }
+                }else{//不存在则认为是今日未打卡
+                    $this->_datas['things'][$k]['clock_in_time'] = 0;
+                }
+                
+            }
+        }
 
         ///分配模板变量&渲染模板
         $this->assign($this->_datas);
@@ -264,10 +334,10 @@ class ProrecordController extends Controller {
         $now_time = time();
         $insert = [
             'title' => $request['title'],
-            'character' => $request['character'],
+            'characte' => $request['characte'],
             'type' => $request['type'],
             'b_time' => empty($request['b_time']) ? strtotime(date('Y-m-d').' 0:0:0') : strtotime($request['b_time']),
-            'e_time' => empty($request['e_time']) ? strtotime(date('Y-m-d').' 23:59:59') : strtotime($request['e_time']),
+            'e_time' => empty($request['e_time']) ? (strtotime(date('Y-m-d').' 23:59:59')+7*24*3600) : strtotime($request['e_time']),
             'post_date' => $now_time
         ];
 
@@ -280,40 +350,157 @@ class ProrecordController extends Controller {
             JSON()->stat(300)->msg('操作失败')->exec();
         }
     }
+    public function edupd(){
+
+        ///接收数据
+        $request = REQUEST()->all();
+
+        ///检查数据
+        //check($request,  $this->_extra['form-elems'])
+
+        ///查找回显数据
+        $this->_datas['row'] = M()->table('everyday_things')->select('*')->where(['id', $request['id']])->find();
+    
+        $this->assign($this->_datas);
+        $this->display('Prorecord/edupd.tpl');
+    }
+
+    public function edupdh(){
+
+        $request = REQUEST()->all();
+
+        ///检查数据
+        //check($request,  $this->_extra['form-elems'])
+
+        ///取出修改了的数据
+        #查询已有数据
+        $request['b_time'] = strtotime($request['b_time']);
+        $request['e_time'] = strtotime($request['e_time']);
+        $row = M()->table('everyday_things')->select('*')->where(['id', $request['id']])->find();
+        $update_data = F()->compare($request, $row, ['title', 'b_time', 'e_time', 'characte', 'type']);
+
+        if( empty($update_data) ){
+            JSON()->stat(300)->msg('请先修改数据！')->exec();
+        }
+
+        ///更新数据
+        $re = M()->table('everyday_things')
+        ->fields(array_keys($update_data))
+        ->update($update_data)
+        ->where(['id', $request['id']])
+        ->exec();
+
+        if( $re ){
+            JSON()->navtab($this->_navTab.'_everyday')->exec();
+        }else{
+            JSON()->stat(300)->msg('操作失败')->exec();
+        }
+    }
 
     public function details(){
-        //接收数据
+        ///接收数据
         $request = REQUEST()->all();
-        #对时间数据进行补全
-        if(isset($request['b_post_date'])&&!empty($request['b_post_date'])) $request['b_post_date'].=' 0:0:0';
-        if(isset($request['e_post_date'])&&!empty($request['e_post_date'])) $request['e_post_date'].=' 23:59:59';
-        if(isset($request['b_begin_time'])&&!empty($request['b_begin_time'])) $request['b_begin_time'].=' 0:0:0';
-        if(isset($request['e_begin_time'])&&!empty($request['e_begin_time'])) $request['e_begin_time'].=' 23:59:59';
-        if(isset($request['b_end_time'])&&!empty($request['b_end_time'])) $request['b_end_time'].=' 0:0:0';
-        if(isset($request['e_end_time'])&&!empty($request['e_end_time'])) $request['e_end_time'].=' 23:59:59';
+        $this->_datas['everyday_things__id'] = $request['id'];
 
-        // //查询条件(融合搜索条件)
-        $con_arr = ['is_del', 0];
-
-        // #需要搜索的字段
-        $form_elems = [
-            ['title', 'like'],
-            ['post_date', 'time-in'],
-            ['begin_time', 'time-in'],
-            ['end_time', 'time-in']
+        ///查询条件
+        $con = [
+            ['everyday_things__id', $request['id']]
         ];
 
-        $con = $this->_condition_string($request, $form_elems, $con_arr);//将条件数组数据转换为条件字符串
-
-        // //将搜索的原始数据扔进模板
-        $this->_datas['search'] = $this->_get_ori_search_datas($request, $form_elems);
-
         //查询数据
-        $this->_datas['rows'] = M()->table('event')->select('*')->where($con)->orderby('post_date desc')->get();
+        $this->_datas['this_everyday_things'] = M()->table('everyday_things')->select('b_time, e_time')->where(['id', $request['id']])->find();
+        $this->_datas['rows'] = M()->table('everyday_things_details')->select('*')->where($con)->orderby('post_date desc')->get();
 
         //分配模板变量&渲染模板
         $this->assign($this->_datas);
         $this->display('Prorecord/details.tpl');
+    }
+
+    public function detad(){
+
+        ///接收数据
+        $request = REQUEST()->all();
+        $this->_datas['everyday_things__id'] = $request['edths_id'];
+    
+        $this->assign($this->_datas);
+        $this->display('Prorecord/detad.tpl');
+    }
+
+    public function detadh(){
+    
+        ///接收数据
+        $request = REQUEST()->all();
+
+        ///检查数据
+        //check($request,  $this->_extra['form-elems'])
+
+        ///构建新增数据
+        $now_time = time();
+        $b_time = empty($request['b_time']) ? ($now_time-3600*3) : strtotime($request['b_time']);
+        $e_time = empty($request['e_time']) ? $now_time : strtotime($request['e_time']);
+        $insert = [
+            'content' => str_replace(PHP_EOL, '<br/>', $request['content']),
+            'b_time' => $b_time,
+            'e_time' => $e_time,
+            'post_date' => $now_time,
+            'everyday_things__id' => $request['everyday_things__id']
+        ];
+
+        $re = M()->table('everyday_things_details')->insert($insert)->exec();
+
+        ///执行新增
+        if( $re ){
+            JSON()->navtab('tools_prorecord_detad')->exec();
+        }else{
+            JSON()->stat(300)->msg('操作失败')->exec();
+        }
+    }
+
+    public function detupd(){
+
+        ///接收数据
+        $request = REQUEST()->all();
+        $this->_datas['id'] = $request['id'];
+        $this->_datas['everyday_things__id'] = $request['edths_id'];
+
+        ///查找回显数据
+        $this->_datas['row'] = M()->table('everyday_things_details')->select('*')->where(['id', $request['id']])->find();
+    
+        $this->assign($this->_datas);
+        $this->display('Prorecord/detupd.tpl');
+    }
+
+    public function detupdh(){
+    
+        $request = REQUEST()->all();
+
+        ///检查数据
+        //check($request,  $this->_extra['form-elems'])
+
+        ///取出修改了的数据
+        #查询已有数据
+        $request['b_time'] = strtotime($request['b_time']);
+        $request['e_time'] = strtotime($request['e_time']);
+        $request['content'] = str_replace(PHP_EOL, '<br/>', $request['content']);
+        $row = M()->table('everyday_things_details')->select('*')->where(['id', $request['id']])->find();
+        $update_data = F()->compare($request, $row, ['content', 'b_time', 'e_time']);
+        
+        if( empty($update_data) ){
+            JSON()->stat(300)->msg('请先修改数据！')->exec();
+        }
+
+        ///更新数据
+        $re = M()->table('everyday_things_details')
+        ->fields(array_keys($update_data))
+        ->update($update_data)
+        ->where(['id', $request['id']])
+        ->exec();
+
+        if( $re ){
+            JSON()->navtab('tools_prorecord_detupd')->exec();
+        }else{
+            JSON()->stat(300)->msg('操作失败')->exec();
+        }
     }
     
 }      

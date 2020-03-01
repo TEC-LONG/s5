@@ -8,6 +8,7 @@ class Model extends NiceModel{
     protected $table;
     protected $select;
     protected $orderby;
+    protected $groupby;
     protected $limit;
     protected $where=[];
     protected $left_join=[];
@@ -67,17 +68,17 @@ class Model extends NiceModel{
      */
     public function where($where){
 
+        $tmp_no_need_quote = ['in', 'not in', 'between'];//不需要在值两侧包裹引号的
+        $tmp_need_space = ['in', 'not in', 'like', 'between'];//需要在0,1,2元素之间加上空格的
         if( $this->is2arr($where)==1 ){//一维数组  $where=['name', '=', 'xxx']
-            
-            $where[0] = '`' . $where[0] . '`';//字段两侧加反引号
-            if( count($where)==3 ){//三个元素  $where=['name', '=', 'xxx']
 
-                $tmp_no_need_quote = ['in', 'not in'];//不需要在值两侧包裹引号的
+            // $where[0] = '`' . $where[0] . '`';//字段两侧加反引号
+            if( count($where)==3 ){//三个元素  $where=['name', '=', 'xxx']
+                
                 if( !in_array($where[1], $tmp_no_need_quote) ){
                     $where[2] = '"' . str_replace('"', '\'', $where[2]) . '"';//数据两侧加双引号
                 }
 
-                $tmp_need_space = ['in', 'not in', 'like'];//需要在0,1,2元素之间加上空格的
                 if( in_array($where[1], $tmp_need_space) ){
                     $where = implode(' ', $where);
                 }else{
@@ -95,11 +96,20 @@ class Model extends NiceModel{
             $tmp = [];
             foreach( $where as $one){
                 
-                $one[0] = '`' . $one[0] . '`';
+                // $one[0] = '`' . $one[0] . '`';
                 if( count($one)==3 ){//三个元素  $one=['name', '=', 'xxx']
 
-                    $one[2] = '"' . str_replace('"', '\'', $one[2]) . '"';//  "xxx"
-                    $tmp1 = implode('', $one);// name="xxx"
+                    
+                    if( !in_array($one[1], $tmp_no_need_quote) ){
+                        $one[2] = '"' . str_replace('"', '\'', $one[2]) . '"';//  "xxx"//数据两侧加双引号
+                    }
+
+                    if( in_array($one[1], $tmp_need_space) ){
+
+                        $tmp1 = implode(' ', $one);// name in (1, 2, 3)
+                    }else{
+                        $tmp1 = implode('', $one);// name="xxx"
+                    }
                 }else{//两个元素  $one=['name', 'xxx']
 
                     $one[1] = '"' . str_replace('"', '\'', $one[1]) . '"';
@@ -128,6 +138,19 @@ class Model extends NiceModel{
         $this->orderby = ' order by ' . $orderby;
         return $this;
     }
+
+    /**
+     * method:指定group by条件
+     * @param $groupby string group by条件，仅支持字符串类型
+                如：$groupby='user__id'
+     * @return object
+     */
+    public function groupby($groupby){
+    
+        $this->groupby = ' group by ' . $groupby;
+        return $this;
+    }
+
     /**
      * method:指定limit条件
      * @param $limit string limit条件，仅支持字符串类型
@@ -234,6 +257,7 @@ class Model extends NiceModel{
             $sql = 'select %s from %s%s where %s';
             $sql = sprintf($sql, $this->select, $this->table, implode(' ', $this->left_join), implode(' and ', $this->where));
 
+            if(!empty($this->groupby)) $sql .= ' ' . $this->groupby;
             if(!empty($this->orderby)) $sql .= ' ' . $this->orderby;
             if(!empty($this->limit)) $sql .= ' ' . $this->limit;
 

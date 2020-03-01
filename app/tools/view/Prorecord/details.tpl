@@ -3,23 +3,33 @@
 		<table class="searchContent">
 			<tr>
 				<td>
-					<h1>日程细节</h1>
+					<span>颜色说明</span>
+					<span style="background-color: rgb(255, 110, 85);">紧急-重要</span>
+					<span style="background-color: rgb(255, 201, 85);">紧急-不重要</span>
+					<span style="background-color: rgb(232, 157, 255);">不紧急-重要</span>
+					<span style="background-color: rgb(49, 255, 142);">不紧急-不重要</span>
+					<span style="background-color: rgb(114, 114, 114);">已完成</span>
+					&nbsp;&nbsp;
+					<span style="font-size: medium;">周期开始：{date('Y-m-d H:i', $this_everyday_things.b_time)}</span>
+					<span style="font-size: medium;"> ~ 周期结束：{date('Y-m-d H:i', $this_everyday_things.e_time)}</span>
 				</td>
 			</tr>
 		</table>
 	</div>
 </div>
 
-<div class="pageContent" style="border-left:1px #B8D0D6 solid;border-right:1px #B8D0D6 solid">
-<div class="panelBar">
+<div class="tools_prorecord_everyday_details_pageContent" style="border-left:1px #B8D0D6 solid;border-right:1px #B8D0D6 solid">
+	<div class="panelBar">
 		<ul class="toolBar">
-			<li><a class="add" href="demo/pagination/dialog2.html" target="dialog" mask="true"><span>添加</span></a></li>
-			<li><a class="delete" href="demo/pagination/ajaxDone3.html?uid=" target="ajaxTodo" title="确定要删除吗?"><span>删除</span></a></li>
-			<li><a class="edit" href="demo/pagination/dialog2.html?uid=" target="dialog" mask="true"><span>修改</span></a></li>
+			<li><a class="add" href="{$url.ad.url}&edths_id={$everyday_things__id}" target="dialog" rel="{$url.ad.rel}" minable="false" width="650" height="440"><span>添加日程细节</span></a></li>
 			<li class="line">line</li>
-			<li><a class="icon" href="demo/common/dwz-team.xls" target="dwzExport" title="实要导出这些记录吗?"><span>导出EXCEL</span></a></li>
+			<li><a class="delete" href="javacript:void(0);" title="确定要删除吗?"><span>删除细节点</span></a></li>
+			<li class="line">line</li>
+			<li><a class="edit" href="javacript:void(0);" title="编辑日程细节"><span>编辑日程细节</span></a></li>
 		</ul>
 	</div>
+	
+	<div class="container" style="background-color: #fbffbe;">
 {literal}
 <style>
 * {margin: 0;padding: 0;}
@@ -44,24 +54,60 @@
 .timeLine li.on ~ li p span {color: #d0d0d0;}
 </style>
 {/literal}
-	<ul class="timeLine" width="100%" layoutH="138">
+	<ul class="timeLine" width="100%" layoutH="117">
 		{foreach $rows as $k=>$row}
 		<li>
-			<p>{date('H:i', $row['post_date'])}<span>{date('Y年m月d日', $row['post_date'])}</span>{$row['title']}</p>
+			<p>{date('H:i:s', $row['post_date'])}</p>
 			<div class="con">
 				<input type="radio" name="id" value="{$row.id}" />&nbsp;&nbsp;
-				{if !empty($row['begin_time'])}事件开始时间：{date('Y-m-d H:i', $row['begin_time'])}<br/>{/if}
-				{if !empty($row['end_time'])}事件结束时间：{date('Y-m-d H:i', $row['end_time'])}<br/>{/if}
-				备注内容：{if !empty($row['descr'])}{htmlspecialchars_decode($row['descr'])}{else}无{/if}
+				{if !empty($row['b_time'])}{date('m-d H:i', $row['b_time'])}{/if}
+            	{if !empty($row['e_time'])} ~ {date('m-d H:i', $row['e_time'])}{/if}
+				<br/>
+				<div style="margin-top: 10px;">
+					<strong style="color:rgb(255, 17, 148);">备注内容：</strong>{if !empty($row['content'])}<br/>
+					<div style="margin-top: 5px;font-size: medium;">
+						{htmlspecialchars_decode($row['content'])}{else}无{/if}
+					</div>
+				</div>
+				
 			</div>
 		</li>
 		{/foreach}
 	</ul>
 <script>
-$('.tools_event_index_pageContent').find('.timeLine').find('input[type="radio"]').bind('click', function(){
-	$('.tools_event_index_pageContent').find('.edit').attr('href', '{$url.upd.url}&id='+$(this).val());
-	$('.tools_event_index_pageContent').find('.delete').attr('href', '{$url.del.url}&id='+$(this).val());
+$('.tools_prorecord_everyday_details_pageContent').find('.timeLine').find('input[type="radio"]').bind('click', function(){
+	$('.tools_prorecord_everyday_details_pageContent').find('.edit').attr('href', '{$url.upd.url}&id='+$(this).val()+'&edths_id={$everyday_things__id}');
+	$('.tools_prorecord_everyday_details_pageContent').find('.edit').attr('rel', '{$url.upd.rel}');
+	$('.tools_prorecord_everyday_details_pageContent').find('.delete').attr('href', '{$url.del.url}&id='+$(this).val());
+});
+
+{literal}
+$('.tools_prorecord_everyday_details_pageContent').find('.edit').bind('click', function () {
+	console.log(this.href)
+	if (this.href!=='javacript:void(0);') {
+		$.pdialog.open(this.href, this.rel, this.title, {'width':650,'height':440,'minable':false,'mask':true,'resizable':true,'drawable':true});
+	}
+	return false;
+});
+{/literal}
+$('.tools_prorecord_everyday_details_pageContent').find('.delete').bind('click', function () {
+	$(this).click(function(event){
+		var $this = $(this);
+		var title = $this.attr("title");
+		if (title) {
+			alertMsg.confirm(title, {
+				okCall: function(){
+					ajaxTodo($this.attr("href"));
+				}
+			});
+		} else {
+			ajaxTodo($this.attr("href"));
+		}
+		event.preventDefault();
+	});
 });
 </script>
+	</div>
+
 	<div class="panelBar"></div>
 </div>

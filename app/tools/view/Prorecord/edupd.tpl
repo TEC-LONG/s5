@@ -1,15 +1,15 @@
 <div class="pageContent">
-	<form method="post" action="{$url.adh.url}" class="pageForm required-validate" onsubmit="return validateCallback(this, edadAjaxDone);">
+	<form method="post" action="{$url.updh.url}&id={$row.id}" class="pageForm required-validate" onsubmit="return validateCallback(this, edupdAjaxDone);">
         <div class="pageFormContent" layoutH="56">
             <p>
 				<label>日程标题：</label>
-				<input name="title" type="text" class="required" style="width:240px;" />
+				<input name="title" type="text" class="required" style="width:240px;" value="{$row.title}" />
 			</p>
 			<p>
 				<label>类型：</label>
 				<select class="combox" name="type">
 					{foreach $type as $k=>$v}
-					<option value="{$k}">{$v}</option>
+					<option value="{$k}" {if $row.type==$k}selected{/if}>{$v}</option>
 					{/foreach}
 				</select>
 			</p>
@@ -17,18 +17,18 @@
 				<label>性质：</label>
 				<select class="combox" name="characte">
 					{foreach $characte as $k=>$v}
-					<option value="{$k}">{$v}</option>
+					<option value="{$k}" {if $row.characte==$k}selected{/if}>{$v}</option>
 					{/foreach}
 				</select>
 			</p>
 			<div class="divider"></div>
 			<p>
 				<label>预期周期开始时间：</label>
-				<input name="b_time" class="date readonly" readonly="readonly" dateFmt="yyyy-MM-dd HH:mm:ss" type="text" value="">
+				<input name="b_time" class="date" readonly="readonly" dateFmt="yyyy-MM-dd HH:mm:ss" type="text" value="{date('Y-m-d H:i:s', $row['b_time'])}">
 			</p>
 			<p>
 				<label>预期周期结束时间：</label>
-				<input name="e_time" class="date readonly" readonly="readonly" dateFmt="yyyy-MM-dd HH:mm:ss" type="text" value="">
+				<input name="e_time" class="date" readonly="readonly" dateFmt="yyyy-MM-dd HH:mm:ss" type="text" value="{date('Y-m-d H:i:s', $row['e_time'])}">
 			</p>
 		</div>
 		<div class="formBar">
@@ -43,7 +43,7 @@
 </div>
 <script>
 {literal}
-var edadAjaxDone = function (re) {
+var edupdAjaxDone = function (re) {
 	
 	/// re = {statusCode: 200, message: "操作成功", navTabId: "tools_prorecord_detad"}
 	if (re.statusCode==200) {
