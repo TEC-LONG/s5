@@ -163,4 +163,35 @@ tl_region
 
 
 
+记忆账号表
+mem_acc
+id,post_date,账号记录
+id,post_date,mem_acc
+
+CREATE TABLE `mem_acc` ( `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ) ENGINE=INNODB DEFAULT CHARSET=utf8;
+ALTER TABLE `mem_acc` ADD `post_date` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0';
+ALTER TABLE `mem_acc` ADD `mem_acc` VARCHAR( 50 )  NOT NULL DEFAULT '' COMMENT '账号记录';
+
+
+记忆密码表
+mem_pwd
+id,post_date,密码记录
+id,post_date,mem_pwd
+
+CREATE TABLE `mem_pwd` ( `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ) ENGINE=INNODB DEFAULT CHARSET=utf8;
+ALTER TABLE `mem_pwd` ADD `post_date` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0';
+ALTER TABLE `mem_pwd` ADD `mem_pwd` VARCHAR( 255 )  NOT NULL DEFAULT '';
+
+
+记忆账号-密码关联表
+mem_acc__mem_pwd
+id,post_date,mem_acc表id,mem_pwd表id
+id,post_date,mem_acc__id,mem_pwd__id
+
+CREATE TABLE `mem_acc__mem_pwd` ( `id` INT( 10 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ) ENGINE=INNODB DEFAULT CHARSET=utf8;
+ALTER TABLE `mem_acc__mem_pwd` ADD `post_date` INT( 10 ) UNSIGNED NOT NULL DEFAULT '0';
+ALTER TABLE `mem_acc__mem_pwd` ADD `mem_acc__id` INT( 4 )  UNSIGNED DEFAULT '0' COMMENT 'mem_acc表id';
+ALTER TABLE `mem_acc__mem_pwd` ADD `mem_pwd__id` INT( 4 )  UNSIGNED DEFAULT '0' COMMENT 'mem_pwd表id';
+
+
 

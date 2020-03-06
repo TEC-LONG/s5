@@ -272,11 +272,15 @@ class Controller extends \Smarty{
         $fields = [];
         foreach( $form_elems as $elem){
         
-            if( $elem[1]==='time-in' ){
+            if( isset($elem[1])&&$elem[1]==='time-in' ){
+
                 $fields[] = 'b_'.$elem[0];
                 $fields[] = 'e_'.$elem[0];
-            }else{
+            }elseif( isset($elem[0]) ){
+
                 $fields[] = $elem[0];
+            }else{
+                $fields[] = $elem;
             }
         }
 
