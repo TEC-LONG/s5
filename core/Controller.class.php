@@ -68,6 +68,22 @@ class Controller extends \Smarty{
 
         return $page;
     } 
+    /**
+     * @method    _pagination
+     * 方法作用: 构建分页参数
+     * @param    $request    array    控制器负责接收数据的$request
+     * @param    $obj    object    查询数据的模型对象
+     * @param    $$numPerPageList    array    每页展示数据条数列表
+     * @return    array    包含分页各项数据的数组
+     */
+    // protected function _pagination($request, $obj, $numPerPageList=[20, 30, 40, 60, 80, 100, 120, 160, 200]){
+
+    //     $nowPage = isset($request['pageNum']) ? intval($request['pageNum']) : (isset($_COOKIE['pageNum']) ? intval($_COOKIE['pageNum']) : 1);
+    //     $page = $obj->pagination($nowPage)->pagination;
+    //     $page['numPerPageList'] = $numPerPageList;
+
+    //     return $page;
+    // } 
 
     /**
      * @method    _condition_string

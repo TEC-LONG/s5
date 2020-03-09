@@ -24,6 +24,8 @@ class Model extends NiceModel{
     protected $update=[];
     protected $update_fields=[];
 
+    public $pagination=[];
+
     public function table($table){
         $this->table= $table;
         return $this;
@@ -175,15 +177,14 @@ class Model extends NiceModel{
         return $this;
     }
 
-    protected function query($type=1){
+    protected function query($type=1, $sql=''){
 
         if( $type==1 )://执行查询
             
-            $sql = $this->get_sql();
-
+            if(empty($sql)) $sql = $this->get_sql();
             try{
                 $this->pdostatement=$this->_pdo->query($sql);
-                $this->init();//执行完SQL语句则初始化一次
+                // $this->init();//执行完SQL语句则初始化一次
             }catch(\PDOException $e){//捕获异常,并且进行捕获异常后的处理.
     
                 $this->e = $e;//记录错误对象
@@ -197,12 +198,7 @@ class Model extends NiceModel{
             return true;
         elseif ($type==2)://执行增，删，改
 
-            $sql = $this->get_sql(2);
-            // echo '<pre>';
-            // var_dump($sql);
-            // echo '<pre>';
-            // exit;
-            
+            if(empty($sql)) $sql = $this->get_sql(2);
             if( is_array($sql) ){//本条件只对批量更新有效，若为批量更新，则使用事务
             
                 try{
@@ -212,11 +208,11 @@ class Model extends NiceModel{
                         $this->_pdo->exec($one_sql);
                     }
                     $re = $this->_pdo->commit();//全部执行成功则提交事务
-                    $this->init();//执行完SQL语句则初始化一次
+                    // $this->init();//执行完SQL语句则初始化一次
 
                 }catch(\PDOException $e){
 
-                    $this->init();//出现错误也视为执行完，执行完SQL语句则初始化一次
+                    // $this->init();//出现错误也视为执行完，执行完SQL语句则初始化一次
                     $this->e = $e;//记录错误对象
                     if( C('pdo.mysql.debug') ){
                         $this->dbug('err.echo', $one_sql);
@@ -231,10 +227,10 @@ class Model extends NiceModel{
 
                 try{
                     $this->_pdo->exec($sql);
-                    $this->init();//执行完SQL语句则初始化一次
+                    // $this->init();//执行完SQL语句则初始化一次
                 }catch(\PDOException $e){
         
-                    $this->init();//出现错误也视为执行完，执行完SQL语句则初始化一次
+                    // $this->init();//出现错误也视为执行完，执行完SQL语句则初始化一次
                     $this->e = $e;//记录错误对象
                     if( C('pdo.mysql.debug') ){
                         $this->dbug('err.echo');
@@ -247,6 +243,49 @@ class Model extends NiceModel{
 
             return true;
         endif;
+    }
+
+    public function pagination($nowPage=1, $numPerPage=32){
+
+        ///得到当前的查询语句
+        $sql = $this->get_sql();
+
+        ///将select与from之间的内容替换成$this->pagination_select
+        $pattern = '/^select.*from/';
+        preg_match($pattern, $sql, $matches);
+
+        if( isset($matches[0]) ){
+            
+            $this->sql = $sql = str_replace($matches[0], 'select count(*) as num from', $sql);
+            
+            $re = $this->query(1, $sql);
+            $this->pagination['pageNum'] = $nowPage;
+            $this->pagination['numPerPage'] = $numPerPage;
+
+            if( $re ){
+                $row = $this->pdostatement->fetch(\PDO::FETCH_ASSOC);
+                
+                $this->pagination['totalNum'] = $row['num'];
+                $this->pagination['totalPageNum'] = intval(ceil(($this->pagination['totalNum']/$this->pagination['numPerPage'])));
+                $this->pagination['limitM'] = ($this->pagination['pageNum']-1)*$this->pagination['numPerPage'];
+            }
+
+            return $this;
+        }
+        // $page = [];
+        // $page['numPerPageList'] = [20, 30, 40, 60, 80, 100, 120, 160, 200];
+        // $page['pageNum'] = $pageNum = isset($request['pageNum']) ? intval($request['pageNum']) : (isset($_COOKIE['pageNum']) ? intval($_COOKIE['pageNum']) : 1);
+        // setcookie('pageNum', $pageNum);
+        // $page['numPerPage'] = $numPerPage = isset($request['numPerPage']) ? intval($request['numPerPage']) : $num_per_page;
+        // $tmp_arr_totalNum = M()->table($tb)->select('count(*) as num')->where($condition)->find();
+        // $page['totalNum'] = $totalNum = $tmp_arr_totalNum['num'];
+        // $page['totalPageNum'] = intval(ceil(($totalNum/$numPerPage)));
+        // $page['limitM'] = ($pageNum-1)*$numPerPage;
+
+        // return $page;
+
+        
+
     }
 
     protected function get_sql($type=1){
