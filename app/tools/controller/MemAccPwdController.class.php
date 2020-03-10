@@ -19,18 +19,14 @@ class MemAccPwdController extends Controller {
 
         $this->_datas['url'] = [
             'index' => ['url'=>L(PLAT, MOD, 'index'), 'rel'=>$this->_navTab.'_index'],
-            'ad' => ['url'=>L(PLAT, MOD, 'ad'), 'rel'=>$this->_navTab.'_ad'],
-            'adh' => ['url'=>L(PLAT, MOD, 'adh')],
-            'upd' => ['url'=>L(PLAT, MOD, 'upd'), 'rel'=>$this->_navTab.'_upd'],
-            'updh' => ['url'=>L(PLAT, MOD, 'updh')],
+            'adupd' => ['url'=>L(PLAT, MOD, 'adupd'), 'rel'=>$this->_navTab.'_adupd'],
+            'post' => ['url'=>L(PLAT, MOD, 'post')],
             'accIndex' => ['url'=>L(PLAT, MOD, 'accIndex'), 'rel'=>$this->_navTab.'_accIndex'],
             'accAdUpd' => ['url'=>L(PLAT, MOD, 'accAdUpd'), 'rel'=>$this->_navTab.'_accAdUpd'],
-            'accPost' => ['url'=>L(PLAT, MOD, 'accPost'), 'rel'=>$this->_navTab.'_accPost'],
+            'accPost' => ['url'=>L(PLAT, MOD, 'accPost')],
             'pwdIndex' => ['url'=>L(PLAT, MOD, 'pwdIndex'), 'rel'=>$this->_navTab.'_pwdIndex'],
-            'pwdAd' => ['url'=>L(PLAT, MOD, 'pwdAd'), 'rel'=>$this->_navTab.'_pwdAd'],
-            'pwdAdh' => ['url'=>L(PLAT, MOD, 'pwdAdh'), 'rel'=>$this->_navTab.'_pwdAdh'],
-            'pwdUpd' => ['url'=>L(PLAT, MOD, 'pwdUpd'), 'rel'=>$this->_navTab.'_pwdUpd'],
-            'pwdUpdh' => ['url'=>L(PLAT, MOD, 'pwdUpdh'), 'rel'=>$this->_navTab.'_pwdUpdh'],
+            'pwdAdUpd' => ['url'=>L(PLAT, MOD, 'pwdAdUpd'), 'rel'=>$this->_navTab.'_pwdAdUpd'],
+            'pwdPost' => ['url'=>L(PLAT, MOD, 'pwdPost')],
             'del' => ['url'=>L(PLAT, MOD, 'del')]
         ];
     }
@@ -49,9 +45,7 @@ class MemAccPwdController extends Controller {
         $obj = M()->table('mem_acc')->select('*')->where(1);
 
         #分页参数
-        $nowPage = isset($request['pageNum']) ? intval($request['pageNum']) : (isset($_COOKIE['pageNum']) ? intval($_COOKIE['pageNum']) : 1);
-        $this->_datas['page'] = $page = $obj->pagination($nowPage)->pagination;
-        $page['numPerPageList'] = [20, 30, 40, 60, 80, 100, 120, 160, 200];
+        $this->_data['page'] = $page = $this->_paginate($request, $obj);
 
         #查询数据
         $this->_datas['rows'] = $obj->limit($page['limitM'] . ',' . $page['numPerPage'])->get();
@@ -67,30 +61,56 @@ class MemAccPwdController extends Controller {
         $this->display('memAccPwd/accIndex.tpl');
     }
 
-    public function accAdUpd(){ 
+    public function accAdUpd(){
+        ///接收数据
+        $request = REQUEST()->all();
+
+        ///编辑部分
+        if( isset($request['id']) ){
+
+            $this->_data['id'] = $request['id'];
+            $this->_data['row'] = M()->table('mem_acc')->select('*')->where(['id', $request['id']])->find();
+        }
 
         ///分配模板变量&渲染模板
-        $this->assign($this->_datas);
+        $this->assign($this->_datas);   
         $this->display('memAccPwd/accAdUpd.tpl');
     }
 
     public function accPost(){
-
-        //接收数据
+        ///接收数据
         $request = REQUEST()->all();
 
-        //检查数据
+        ///检查数据
         //check($request,  $this->_extra['form-elems'])
 
-        //构建新增数据
-        $insert = [
-            'mem_acc' => $request['mem_acc'],
-            'post_date' => time()
-        ];
+        ///模型对象
+        $obj = M()->table('mem_acc');
 
-        $re = M()->table('mem_acc')->insert($insert)->exec();
+        ///数据是否重复，重复了没必要增和改
+        $duplicate = $obj->select('id')->where(['mem_acc', $request['mem_acc']])->limit(1)->find();
+        if(!empty($duplicate)) JSON()->stat(300)->msg('"账号数据"已经存在。')->exec();
 
-        //执行新增
+        if( isset($request['id']) ){///编辑
+            #查询已有数据
+            $ori = M()->table('mem_acc')->select('*')->where(['id', $request['id']])->find();
+
+            #新老数据对比，构建编辑数据
+            $update = F()->compare($request, $ori, ['mem_acc']);
+
+            if( empty($update) ) JSON()->stat(300)->msg('您还没有修改任何数据！请先修改数据。')->exec();
+            $re = $obj->fields(array_keys($update))->update($update)->where(['id', $request['id']])->exec();
+
+        }else{///新增
+            $insert = [
+                'mem_acc' => $request['mem_acc'],
+                'post_date' => time()
+            ];
+
+            $re = $obj->insert($insert)->exec();
+        }
+        
+        ///返回结果
         if( $re ){
             JSON()->navtab($this->_navTab.'_accPost')->exec();
         }else{
@@ -99,12 +119,93 @@ class MemAccPwdController extends Controller {
     }
 
     public function pwdIndex(){
-    
+        ///接收数据
+        $request = REQUEST()->all();
+        $this->_datas['pwdIndexType'] = isset($request['type']) ? $request['type'] : '';
 
+        ///将搜索的原始数据扔进模板
+        #需要搜索的字段
+        // $form_elems = [];
+        // $this->_datas['search'] = $this->_get_ori_search_datas($request, $form_elems);
+
+        ///构建查询对象
+        $obj = M()->table('mem_pwd')->select('*')->where(1);
+
+        #分页参数
+        $this->_data['page'] = $page = $this->_paginate($request, $obj);
+
+        #查询数据
+        $this->_datas['rows'] = $obj->limit($page['limitM'] . ',' . $page['numPerPage'])->get();
+        
+        ///表头信息
+        $this->_datas['thead'] = [
+            ['ch'=>'ID', 'width'=>30],
+            ['ch'=>'pwd数据', 'width'=>120]
+        ];
+
+        ///分配模板变量&渲染模板
+        $this->assign($this->_datas);
+        $this->display('memAccPwd/pwdIndex.tpl');
+    }
+
+    public function pwdAdUpd(){
+        ///接收数据
+        $request = REQUEST()->all();
+
+        ///编辑部分
+        if( isset($request['id']) ){
+
+            $this->_data['id'] = $request['id'];
+            $this->_data['row'] = M()->table('mem_pwd')->select('*')->where(['id', $request['id']])->find();
+        }
+
+        ///分配模板变量&渲染模板
+        $this->assign($this->_datas);   
+        $this->display('memAccPwd/pwdAdUpd.tpl');
+    }
+
+    public function pwdPost(){
+        ///接收数据
+        $request = REQUEST()->all();
+
+        ///检查数据
+        //check($request,  $this->_extra['form-elems'])
+
+        ///模型对象
+        $obj = M()->table('mem_pwd');
+
+        ///数据是否重复，重复了没必要增和改
+        $duplicate = $obj->select('id')->where(['mem_pwd', $request['mem_pwd']])->limit(1)->find();
+        if(!empty($duplicate)) JSON()->stat(300)->msg('"密码数据"已经存在。')->exec();
+
+        if( isset($request['id']) ){///编辑
+            #查询已有数据
+            $ori = M()->table('mem_pwd')->select('*')->where(['id', $request['id']])->find();
+
+            #新老数据对比，构建编辑数据
+            $update = F()->compare($request, $ori, ['mem_pwd']);
+
+            if( empty($update) ) JSON()->stat(300)->msg('您还没有修改任何数据！请先修改数据。')->exec();
+            $re = $obj->fields(array_keys($update))->update($update)->where(['id', $request['id']])->exec();
+
+        }else{///新增
+            $insert = [
+                'mem_pwd' => $request['mem_pwd'],
+                'post_date' => time()
+            ];
+
+            $re = $obj->insert($insert)->exec();
+        }
+        
+        ///返回结果
+        if( $re ){
+            JSON()->navtab($this->_navTab.'_pwdPost')->exec();
+        }else{
+            JSON()->stat(300)->msg('操作失败')->exec();
+        }
     }
 
     public function index(){ 
-
         ///接收数据
         $request = REQUEST()->all();
 
@@ -138,11 +239,23 @@ class MemAccPwdController extends Controller {
         $this->display('memAccPwd/index.tpl');
     }
 
-    public function ad(){ 
+    public function adupd(){ 
+         ///接收数据
+        $request = REQUEST()->all();
+
+        ///编辑部分
+        if( isset($request['id']) ){
+
+            $this->_data['id'] = $request['id'];
+            $this->_data['row'] = M()->table('mem_acc__mem_pwd as map')->select('map.*, ma.mem_acc, mp.mem_pwd')->where(['id', $request['id']])
+            ->leftjoin('mem_acc as ma', 'ma.id=map.mem_acc__id')
+            ->leftjoin('mem_pwd as mp', 'mp.id=map.mem_pwd__id')
+            ->find();
+        }
 
         ///分配模板变量&渲染模板
-        $this->assign($this->_datas);
-        $this->display('memAccPwd/ad.tpl');
+        $this->assign($this->_datas);   
+        $this->display('memAccPwd/adUpd.tpl');
     }
 
     public function adh(){ 

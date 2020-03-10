@@ -76,14 +76,14 @@ class Controller extends \Smarty{
      * @param    $$numPerPageList    array    每页展示数据条数列表
      * @return    array    包含分页各项数据的数组
      */
-    // protected function _pagination($request, $obj, $numPerPageList=[20, 30, 40, 60, 80, 100, 120, 160, 200]){
+    protected function _paginate($request, $obj, $numPerPageList=[20, 30, 40, 60, 80, 100, 120, 160, 200]){
 
-    //     $nowPage = isset($request['pageNum']) ? intval($request['pageNum']) : (isset($_COOKIE['pageNum']) ? intval($_COOKIE['pageNum']) : 1);
-    //     $page = $obj->pagination($nowPage)->pagination;
-    //     $page['numPerPageList'] = $numPerPageList;
+        $nowPage = isset($request['pageNum']) ? intval($request['pageNum']) : (isset($_COOKIE['pageNum']) ? intval($_COOKIE['pageNum']) : 1);
+        $page = $obj->pagination($nowPage)->pagination;
+        $page['numPerPageList'] = $numPerPageList;
 
-    //     return $page;
-    // } 
+        return $page;
+    } 
 
     /**
      * @method    _condition_string

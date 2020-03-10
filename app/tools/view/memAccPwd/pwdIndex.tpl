@@ -1,10 +1,10 @@
 <div class="pageHeader">
-	<form onsubmit="return navTabSearch(this);" action="{$url.accIndex.url}" method="post" onreset="$(this).find('select.combox').comboxReset()">
+	<form onsubmit="return navTabSearch(this);" action="{$url.pwdIndex.url}" method="post" onreset="$(this).find('select.combox').comboxReset()">
 	<div class="searchBar">
 		<table class="searchContent">
 			<tr>
 				<td>
-					acc数据：<input type="text" name="s_mem_acc" value="{$search.s_mem_acc}" />
+					pwd数据：<input type="text" name="s_mem_pwd" value="{$search.s_mem_pwd}" />
 				</td>
 			</tr>
 		</table>
@@ -20,7 +20,7 @@
 <div class="pageContent">
 	<div class="panelBar">
 		<ul class="toolBar">
-			<li><a class="add" href="{$url.accAd.url}" target="dialog" rel="{$url.accAd.rel}" rel="{$url.ad.rel}" minable="false" width="750" height="270"><span>新增acc数据</span></a></li>
+			<li><a class="add" href="{$url.pwdAd.url}" target="dialog" rel="{$url.pwdAd.rel}" rel="{$url.ad.rel}" minable="false" width="750" height="270"><span>新增pwd数据</span></a></li>
 		</ul>
 	</div>
 	<table class="table" width="100%" layoutH="138">
@@ -39,15 +39,15 @@
 				<td>{$k+1}</td>
 				<td>{$row.id}</td>
 				<td>
-					{if $accIndexType=='lookup'}
-					<a href="javascript:" onclick="$.bringBack({ldelim}mem_acc__id:{$row.id}, mem_acc:'{$row.mem_acc}'{rdelim})">{$row.mem_acc}</a>
+					{if $pwdIndexType=='lookup'}
+					<a href="javascript:" onclick="$.bringBack({ldelim}mem_pwd__id:{$row.id}, mem_pwd:'{$row.mem_pwd}'{rdelim})">{$row.mem_pwd}</a>
 					{else}
-					{$row.mem_acc}
+					{$row.mem_pwd}
 					{/if}
 				</td>
 				<td>
 					<a title="确实要删除？" target="ajaxTodo" href="{$url.del.url}&id={$row['id']}" class="btnDel">删除</a>
-					<a title="修改映射信息" target="navTab" href="{$url.accAdUpd.url}&id={$row['id']}" class="btnEdit" rel="{$url.upd.rel}">编辑</a>
+					<a title="修改映射信息" target="navTab" href="{$url.pwdAdUpd.url}&id={$row['id']}" class="btnEdit" rel="{$url.upd.rel}">编辑</a>
 				</td>
 			</tr>
 			{/foreach}
@@ -57,7 +57,7 @@
 	<form id="pagerForm" method="post" action="{$url.index}">
 		<input type="hidden" name="pageNum" value="1" />
 		<input type="hidden" name="numPerPage" value="{$page.numPerPage}" />
-		<input type="hidden" name="s_mem_acc" value="{$search.s_mem_acc}" />
+		<input type="hidden" name="s_mem_pwd" value="{$search.s_mem_pwd}" />
 	</form>
 	<div class="panelBar">
 		<div class="pages">

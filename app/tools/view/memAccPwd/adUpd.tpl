@@ -1,16 +1,20 @@
 <div class="pageContent">
-	<form method="post" action="{$url.adh.url}" class="pageForm required-validate" onsubmit="return validateCallback(this, memAccPwdAjaxDone);">
+	<form method="post" action="{$url.post.url}" class="pageForm required-validate" onsubmit="return validateCallback(this, memAccPwdAjaxDone);">
+		{if isset($id)}
+		<input type="hidden" name="id" value="{$id}">
+		{/if}
         <div class="pageFormContent" layoutH="56">
             <p>
 				<label>acc数据：</label>
-				<input class="required" name="accLookup.mem_acc" type="text" readonly/>
-				<input name="accLookup.mem_acc__id" type="hidden"/>
+				<input class="required" name="accLookup.mem_acc" type="text" value="{$row.mem_acc}" readonly/>
+				<input name="accLookup.mem_acc__id" type="hidden" value="{$row.mem_acc__id}" />
 				<a class="btnLook" href="{$url.accIndex.url}&type=lookup" lookupGroup="accLookup">查找带回</a>
 			</p>
 			<p>
 				<label>pwd数据：</label>
-				<input class="required" name="expcat.cat3name" type="text" readonly/>
-				<a class="btnLook" href="{$url.pwdIndex.url}" lookupGroup="pwdLookup">查找带回</a>
+				<input class="required" name="expcat.mem_pwd" type="text" readonly/>
+				<input name="pwdLookup.mem_pwd__id" type="hidden"/>
+				<a class="btnLook" href="{$url.pwdIndex.url}&type=lookup" lookupGroup="pwdLookup">查找带回</a>
 			</p>
 			<div class="divider"></div>
 		</div>

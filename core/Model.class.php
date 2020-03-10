@@ -78,6 +78,7 @@ class Model extends NiceModel{
             if( count($where)==3 ){//三个元素  $where=['name', '=', 'xxx']
                 
                 if( !in_array($where[1], $tmp_no_need_quote) ){
+                    $where[1] = ' ' . $where[1] . ' ';
                     $where[2] = '"' . str_replace('"', '\'', $where[2]) . '"';//数据两侧加双引号
                 }
 

@@ -1,12 +1,12 @@
 <div class="pageContent">
-	<form method="post" action="{$url.accPost.url}" class="pageForm required-validate" onsubmit="return validateCallback(this, memAccAjaxDone);">
+	<form method="post" action="{$url.pwdPost.url}" class="pageForm required-validate" onsubmit="return validateCallback(this, mempwdAjaxDone);">
 		{if isset($id)}
 		<input type="hidden" name="id" value="{$id}">
 		{/if}
         <div class="pageFormContent" layoutH="56">
             <p>
-				<label>acc数据：</label>
-				<input class="required" name="mem_acc" type="text" value="{if isset($row)&&!empty($row.mem_acc)}{$row.mem_acc}{/if}"/>
+				<label>pwd数据：</label>
+				<input class="required" name="mem_pwd" type="text" value="{if isset($row)&&!empty($row.mem_pwd)}{$row.mem_pwd}{/if}"/>
 			</p>
 			<div class="divider"></div>
 		</div>
@@ -22,7 +22,7 @@
 </div>
 <script>
 {literal}
-var memAccAjaxDone = function (re) {
+var mempwdAjaxDone = function (re) {
 	
 	/// re = {statusCode: 200, message: "操作成功", navTabId: "tools_prorecord_detad"}
 	if (re.statusCode==200) {
