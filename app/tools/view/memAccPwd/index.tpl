@@ -24,13 +24,13 @@
 <div class="pageContent">
 	<div class="panelBar">
 		<ul class="toolBar">
-			<li><a class="add" href="{$url.accAdUpd.url}" target="dialog" rel="{$url.accAdUpd.rel}" minable="false" width="750" height="270"><span>新增acc数据</span></a></li>
-			<li><a class="edit" href="{$url.accIndex.url}" target="dialog" rel="{$url.accIndex.rel}"><span>acc数据列表</span></a></li>
+			<li><a class="add" href="{$url.accAdUpd.url}" target="dialog" rel="{$url.accAdUpd.rel}" minable="false" width="750" height="160"><span>新增acc数据</span></a></li>
+			<li><a class="edit" href="{$url.accIndex.url}" target="dialog" rel="{$url.accIndex.rel}" minable="false" width="750" height="600"><span>acc数据列表</span></a></li>
 			<li class="line">line</li>
-			<li><a class="add" href="{$url.pwdAd.url}" target="dialog" rel="{$url.pwdAd.rel}" minable="false" width="750" height="270"><span>新增pwd数据</span></a></li>
-			<li><a class="edit" href="{$url.pwdIndex.url}" target="dialog" rel="{$url.pwdIndex.rel}"><span>pwd数据列表</span></a></li>
+			<li><a class="add" href="{$url.pwdAdUpd.url}" target="dialog" rel="{$url.pwdAdUpd.rel}" minable="false" width="750" height="160"><span>新增pwd数据</span></a></li>
+			<li><a class="edit" href="{$url.pwdIndex.url}" target="dialog" rel="{$url.pwdIndex.rel}" minable="false" width="750" height="160"><span>pwd数据列表</span></a></li>
 			<li class="line">line</li>
-			<li><a class="add" href="{$url.ad.url}" target="dialog" rel="{$url.ad.rel}" minable="false" width="750" height="270"><span>新增acc-pwd映射</span></a></li>
+			<li><a class="add" href="{$url.adUpd.url}" target="dialog" rel="{$url.adUpd.rel}" minable="false" width="650" height="440"><span>新增acc-pwd映射</span></a></li>
 		</ul>
 	</div>
 	<table class="table" width="100%" layoutH="138">
@@ -50,11 +50,13 @@
 				<td><input name="ids" value="{$row.id}" type="checkbox"></td>
 				<td>{$k+1}</td>
 				<td>{$row.id}</td>
+				<td>{$row.belongs_to}</td>
 				<td>{$row.mem_acc}</td>
 				<td>{$row.mem_pwd}</td>
+				<td>{$row.tags}</td>
 				<td>
 					<a title="确实要删除？" target="ajaxTodo" href="{$url.del.url}&id={$row['id']}" class="btnDel">删除</a>
-					<a title="修改映射信息" target="navTab" href="{$url.upd.url}&id={$row['id']}" class="btnEdit" rel="{$url.upd.rel}">编辑</a>
+					<a title="修改映射信息" target="dialog" href="{$url.adUpd.url}&id={$row['id']}" class="btnEdit" rel="{$url.adUpd.rel}"  minable="false" width="650" height="440">编辑</a>
 				</td>
 			</tr>
 			{/foreach}

@@ -19,7 +19,7 @@ class MemAccPwdController extends Controller {
 
         $this->_datas['url'] = [
             'index' => ['url'=>L(PLAT, MOD, 'index'), 'rel'=>$this->_navTab.'_index'],
-            'adupd' => ['url'=>L(PLAT, MOD, 'adupd'), 'rel'=>$this->_navTab.'_adupd'],
+            'adUpd' => ['url'=>L(PLAT, MOD, 'adUpd'), 'rel'=>$this->_navTab.'_adUpd'],
             'post' => ['url'=>L(PLAT, MOD, 'post')],
             'accIndex' => ['url'=>L(PLAT, MOD, 'accIndex'), 'rel'=>$this->_navTab.'_accIndex'],
             'accAdUpd' => ['url'=>L(PLAT, MOD, 'accAdUpd'), 'rel'=>$this->_navTab.'_accAdUpd'],
@@ -45,7 +45,7 @@ class MemAccPwdController extends Controller {
         $obj = M()->table('mem_acc')->select('*')->where(1);
 
         #分页参数
-        $this->_data['page'] = $page = $this->_paginate($request, $obj);
+        $this->_datas['page'] = $page = $this->_paginate($request, $obj);
 
         #查询数据
         $this->_datas['rows'] = $obj->limit($page['limitM'] . ',' . $page['numPerPage'])->get();
@@ -93,7 +93,7 @@ class MemAccPwdController extends Controller {
 
         if( isset($request['id']) ){///编辑
             #查询已有数据
-            $ori = M()->table('mem_acc')->select('*')->where(['id', $request['id']])->find();
+            $ori = $obj->select('*')->where(['id', $request['id']])->find();
 
             #新老数据对比，构建编辑数据
             $update = F()->compare($request, $ori, ['mem_acc']);
@@ -112,7 +112,7 @@ class MemAccPwdController extends Controller {
         
         ///返回结果
         if( $re ){
-            JSON()->navtab($this->_navTab.'_accPost')->exec();
+            JSON()->navtab($this->_navTab.'_accIndex')->exec();
         }else{
             JSON()->stat(300)->msg('操作失败')->exec();
         }
@@ -132,7 +132,7 @@ class MemAccPwdController extends Controller {
         $obj = M()->table('mem_pwd')->select('*')->where(1);
 
         #分页参数
-        $this->_data['page'] = $page = $this->_paginate($request, $obj);
+        $this->_datas['page'] = $page = $this->_paginate($request, $obj);
 
         #查询数据
         $this->_datas['rows'] = $obj->limit($page['limitM'] . ',' . $page['numPerPage'])->get();
@@ -180,7 +180,7 @@ class MemAccPwdController extends Controller {
 
         if( isset($request['id']) ){///编辑
             #查询已有数据
-            $ori = M()->table('mem_pwd')->select('*')->where(['id', $request['id']])->find();
+            $ori =$obj->select('*')->where(['id', $request['id']])->find();
 
             #新老数据对比，构建编辑数据
             $update = F()->compare($request, $ori, ['mem_pwd']);
@@ -199,7 +199,7 @@ class MemAccPwdController extends Controller {
         
         ///返回结果
         if( $re ){
-            JSON()->navtab($this->_navTab.'_pwdPost')->exec();
+            JSON()->navtab($this->_navTab.'_pwdIndex')->exec();
         }else{
             JSON()->stat(300)->msg('操作失败')->exec();
         }
@@ -226,12 +226,14 @@ class MemAccPwdController extends Controller {
 
         #查询数据
         $this->_datas['rows'] = $obj->limit($page['limitM'] . ',' . $page['numPerPage'])->get();
-        
+
         ///表头信息
         $this->_datas['thead'] = [
             ['ch'=>'ID', 'width'=>30],
+            ['ch'=>'归属方', 'width'=>160],
             ['ch'=>'acc映射', 'width'=>120],
-            ['ch'=>'pwd映射', 'width'=>120]
+            ['ch'=>'pwd映射', 'width'=>120],
+            ['ch'=>'标签', 'width'=>220]
         ];
 
         ///分配模板变量&渲染模板
@@ -239,15 +241,15 @@ class MemAccPwdController extends Controller {
         $this->display('memAccPwd/index.tpl');
     }
 
-    public function adupd(){ 
-         ///接收数据
+    public function adUpd(){ 
+        ///接收数据
         $request = REQUEST()->all();
 
         ///编辑部分
         if( isset($request['id']) ){
 
-            $this->_data['id'] = $request['id'];
-            $this->_data['row'] = M()->table('mem_acc__mem_pwd as map')->select('map.*, ma.mem_acc, mp.mem_pwd')->where(['id', $request['id']])
+            $this->_datas['id'] = $request['id'];
+            $this->_datas['row'] = M()->table('mem_acc__mem_pwd as map')->select('map.*, ma.mem_acc, mp.mem_pwd')->where(['map.id', $request['id']])
             ->leftjoin('mem_acc as ma', 'ma.id=map.mem_acc__id')
             ->leftjoin('mem_pwd as mp', 'mp.id=map.mem_pwd__id')
             ->find();
@@ -258,79 +260,52 @@ class MemAccPwdController extends Controller {
         $this->display('memAccPwd/adUpd.tpl');
     }
 
-    public function adh(){ 
-        //接收数据
+    public function post(){
+        ///接收数据
         $request = REQUEST()->all();
 
-        //检查数据
+        ///检查数据
         //check($request,  $this->_extra['form-elems'])
 
-        //构建新增数据
-        $insert = [
-            'acc' => $request['acc'],
-            'pwd' => M('UserModel')->make_pwd($request['pwd']),
-            'nickname' => $request['nickname'],
-            'cell' => $request['cell'],
-            'email' => $request['email'],
-            'salt' => M('UserModel')->make_salt(),
-            'level' => 1,
-            'ori' => 1,
-            'post_date' => time()
-        ];
+        ///模型对象
+        $obj = M()->table('mem_acc__mem_pwd');
 
-        $re = M('UserModel')->insert($insert)->exec();
+        if( isset($request['id']) ){///编辑
+            #查询已有数据
+            $ori = $obj->select('*')->where(['id', $request['id']])->find();
 
-        //执行新增
-        if( $re ){
-            JSON()->navtab($this->_navTab.'_ad')->exec();
-        }else{
-            JSON()->stat(300)->msg('操作失败')->exec();
+            #新老数据对比，构建编辑数据
+            $request['mem_acc__id'] = $request['accLookup_mem_acc__id'];
+            $request['mem_pwd__id'] = $request['pwdLookup_mem_pwd__id'];
+            $update = F()->compare($request, $ori, ['mem_acc__id', 'mem_pwd__id', 'belongs_to', 'comm', 'tags']);
+
+            if( empty($update) ) JSON()->stat(300)->msg('您还没有修改任何数据！请先修改数据。')->exec();
+            $re = $obj->fields(array_keys($update))->update($update)->where(['id', $request['id']])->exec();
+
+        }else{///新增
+
+            #数据是否重复，重复了没必要新增
+            $duplicate = $obj->select('id')->where([
+                ['mem_acc__id', $request['accLookup_mem_acc__id']],
+                ['mem_pwd__id', $request['accLookup_mem_pwd__id']],
+                ['belongs_to', $request['belongs_to']]
+            ])->limit(1)->find();
+            if(!empty($duplicate)) JSON()->stat(300)->msg('数据已经存在。')->exec();
+
+            $insert = [
+                'mem_acc__id' => $request['accLookup_mem_acc__id'],
+                'mem_pwd__id' => $request['pwdLookup_mem_pwd__id'],
+                'belongs_to' => $request['belongs_to'],
+                'comm' => $request['comm'],
+                'tags' => $request['tags'],
+                'post_date' => time()
+            ];
+            $re = $obj->insert($insert)->exec();
         }
-    }
-
-    public function upd(){ 
         
-        //接收数据
-        $request = REQUEST()->all();
-
-        //检查数据
-        //check($request,  $this->_extra['form-elems'])
-
-        //查询数据
-        $this->_datas['row'] = M('UserModel')->select('*')->where(['id', $request['id']])->find();
-
-        //分配模板变量&渲染模板
-        $this->assign($this->_datas);
-        $this->display('user/upd.tpl');
-    }
-
-    public function updh(){ 
-
-        //接收数据
-        $request = REQUEST()->all();
-
-        //检查数据
-        // $this->_extra['form-elems']['id'] = ['ch'=>'菜品ID', 'rule'=>'required'];
-        //check($request,  $this->_extra['form-elems'])
-
-        //取出修改了的数据
-        #查询已有数据
-        $row = M('UserModel')->select('*')->where(['id', $request['id']])->find();
-        $request['pwd'] = $request['pwd']=='' ? $row['pwd'] : M('UserModel')->make_pwd($request['pwd'], $row['salt']);
-        $update_data = F()->compare($request, $row, ['acc', 'pwd', 'nickname', 'cell', 'email']);
-
-        if( empty($update_data) ){
-            JSON()->stat(300)->msg('您还没有修改任何数据！请先修改数据。')->exec();
-        }
-
-        $re = M('UserModel')
-        ->fields(array_keys($update_data))
-        ->update($update_data)
-        ->where(['id', '=', $request['id']])
-        ->exec();
-
+        ///返回结果
         if( $re ){
-            JSON()->navtab($this->_navTab.'_upd')->msg('修改用户成功！')->exec();
+            JSON()->navtab($this->_navTab.'_index')->exec();
         }else{
             JSON()->stat(300)->msg('操作失败')->exec();
         }

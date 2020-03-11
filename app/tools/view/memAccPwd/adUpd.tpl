@@ -5,18 +5,30 @@
 		{/if}
         <div class="pageFormContent" layoutH="56">
             <p>
+				<label>归属方：</label>
+				<input class="required" name="belongs_to" type="text" {if isset($row)}value="{$row.belongs_to}"{/if}/>
+			</p>
+            <p>
+				<label>标签：</label>
+				<input name="tags" type="text" {if isset($row)}value="{$row.tags}"{/if}/>
+			</p>
+            <p>
 				<label>acc数据：</label>
-				<input class="required" name="accLookup.mem_acc" type="text" value="{$row.mem_acc}" readonly/>
-				<input name="accLookup.mem_acc__id" type="hidden" value="{$row.mem_acc__id}" />
+				<input name="accLookup.mem_acc" type="text" {if isset($row)}value="{$row.mem_acc}"{/if} readonly/>
+				<input name="accLookup.mem_acc__id" type="hidden" {if isset($row)}value="{$row.mem_acc__id}"{/if} />
 				<a class="btnLook" href="{$url.accIndex.url}&type=lookup" lookupGroup="accLookup">查找带回</a>
 			</p>
 			<p>
 				<label>pwd数据：</label>
-				<input class="required" name="expcat.mem_pwd" type="text" readonly/>
-				<input name="pwdLookup.mem_pwd__id" type="hidden"/>
+				<input name="pwdLookup.mem_pwd" type="text" {if isset($row)}value="{$row.mem_pwd}"{/if} readonly/>
+				<input name="pwdLookup.mem_pwd__id" type="hidden" {if isset($row)}value="{$row.mem_pwd__id}"{/if}/>
 				<a class="btnLook" href="{$url.pwdIndex.url}&type=lookup" lookupGroup="pwdLookup">查找带回</a>
 			</p>
 			<div class="divider"></div>
+			<p>
+				<label>备注说明：</label>
+				<textarea name="comm" cols="90" rows="10">{if isset($row)}{$row.comm}{/if}</textarea>
+			</p>
 		</div>
 		<div class="formBar">
 			<ul>
