@@ -18,7 +18,7 @@ class ProrecordController extends Controller {
 
         parent::__construct();
 
-        $this->_datas['belong_pro'] = [0=>'exp', 1=>'玖富', 2=>'综合'];
+        $this->_datas['belong_pro'] = [0=>'exp', 1=>'玖富', 2=>'综合', 3=>'home'];
 
         $this->_navTab = 'tools_prorecord';
         
