@@ -28,7 +28,10 @@
 			<li><a class="edit" href="{$url.accIndex.url}" target="dialog" rel="{$url.accIndex.rel}" minable="false" width="750" height="600"><span>acc数据列表</span></a></li>
 			<li class="line">line</li>
 			<li><a class="add" href="{$url.pwdAdUpd.url}" target="dialog" rel="{$url.pwdAdUpd.rel}" minable="false" width="750" height="160"><span>新增pwd数据</span></a></li>
-			<li><a class="edit" href="{$url.pwdIndex.url}" target="dialog" rel="{$url.pwdIndex.rel}" minable="false" width="750" height="160"><span>pwd数据列表</span></a></li>
+			<li><a class="edit" href="{$url.pwdIndex.url}" target="dialog" rel="{$url.pwdIndex.rel}" minable="false" width="750" height="600"><span>pwd数据列表</span></a></li>
+			<li class="line">line</li>
+			<li><a class="add" href="{$url.belongsToAdUpd.url}" target="dialog" rel="{$url.belongsToAdUpd.rel}" minable="false" width="750" height="160"><span>新增归属方</span></a></li>
+			<li><a class="edit" href="{$url.belongsToIndex.url}" target="dialog" rel="{$url.belongsToIndex.rel}" minable="false" width="750" height="600"><span>归属方数据列表</span></a></li>
 			<li class="line">line</li>
 			<li><a class="add" href="{$url.adUpd.url}" target="dialog" rel="{$url.adUpd.rel}" minable="false" width="650" height="440"><span>新增acc-pwd映射</span></a></li>
 		</ul>
@@ -50,7 +53,7 @@
 				<td><input name="ids" value="{$row.id}" type="checkbox"></td>
 				<td>{$k+1}</td>
 				<td>{$row.id}</td>
-				<td>{$row.belongs_to}</td>
+				<td>{$row.bt}</td>
 				<td>{$row.mem_acc}</td>
 				<td>{$row.mem_pwd}</td>
 				<td>{$row.tags}</td>
