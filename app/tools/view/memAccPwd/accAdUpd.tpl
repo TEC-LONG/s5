@@ -21,21 +21,22 @@
 	</form>
 </div>
 <script>
-{literal}
 var memAccAjaxDone = function (re) {
 	
+	var tmp_url = '{$url.accIndex.url}';
+	{literal}
 	/// re = {statusCode: 200, message: "操作成功", navTabId: "tools_prorecord_detad"}
 	if (re.statusCode==200) {
 		alertMsg.correct(re.message);
-		// if (re.navTabId){
-		// 	navTab.reloadFlag(re.navTabId);
-		// } else {
-		// 	navTabPageBreak();
-		// }
+		if (re.navTabId){
+			$.pdialog.reload(tmp_url, {data:{}, dialogId:re.navTabId, callback:null}) 
+		} else {
+			navTabPageBreak();
+		}
 		$.pdialog.closeCurrent();
 	}else{
 		alertMsg.error(re.message);
 	}
+	{/literal}
 }
-{/literal}
 </script>

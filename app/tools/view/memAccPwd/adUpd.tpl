@@ -7,7 +7,7 @@
             <p>
 				<label>归属方：</label>
 				<input class="required" name="belongsToLookup.belongs_to" type="text" {if isset($row)}value="{$row.belongs_to}"{/if} readonly/>
-				<input name="belongsToLookup.mem_belongs_to__id" type="hidden" {if isset($row)}value="{$row.mem_belongs_to__id}"{/if} />
+				<input name="belongsToLookup.belongs_to__id" type="hidden" {if isset($row)}value="{$row.mem_belongs_to__id}"{/if} />
 				<a class="btnLook" href="{$url.belongsToIndex.url}&type=lookup" lookupGroup="belongsToLookup">查找带回</a>
 			</p>
             <p>

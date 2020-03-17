@@ -45,6 +45,9 @@ class App{
             //include APP_ADMIN_CONTROLLER_PATH . $className . '.class.php';
             //         mvc/app/     admin[/home]               /controller/xxxController.class.php
             include APP_PATH . $GLOBALS['plat'] . '/controller/' . $className . '.class.php';
+        }elseif( substr($className, -10)=='Service' ){
+
+            include APP_PATH . $GLOBALS['plat'] . '/service/' . $className . '.class.php';
         }elseif( $className=='Model'||$className=='NiceModel' ){//父类模型和NiceModel父类模型要比普通模型先判断
             
             //       mvc/core/    Model|NiceModel   .class.php

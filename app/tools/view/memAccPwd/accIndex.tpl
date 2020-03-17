@@ -20,7 +20,7 @@
 <div class="pageContent">
 	<div class="panelBar">
 		<ul class="toolBar">
-			<li><a class="add" href="{$url.accAd.url}" target="dialog" rel="{$url.accAd.rel}" rel="{$url.ad.rel}" minable="false" width="750" height="270"><span>新增acc数据</span></a></li>
+			<li><a class="add" href="{$url.accAdUpd.url}" target="dialog" rel="{$url.accAdUpd.rel}" minable="false" width="750" height="160"><span>新增acc数据</span></a></li>
 		</ul>
 	</div>
 	<table class="table" width="100%" layoutH="138">
@@ -47,7 +47,7 @@
 				</td>
 				<td>
 					<a title="确实要删除？" target="ajaxTodo" href="{$url.del.url}&id={$row['id']}" class="btnDel">删除</a>
-					<a title="修改映射信息" target="navTab" href="{$url.accAdUpd.url}&id={$row['id']}" class="btnEdit" rel="{$url.upd.rel}">编辑</a>
+					<a title="修改映射信息" href="{$url.accAdUpd.url}&id={$row['id']}" class="btnEdit"  target="dialog" rel="{$url.accAdUpd.rel}" minable="false" width="750" height="160">编辑</a>
 				</td>
 			</tr>
 			{/foreach}

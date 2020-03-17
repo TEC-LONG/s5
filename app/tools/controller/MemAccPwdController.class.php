@@ -71,8 +71,8 @@ class MemAccPwdController extends Controller {
         ///编辑部分
         if( isset($request['id']) ){
 
-            $this->_data['id'] = $request['id'];
-            $this->_data['row'] = M()->table('mem_acc')->select('*')->where(['id', $request['id']])->find();
+            $this->_datas['id'] = $request['id'];
+            $this->_datas['row'] = M()->table('mem_acc')->select('*')->where(['id', $request['id']])->find();
         }
 
         ///分配模板变量&渲染模板
@@ -159,8 +159,8 @@ class MemAccPwdController extends Controller {
         ///编辑部分
         if( isset($request['id']) ){
 
-            $this->_data['id'] = $request['id'];
-            $this->_data['row'] = M()->table('mem_pwd')->select('*')->where(['id', $request['id']])->find();
+            $this->_datas['id'] = $request['id'];
+            $this->_datas['row'] = M()->table('mem_pwd')->select('*')->where(['id', $request['id']])->find();
         }
 
         ///分配模板变量&渲染模板
@@ -247,8 +247,8 @@ class MemAccPwdController extends Controller {
         ///编辑部分
         if( isset($request['id']) ){
 
-            $this->_data['id'] = $request['id'];
-            $this->_data['row'] = M()->table('mem_belongs_to')->select('*')->where(['id', $request['id']])->find();
+            $this->_datas['id'] = $request['id'];
+            $this->_datas['row'] = M()->table('mem_belongs_to')->select('*')->where(['id', $request['id']])->find();
         }
 
         ///分配模板变量&渲染模板
@@ -320,7 +320,7 @@ class MemAccPwdController extends Controller {
 
         #查询数据
         $this->_datas['rows'] = $obj->limit($page['limitM'] . ',' . $page['numPerPage'])->get();
-
+        
         ///表头信息
         $this->_datas['thead'] = [
             ['ch'=>'ID', 'width'=>30],
@@ -389,7 +389,7 @@ class MemAccPwdController extends Controller {
             $insert = [
                 'mem_acc__id' => !empty($request['accLookup_mem_acc__id']) ? $request['accLookup_mem_acc__id'] : 0,
                 'mem_pwd__id' => !empty($request['pwdLookup_mem_pwd__id']) ? $request['pwdLookup_mem_pwd__id'] : 0,
-                'mem_belongs_to__id' => !empty($request['belongsToLookup_mem_belongs_to__id']) ? $request['belongsToLookup_mem_belongs_to__id'] : 0,
+                'mem_belongs_to__id' => !empty($request['belongsToLookup_belongs_to__id']) ? $request['belongsToLookup_belongs_to__id'] : 0,
                 'comm' => $request['comm'],
                 'tags' => $request['tags'],
                 'post_date' => time()
@@ -423,8 +423,4 @@ class MemAccPwdController extends Controller {
             JSON()->stat(300)->msg('操作失败')->exec();
         }
     }
-
-    
-
-    
 }      
