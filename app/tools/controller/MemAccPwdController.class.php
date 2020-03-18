@@ -37,22 +37,25 @@ class MemAccPwdController extends Controller {
     public function accIndex(){
         ///接收数据
         $request = REQUEST()->all();
+        $this->_datas['search'] = $request;
         $this->_datas['accIndexType'] = isset($request['type']) ? $request['type'] : '';
 
-        ///将搜索的原始数据扔进模板
-        #需要搜索的字段
-        // $form_elems = [];
-        // $this->_datas['search'] = $this->_get_ori_search_datas($request, $form_elems);
+        ///需要搜索的字段
+        $search_form = [
+            ['s_mem_acc', 'like']
+        ];
+        $condition = F()->S2C($request, $search_form);
+        if(empty($condition)) $condition=1;
 
         ///构建查询对象
-        $obj = M()->table('mem_acc')->select('*')->where(1);
+        $obj = M()->table('mem_acc')->select('*')->where($condition);
 
         #分页参数
         $this->_datas['page'] = $page = $this->_paginate($request, $obj);
 
         #查询数据
         $this->_datas['rows'] = $obj->limit($page['limitM'] . ',' . $page['numPerPage'])->get();
-        
+
         ///表头信息
         $this->_datas['thead'] = [
             ['ch'=>'ID', 'width'=>30],
@@ -125,15 +128,18 @@ class MemAccPwdController extends Controller {
     public function pwdIndex(){
         ///接收数据
         $request = REQUEST()->all();
+        $this->_datas['search'] = $request;
         $this->_datas['pwdIndexType'] = isset($request['type']) ? $request['type'] : '';
 
-        ///将搜索的原始数据扔进模板
-        #需要搜索的字段
-        // $form_elems = [];
-        // $this->_datas['search'] = $this->_get_ori_search_datas($request, $form_elems);
+        ///需要搜索的字段
+        $search_form = [
+            ['s_mem_pwd', 'like']
+        ];
+        $condition = F()->S2C($request, $search_form);
+        if(empty($condition)) $condition=1;
 
         ///构建查询对象
-        $obj = M()->table('mem_pwd')->select('*')->where(1);
+        $obj = M()->table('mem_pwd')->select('*')->where($condition);
 
         #分页参数
         $this->_datas['page'] = $page = $this->_paginate($request, $obj);
@@ -213,15 +219,18 @@ class MemAccPwdController extends Controller {
     public function belongsToIndex(){
         ///接收数据
         $request = REQUEST()->all();
+        $this->_datas['search'] = $request;
         $this->_datas['belongsToIndexType'] = isset($request['type']) ? $request['type'] : '';
 
-        ///将搜索的原始数据扔进模板
-        #需要搜索的字段
-        // $form_elems = [];
-        // $this->_datas['search'] = $this->_get_ori_search_datas($request, $form_elems);
+        ///需要搜索的字段
+        $search_form = [
+            ['s_belongs_to', 'like']
+        ];
+        $condition = F()->S2C($request, $search_form);
+        if(empty($condition)) $condition=1;
 
         ///构建查询对象
-        $obj = M()->table('mem_belongs_to')->select('*')->where(1);
+        $obj = M()->table('mem_belongs_to')->select('*')->where($condition);
 
         #分页参数
         $this->_datas['page'] = $page = $this->_paginate($request, $obj);
@@ -301,11 +310,15 @@ class MemAccPwdController extends Controller {
     public function index(){ 
         ///接收数据
         $request = REQUEST()->all();
+        $this->_datas['search'] = $request;
 
-        ///将搜索的原始数据扔进模板
-        #需要搜索的字段
-        // $form_elems = [];
-        // $this->_datas['search'] = $this->_get_ori_search_datas($request, $form_elems);
+        ///需要搜索的字段
+        $search_form = [
+            ['s_mem_acc', 'like'],
+            ['s_mem_pwd', 'like']
+        ];
+        $condition = F()->S2C($request, $search_form);
+        if(empty($condition)) $condition=1;
 
         ///构建查询对象
         $obj = M()->table('mem_acc__mem_pwd as map')->select('map.*, mbt.belongs_to as bt, ma.mem_acc, mp.mem_pwd')->where(1)

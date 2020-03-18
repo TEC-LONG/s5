@@ -203,6 +203,41 @@ class FuncTool{
         }
         return $update_data;
     }
+
+    /**
+     * 方法名：S2C
+     * 方法作用：(search to condition)将搜索数据转化为查询的condition
+     * 参数：
+     * @param    array    $request    
+     * @param    array    $search_form
+     * @return    array
+     */
+    public function S2C($request, $search_form){
+        
+        // $search_form = [
+        //     ['s_mem_acc', 'like']
+        // ];
+        // $search_form = [
+        //     's_name',
+        //     ['s_mem_acc', 'like']
+        // ];
+
+        $condition = [];
+        foreach( $search_form as $k=>$v){
+        
+            if( is_string($v) ){#仅有一个值
+                
+                $name = substr($v, 2);
+                if(isset($request[$v])) $condition[] = [$name, $request[$v]];
+            }else{//数组
+
+                // $counter = count($v);
+                $name = substr($v[0], 2);
+                if(isset($request[$v[0]])) $condition[] = [$name, $v[1], $request[$v[0]]];
+            }
+        }
+        return $condition;
+    }
     
 
 }

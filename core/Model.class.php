@@ -77,6 +77,10 @@ class Model extends NiceModel{
             // $where[0] = '`' . $where[0] . '`';//字段两侧加反引号
             if( count($where)==3 ){//三个元素  $where=['name', '=', 'xxx']
                 
+                if( $where[1]=='like' ){
+                    $where[2] = '%' . $where[2] . '%';
+                }
+
                 if( !in_array($where[1], $tmp_no_need_quote) ){
                     $where[1] = ' ' . $where[1] . ' ';
                     $where[2] = '"' . str_replace('"', '\'', $where[2]) . '"';//数据两侧加双引号
@@ -102,7 +106,10 @@ class Model extends NiceModel{
                 // $one[0] = '`' . $one[0] . '`';
                 if( count($one)==3 ){//三个元素  $one=['name', '=', 'xxx']
 
-                    
+                    if( $one[1]=='like' ){
+                        $one[2] = '%' . $one[2] . '%';
+                    }
+
                     if( !in_array($one[1], $tmp_no_need_quote) ){
                         $one[2] = '"' . str_replace('"', '\'', $one[2]) . '"';//  "xxx"//数据两侧加双引号
                     }

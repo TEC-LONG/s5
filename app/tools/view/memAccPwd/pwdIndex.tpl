@@ -1,5 +1,5 @@
 <div class="pageHeader">
-	<form onsubmit="return navTabSearch(this);" action="{$url.pwdIndex.url}" method="post" onreset="$(this).find('select.combox').comboxReset()">
+	<form onsubmit="return dialogSearch(this);" action="{$url.pwdIndex.url}" method="post" onreset="$(this).find('select.combox').comboxReset()">
 	<div class="searchBar">
 		<table class="searchContent">
 			<tr>
