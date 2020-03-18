@@ -170,7 +170,7 @@ class MemAccPwdController extends Controller {
         }
 
         ///分配模板变量&渲染模板
-        $this->assign($this->_datas);   
+        $this->assign($this->_datas);
         $this->display('memAccPwd/pwdAdUpd.tpl');
     }
 

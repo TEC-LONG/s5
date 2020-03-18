@@ -63,9 +63,10 @@ class Model extends NiceModel{
                 可能的情况有：
                 (1) $where=['id', '>', 10]
                 (2) $where="name='zhangsan' and id in (1, 2, 3)"
-                (3) $where=[['age',12],['height', '<=', '2.0']]
+                (3) $where=[['age',12],['height', '<=', '2.0'], ['title', 'like', 'aa']]
                 (4) $where='user.id=1'
-                (5) $where=['id', 'in', '(1, 2, 3)']
+                (5) $where=['id', 'in', '(1, "2", 3)']
+                (6) $where=1;
      * @return object
      */
     public function where($where){

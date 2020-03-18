@@ -1,0 +1,41 @@
+<IfModule mod_rewrite.c>
+	<IfModule mod_negotiation.c>
+		Options -MultiViews
+	</IfModule>
+
+	RewriteEngine On
+	#RewiteBase /
+
+	#当访问的upload下的图片不存在时，默认展示的图片
+	RewriteCond %{REQUEST_FILENAME}  !-f
+	RewriteRule ^upload/(.*)\.(jpg|png|jpeg)$ /upload/editormdimg/2020/02/task_default.png [L,R=301]
+
+	# Redirect Trailing Slashes If Not A Folder...
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteRule ^(.*)/$ /$1 [L,R=301]
+
+	# Handle Front Controller...
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteRule ^ index.php [L]
+
+	#防盗链
+	#RewriteCond %{HTTP_REFERER}!^$ [NC]
+	#RewriteCond %{HTTP_REFERER}!xxx.info [NC]
+	#RewriteRule \.(jpg|gif|png|bmp|swf|jpeg)$ /error/daolian.gif [R,NC,L]
+</IfModule>
+
+
+
+
+
+#RewriteEngineOn
+#RewiteBase/
+#RewriteCond%{HTTP_HOST}^(www\.)?xxx\.com$[NC]
+#RewriteCond%{REQUEST_URI}!^/blog/
+#RewriteCond%{REQUEST_FILENAME}!-f
+#RewriteCond%{REQUEST_FILENAME}!-d
+#RewriteRule^(.*)$blog/$1
+##没有输入文件名的默认到到首页
+#RewriteCond%{HTTP_HOST}^(www\.)?xxx\.com$[NC]
+#RewriteRule^(/)?$blog/index.php[L]
