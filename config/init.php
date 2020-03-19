@@ -12,12 +12,14 @@ include CONFIG_PATH . 'D.php';
 
 include CONFIG_PATH . 'define.conf.php';
 
-$plat = isset($_GET['p']) ? $_GET['p'] : $GLOBALS['configs']['dweb']['p'];//平台参数
+include CORE_PATH . 'Route.class.php';
 
-if( $plat=='tools' ){
+Route::prepare();
+
+if( Route::$plat=='tools' ){
     // include TOOLS_CONF_PATH . 'menu.conf.php';
     include TOOLS_CONF_PATH . 'AutoTb.conf.php';
-}elseif( $plat=='admin' ){
+}elseif( Route::$plat=='admin' ){
     //引入模板配置文件
     include CONFIG_PATH . 'template_conf.php';
 }

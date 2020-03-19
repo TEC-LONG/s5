@@ -73,8 +73,6 @@ class TBRecordController extends Controller {
                 if( $k==$v1['belong_db'] ){
                     $rows[$v][$k1] = $v1;
                 }
-
-                
             }
         }
         $this->assign([

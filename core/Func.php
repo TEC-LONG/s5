@@ -9,9 +9,13 @@
  * @param    string    $m    模块参
  * @param    string    $a    动作参
  */
-function L($p='exp', $m='index', $a='index')
+// function L($p='exp', $m='index', $a='index')
+// {
+//     return C('URL').'/index.php?p='.$p.'&m='.$m.'&a='.$a;
+// }
+function L($route)
 {
-    return C('URL').'/index.php?p='.$p.'&m='.$m.'&a='.$a;
+    return C('URL').$route;
 }
 
 /**
@@ -162,6 +166,37 @@ function handler_init_special_fields(&$init){
     $select .= '</select>';
 
     return $select;
+}
+
+function G($globalVarName='', $globalVarValue=NULL){
+
+    if( $globalVarValue!==NULL ){#增加变量
+        $GLOBALS[$globalVarName] = $globalVarValue;
+    }
+
+    return $GLOBALS[$globalVarName];
+}
+
+function J($msg='操作成功！', $route='default', $time=2){
+    
+    echo $msg; 
+
+    if( $route==='default' ){///跳转到各平台下的默认页
+    
+        if(G('plat')=='tools'):
+            $route_str = '/tools/login/index';
+        elseif(G('plat')=='store'):
+            $route_str = '';
+        elseif(G('plat')=='home'):
+            $route_str = '';
+        endif;
+
+    }else{
+        $route_str = $route;
+    }
+    $url = C('URL') . $route_str;
+    header("Refresh:{$time}; url={$url}");
+    exit;
 }
 
 

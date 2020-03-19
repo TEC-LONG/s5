@@ -27,7 +27,7 @@ $(document).ready(function() {
 </script>
 </head>
 <body>
-<form method="POST" name="login" action="{L('tools', 'login', 'checklogin')}" />
+<form method="POST" name="login" action="{L('/tools/login/check')}" />
 	
 <dl class="admin_login">
  <dt>
@@ -43,7 +43,7 @@ $(document).ready(function() {
  <dd class="val_icon">
   <div class="checkcode">
     <input name="checkcode" type="text" id="J_codetext" placeholder="验证码" maxlength="4" class="login_txtbx">
-	<img class="checkCodeImg" src="{L('tools', 'login', 'showCheckcodeImg')}" />
+	<img class="checkCodeImg" src="{L('/tools/login/capture')}" />
     <!-- <canvas class="J_codeimg" id="myCanvas" onclick="createCode()">对不起，您的浏览器不支持canvas，请下载最新版浏览器!</canvas> -->
   </div>
   <input type="button" value="CHANGE" class="ver_btn changeCheckCodeImg">
@@ -60,7 +60,7 @@ $(document).ready(function() {
 </form>
 <script type="text/javascript">
 var changeCheckCodeImgClick = function (){
-	var url = "{L('tools', 'login', 'showCheckcodeImg')}&rd="+Math.random();
+	var url = "{L('/tools/login/capture')}&rd="+Math.random();
 	$('.checkCodeImg').attr('src', url);
 }
 $(function(){

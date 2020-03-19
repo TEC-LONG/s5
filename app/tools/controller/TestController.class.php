@@ -65,6 +65,11 @@ class TestController extends Controller {
         echo '<pre>';
     }
 
+    public function t1(){
+    
+        var_dump(123);
+    }
+
     public function t(){
     
         // 小内存型

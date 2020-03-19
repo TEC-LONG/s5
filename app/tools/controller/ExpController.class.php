@@ -216,10 +216,6 @@ class ExpController extends Controller {
         }else{
             $this->jump('修改失败！', 'p=tools&m=exp&a=upd&id='.$request['id']);
         }
-
-        
-
-
         
         #接收数据
         //条件
@@ -272,13 +268,6 @@ class ExpController extends Controller {
         exit;
     }
 
-
-
-
-    public function test(){ 
-        
-        $this->display('Exp/test1.tpl');
-    }
 
 
 

@@ -58,7 +58,7 @@
 		{foreach $prorecords as $prorecords_key=>$prorecord}
 			<tr target="sid_user" rel="{$prorecord.id}">
 				<td>{$prorecords_key+1}</td>
-				<td><a href="{$url.info}&id={$prorecord.id}" target="_blank">{$prorecord.title}</a></td>
+				<td><a href="{$url.info}?id={$prorecord.id}" target="_blank">{$prorecord.title}</a></td>
 				<td>{$belong_pro[$prorecord.belong_pro]}</td>
 				<td>{$prorecord.id}</td>
 				<td>

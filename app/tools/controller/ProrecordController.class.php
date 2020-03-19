@@ -25,7 +25,7 @@ class ProrecordController extends Controller {
         switch ( ACT ){
             case 'index':
                 $this->_url = [
-                    'info' => L(PLAT, MOD, 'info'),
+                    'info' => L('/tools/prorecord/info'),
                     'index' => L(PLAT, MOD, 'index'),
                     'ad' => ['url'=>L(PLAT, MOD, 'ad'), 'rel'=>$this->_navTab.'_ad'],
                     'upd' => ['url'=>L(PLAT, MOD, 'upd'), 'rel'=>$this->_navTab.'_upd'],

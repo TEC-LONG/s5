@@ -12,11 +12,6 @@
 						<ul>
 							<li><a href="sidebar_1.html">北京</a></li>
 							<li><a href="sidebar_2.html">上海</a></li>
-							<li><a href="sidebar_2.html">南京</a></li>
-							<li><a href="sidebar_2.html">深圳</a></li>
-							<li><a href="sidebar_2.html">广州</a></li>
-							<li><a href="sidebar_2.html">天津</a></li>
-							<li><a href="sidebar_2.html">杭州</a></li>
 						</ul>
 					</li> -->
 					<!-- <li><a href="donation.html" target="dialog" height="400" title="捐赠 & DWZ学习视频">捐赠</a></li>
@@ -62,7 +57,7 @@
 								<ul>
 								{foreach $menu3 as $k3=>$v3}
 								{if $v2.id==$v3.parent_id}
-									<li><a href="{if $v3.level3_type!=0}{$v3.level3_href}{else}{L($v3['plat'], $v3['module'], $v3['act'])}{/if}" target="navTab" rel="{$v3['navtab']}">{$v3.name}</a></li>
+									<li><a href="{if $v3.level3_type!=0}{$v3.level3_href}{else}{L($v3.route)}{/if}" target="navTab" rel="{$v3['navtab']}">{$v3.name}</a></li>
 								{/if}
 								{/foreach}
 								</ul>

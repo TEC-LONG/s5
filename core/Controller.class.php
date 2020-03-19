@@ -40,7 +40,8 @@ class Controller extends \Smarty{
                 //$_SESSION['user'] = $user;
 
             //}else{//即不存在SESSION登陆信息，也没有之前记录的7天免登录信息，则重新登陆
-                $this->jump('请先登陆！', 'p=tools&m=login&a=index');
+                // $this->jump('请先登陆！', 'p=tools&m=login&a=index');
+                J('请先登陆！', '/tools/login/index');
             //}
         }
     }

@@ -1,6 +1,7 @@
 <?php
 
 namespace core;
+use \Route;
 
 class App{
 
@@ -64,35 +65,12 @@ class App{
 
     public static function run(){ 
         //接收一个名为a的GET参数保存到$action变量中
-        $GLOBALS['action'] = $action = isset($_GET['a']) ? $_GET['a'] : $GLOBALS['configs']['dweb']['a'];//动作参数
+        $GLOBALS['action'] = $action = Route::$method;//动作参数
         //接收一个名为m的GET参数保存到$module变量中
-        $GLOBALS['module'] = $module = isset($_GET['m']) ? ucfirst($_GET['m']) : ucfirst($GLOBALS['configs']['dweb']['m']);//模块参数
+        $GLOBALS['module'] = $module = Route::$controller;//模块参数
         //接收一个名为p的GET参数保存到$plat变量中
-        $GLOBALS['plat'] = $plat = isset($_GET['p']) ? $_GET['p'] : $GLOBALS['configs']['dweb']['p'];//平台参数
-
-
-        $URI = $_SERVER['REQUEST_URI'];
-
-        if(empty($URI)||$URI==='/') $URI=$GLOBALS['configs']['dweb']['p'].'/'.$GLOBALS['configs']['dweb']['m'].'/'.$GLOBALS['configs']['dweb']['a'];
-        $URI_arr = explode('/', $URI);
-
-        ///确定routes文件
-        $routes_path = APP_PATH . strtolower($URI_arr[0]) . PATH_SEPARATOR . 'routes.php';
-        $has_routes = file_exists($routes_path);
-        if(!$has_routes) exit('跳转404，记录日志！');
+        $GLOBALS['plat'] = $plat = Route::$plat;//平台参数
         
-        ///匹配routes规则，确定指向哪个控制器下的哪个方法
-        include $routes_path;
-
-
-        
-        echo '<pre>';
-        
-        var_dump($URI_arr);
-        echo '<pre>';
-        exit;
-        
-
         define('PLAT', $plat);
         define('MOD', $module);
         define('ACT', $action);
