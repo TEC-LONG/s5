@@ -24,10 +24,10 @@ class MenuController extends Controller {
 
         $this->_datas['navTab'] = $this->_navTab;
         $this->_datas['url'] = [
-            'index' => L(PLAT, MOD, 'index'),
-            'adh' => L(PLAT, MOD, 'adh'),
-            'updh' => L(PLAT, MOD, 'updh'),
-            'del' => L(PLAT, MOD, 'del')
+            'index' => L('/tools/menu/index'),
+            'adh' => L('/tools/menu/adh'),
+            'updh' => L('/tools/menu/updh'),
+            'del' => L('/tools/menu/del')
         ];
     }
 
@@ -55,7 +55,7 @@ class MenuController extends Controller {
         $request = $this->_requ->all();
 
         //查询数据
-        $rows = M()->table('menu')->select('id,name,level,plat,module,act,navtab,level3_type,level3_href')->where([['parent_id', $request['p_id']], ['is_del', 0]])->get();
+        $rows = M()->table('menu')->select('id,name,level,plat,module,act,navtab,level3_type,level3_href,route')->where([['parent_id', $request['p_id']], ['is_del', 0]])->get();
 
         $child = [];
 
@@ -70,6 +70,7 @@ class MenuController extends Controller {
                 $child['navtab'][$row_key] = $row['navtab'];
                 $child['level3_type'][$row_key] = $row['level3_type'];
                 $child['level3_href'][$row_key] = $row['level3_href'];
+                $child['route'][$row_key] = $row['route'];
             }
         }
 
@@ -91,7 +92,8 @@ class MenuController extends Controller {
             'navtab' => $request['navtab'],
             'level' => $request['plevel']+1,
             'level3_type'=>$request['level3_type'],
-            'level3_href'=>$request['level3_href']
+            'level3_href'=>$request['level3_href'],
+            'route'=>$request['route']
         ];
 
         if ( M()->table('menu')->insert($datas)->exec() ){ 
@@ -120,6 +122,7 @@ class MenuController extends Controller {
         if( $request['navtab']!==$request['ori_navtab'] ) $datas['navtab'] = $request['navtab'];
         if( $request['level3_type']!==$request['ori_level3_type'] ) $datas['level3_type'] = $request['level3_type'];
         if( $request['level3_href']!==$request['ori_level3_href'] ) $datas['level3_href'] = $request['level3_href'];
+        if( $request['route']!==$request['ori_route'] ) $datas['route'] = $request['route'];
 
         if(empty($datas)){
             $re = AJAXre(1);

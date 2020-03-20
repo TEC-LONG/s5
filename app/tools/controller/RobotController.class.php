@@ -22,10 +22,10 @@ class RobotController extends Controller {
 
         $this->_datas['navTab'] = $this->_navTab;
         $this->_datas['url'] = [
-            'index' => L(PLAT, MOD, 'index'),
-            'adh' => L(PLAT, MOD, 'adh'),
-            'tbLookup' => L(PLAT, 'TBRecord', 'tbLookup'),
-            'kvLookup' => L(PLAT, 'TBRecord', 'kvLookup')
+            'index' => L('/tools/robot/index'),
+            'adh' => L('/tools/robot/adh'),
+            'tbLookup' => L('/tools/tbRecord/tbLookup'),
+            'kvLookup' => L('/tools/tbRecord/kvLookup')
         ];
 
         switch (ACT) {
@@ -475,7 +475,7 @@ class RobotController extends Controller {
 
             $search_html = '
 <div class="pageHeader">
-    <form onsubmit="return navTabSearch(this);" action="'.$templ_form_action['url'].'" method="post" onreset="$(this).find(\'select.combox\').comboxReset()">
+    <form onsubmit="return navTabSearch(this);" action="'.$templ_form_action['url'].'" method="get" onreset="$(this).find(\'select.combox\').comboxReset()">
     <div class="searchBar">
         <table class="searchContent">
             <tr>
@@ -497,7 +497,7 @@ class RobotController extends Controller {
         /*E
         最终得到：
         <div class="pageHeader">
-            <form onsubmit="return navTabSearch(this);" action="{$url.index}" method="post" onreset="$(this).find('select.combox').comboxReset()">
+            <form onsubmit="return navTabSearch(this);" action="{$url.index}" method="get" onreset="$(this).find('select.combox').comboxReset()">
             <div class="searchBar">
                 <table class="searchContent">
                     <tr>
@@ -572,7 +572,7 @@ class RobotController extends Controller {
             <ul class="toolBar">
                 <li><a class="add" href="{$url.ad.url}" target="navTab" rel="{$url.ad.rel}"><span>添加菜品</span></a></li>
                 <li><a class="delete" href="{$url.del}&id={ldelim}sid_{$navTab}}" target="ajaxTodo" title="确定要删除吗?"><span>删除</span></a></li>
-                <li><a class="edit" href="{$url.upd.url}&id={ldelim}sid_{$navTab}}" target="navTab"  rel="{$url.upd.rel}"><span>修改菜品</span></a></li>
+                <li><a class="edit" href="{$url.upd.url}?id={ldelim}sid_{$navTab}}" target="navTab"  rel="{$url.upd.rel}"><span>修改菜品</span></a></li>
                 <li class="line">line</li>
                 <li><a class="icon" href="demo/common/dwz-team.xls" target="dwzExport" targetType="navTab" title="实要导出这些记录吗?"><span>导出EXCEL</span></a></li>
             </ul>
@@ -669,7 +669,7 @@ class RobotController extends Controller {
         $templ_form_action = $this->handler_get_jump_url('列表页');
 
         $pagination_html = '
-        <form id="pagerForm" method="post" action="'.$templ_form_action['url'].'">
+        <form id="pagerForm" method="get" action="'.$templ_form_action['url'].'">
             <input type="hidden" name="pageNum" value="1" />
             <input type="hidden" name="numPerPage" value="{$page.numPerPage}" />
             '.$pagination_search_html.'
@@ -695,7 +695,7 @@ class RobotController extends Controller {
 
         /*E
         最终得到：
-        <form id="pagerForm" method="post" action="{$url.index}">
+        <form id="pagerForm" method="get" action="{$url.index}">
             <input type="hidden" name="pageNum" value="1" />
             <input type="hidden" name="numPerPage" value="{$page.numPerPage}" />
             <input type="hidden" name="cai" value="{$search.cai}" />

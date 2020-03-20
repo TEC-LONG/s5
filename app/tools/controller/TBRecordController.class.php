@@ -20,12 +20,11 @@ class TBRecordController extends Controller {
         $this->_datas['belong_db'] = ['exp', 'test', 'blog', 'store'];
         $this->_datas['navTab'] = $this->_navTab;
         $this->_datas['url'] = [
-            'index' => L(PLAT, MOD, 'index'),
-            'robot' => L(PLAT, MOD, 'robot'),
-            'ad' => L(PLAT, MOD, 'ad'),
-            'adh' => L(PLAT, MOD, 'adh'),
-            'upd' => L(PLAT, MOD, 'upd'),
-            'del' => L(PLAT, MOD, 'del')
+            'index' => L('/tools/tbRecord/index'),
+            'ad' => L('/tools/tbRecord/ad'),
+            'adh' => L('/tools/tbRecord/adh'),
+            'upd' => L('/tools/tbRecord/upd'),
+            'del' => L('/tools/tbRecord/del')
         ];
 
         switch (ACT) {
@@ -45,7 +44,7 @@ class TBRecordController extends Controller {
             break;
             case 'upd':
                 $this->_datas['url'] = [
-                    'updh' => L(PLAT, MOD, 'updh')
+                    'updh' => L('/tools/tbRecord/updh')
                 ];
                 $this->_extra['form-elems'] = [
                     'id' => ['ch'=>'表信息ID', 'rule'=>'required']

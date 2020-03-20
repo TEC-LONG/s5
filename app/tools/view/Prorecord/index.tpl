@@ -1,10 +1,10 @@
-<form id="pagerForm" method="post" action="{$url.index}">
+<form id="pagerForm" method="get" action="{$url.index}">
 	<input type="hidden" name="pageNum" value="1" />
 	<input type="hidden" name="numPerPage" value="{$page.numPerPage}" />
 </form>
 
 <div class="pageHeader">
-	<form onsubmit="return navTabSearch(this);" action="demo_page1.html" method="post" onreset="$(this).find('select.combox').comboxReset()">
+	<form onsubmit="return navTabSearch(this);" action="demo_page1.html" method="get" onreset="$(this).find('select.combox').comboxReset()">
 	<div class="searchBar">
 		<table class="searchContent">
 			<tr>
@@ -63,7 +63,7 @@
 				<td>{$prorecord.id}</td>
 				<td>
 					<a title="确实要删除？" target="ajaxTodo" href="{$url.del}&id={$prorecord['id']}" class="btnDel">删除</a>
-					<a title="编辑工程信息" target="_blank" href="{$url.upd.url}&id={$prorecord['id']}" class="btnEdit">编辑</a>
+					<a title="编辑工程信息" target="_blank" href="{$url.upd.url}?id={$prorecord['id']}" class="btnEdit">编辑</a>
 				</td>
 			</tr>
 		{/foreach}

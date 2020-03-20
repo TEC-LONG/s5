@@ -1,5 +1,5 @@
 <div class="pageHeader">
-	<form onsubmit="return dialogSearch(this);" action="{$url.accIndex.url}" method="post" onreset="$(this).find('select.combox').comboxReset()">
+	<form onsubmit="return dialogSearch(this);" action="{$url.accIndex.url}" method="get" onreset="$(this).find('select.combox').comboxReset()">
 	<div class="searchBar">
 		<table class="searchContent">
 			<tr>
@@ -46,15 +46,15 @@
 					{/if}
 				</td>
 				<td>
-					<a title="确实要删除？" target="ajaxTodo" href="{$url.del.url}&id={$row['id']}" class="btnDel">删除</a>
-					<a title="修改映射信息" href="{$url.accAdUpd.url}&id={$row['id']}" class="btnEdit"  target="dialog" rel="{$url.accAdUpd.rel}" minable="false" width="750" height="160">编辑</a>
+					<a title="确实要删除？" target="ajaxTodo" href="{$url.del.url}?id={$row['id']}" class="btnDel">删除</a>
+					<a title="修改映射信息" href="{$url.accAdUpd.url}?id={$row['id']}" class="btnEdit"  target="dialog" rel="{$url.accAdUpd.rel}" minable="false" width="750" height="160">编辑</a>
 				</td>
 			</tr>
 			{/foreach}
 		</tbody>
 	</table>
 
-	<form id="pagerForm" method="post" action="{$url.index}">
+	<form id="pagerForm" method="get" action="{$url.index}">
 		<input type="hidden" name="pageNum" value="1" />
 		<input type="hidden" name="numPerPage" value="{$page.numPerPage}" />
 		<input type="hidden" name="s_mem_acc" value="{$search.s_mem_acc}" />

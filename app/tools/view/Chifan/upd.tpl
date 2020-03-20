@@ -1,5 +1,5 @@
 <div class="pageContent">
-	<form method="post" action="{$url.updh}&id={$row.id}" class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
+	<form method="post" action="{$url.updh}?id={$row.id}" class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
 		<div class="pageFormContent" layoutH="57">
 			<dl class="nowrap">
 				<dt>适用场景：</dt>

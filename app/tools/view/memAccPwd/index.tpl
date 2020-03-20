@@ -58,8 +58,8 @@
 				<td>{$row.mem_pwd}</td>
 				<td>{$row.tags}</td>
 				<td>
-					<a title="确实要删除？" target="ajaxTodo" href="{$url.del.url}&id={$row['id']}" class="btnDel">删除</a>
-					<a title="修改映射信息" target="dialog" href="{$url.adUpd.url}&id={$row['id']}" class="btnEdit" rel="{$url.adUpd.rel}"  minable="false" width="650" height="440">编辑</a>
+					<a title="确实要删除？" target="ajaxTodo" href="{$url.del.url}?id={$row['id']}" class="btnDel">删除</a>
+					<a title="修改映射信息" target="dialog" href="{$url.adUpd.url}?id={$row['id']}" class="btnEdit" rel="{$url.adUpd.rel}"  minable="false" width="650" height="440">编辑</a>
 				</td>
 			</tr>
 			{/foreach}

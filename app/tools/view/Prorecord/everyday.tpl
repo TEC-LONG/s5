@@ -2,7 +2,7 @@
 
 	<div id="tools_everyday_things" class="unitBox" style="float:left; display:block; overflow:auto; width:714px;">
 		<div class="pageHeader" style="border:1px #B8D0D6 solid">
-			<form id="pagerForm" onsubmit="return divSearch(this, 'tools_everyday_things');" action="demo/pagination/list2.html" method="post">
+			<form id="pagerForm" onsubmit="return divSearch(this, 'tools_everyday_things');" action="demo/pagination/list2.html" method="get">
 				<input type="hidden" name="pageNum" value="1" />
 				<input type="hidden" name="numPerPage" value="" />
 				<div class="searchBar">
@@ -25,9 +25,9 @@
 				<ul class="toolBar">
 					<li><a class="add" href="{$url.ad.url}" target="dialog" rel="{$url.ad.rel}" minable="false" width="750" height="270"><span>添加日程</span></a></li>
 					<li class="line">line</li>
-					<a class="delete" href="{$url.upd.url}&id={ldelim}sid_{$navTab}}"><span>删除日程</span></a>
+					<a class="delete" href="{$url.upd.url}?id={ldelim}sid_{$navTab}}"><span>删除日程</span></a>
 					<li class="line">line</li>
-					<a class="edit" href="{$url.upd.url}&id={ldelim}sid_{$navTab}}" target="dialog" rel="{$url.upd.rel}" minable="false" width="750" height="270"><span>编辑日程</span></a>
+					<a class="edit" href="{$url.upd.url}?id={ldelim}sid_{$navTab}}" target="dialog" rel="{$url.upd.rel}" minable="false" width="750" height="270"><span>编辑日程</span></a>
 					<li class="line">line</li>
 					<li><a class="add" href="{$url.ad.url}" target="dialog" rel="{$url.ad.rel}" minable="false" width="750" height="270"><span>尚未开始的日程</span></a></li>
 					<li class="line">line</li>
@@ -61,13 +61,13 @@ background-color:rgb(99, 98, 97)
 					{foreach $things as $k=>$thing}
 					<tr target="sid_{$navTab}" rel="{$thing.id}" class="tools_prorecord_everyday_tr {if !empty($thing.clock_in_time)}tr4{elseif $thing.characte==0}tr0{elseif $thing.characte==1}tr1{elseif $thing.characte==2}tr2{elseif $thing.characte==3}tr3{/if}">
 						<td>{$thing.id}</td>
-						<td><a href="{$url.everyday.url}&id={$thing.id}&stat=1" target="navTab" rel="{$url.everyday.rel}" class="btnSelect" title="每日日程安排"></a></td>
+						<td><a href="{$url.everyday.url}?id={$thing.id}&stat=1" target="navTab" rel="{$url.everyday.rel}" class="btnSelect" title="每日日程安排"></a></td>
 						<td>{$type[$thing.type]}</td>
 						<td align="right">
 							{if empty($thing.clock_in_time)}
-							<a href="{$url.everyday.url}&id={$thing.id}" target="navTab" rel="{$url.everyday.rel}" class="btnSelect" title="每日日程安排"></a>
+							<a href="{$url.everyday.url}?id={$thing.id}" target="navTab" rel="{$url.everyday.rel}" class="btnSelect" title="每日日程安排"></a>
 							{/if}
-							<a href="{$url.details.url}&id={$thing.id}" target="ajax" rel="tools_everyday_things_details" style="font-size:medium; text-decoration:none;">
+							<a href="{$url.details.url}?id={$thing.id}" target="ajax" rel="tools_everyday_things_details" style="font-size:medium; text-decoration:none;">
 								{if !empty($thing.clock_in_time)}
 								<s style="font-size:medium;">{$thing.title}</s>
 								{else}

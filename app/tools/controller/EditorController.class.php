@@ -13,19 +13,10 @@ class EditorController extends Controller {
         parent::__construct();
 
         $this->_navTab = 'Editor';
+        $this->_url = [
+            'editormdImgUp' => L('/tools/editormd/imgUp')
+        ];
         
-        switch ( ACT ){
-            case 'editormd':
-                $this->_url = [
-                    'editormdImgUp' => L(PLAT, MOD, 'imgupmd')
-                ];
-            break;
-            case 'editormdupd':
-                $this->_url = [
-                    'editormdImgUp' => L(PLAT, MOD, 'imgupmd')
-                ];
-            break;
-        }
     }
 
     public function imgupmd(){ 

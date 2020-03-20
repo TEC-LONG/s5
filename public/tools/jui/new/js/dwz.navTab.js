@@ -304,7 +304,12 @@ var navTab = {
 		var op = $.extend({data:{}, navTabId:"", callback:null}, options);
 		var $tab = op.navTabId ? this._getTab(op.navTabId) : this._getTabs().eq(this._currentIndex);
 		var $panel =  op.navTabId ? this.getPanel(op.navTabId) : this._getPanels().eq(this._currentIndex);
-		
+		///teclong-给分页扩展一个功能，让ajax请求追随form的method属性
+		var this_method = "POST";
+		if (typeof(options.data[2])!='undefined') {
+			var tmp_json = options.data[2];
+			var this_method = tmp_json.value.toUpperCase();
+		}
 		if ($panel){
 			if (!url) {
 				url = $tab.attr("url");
@@ -317,9 +322,8 @@ var navTab = {
 						var $pagerForm = $("#pagerForm", $panel);
 						op.data = $pagerForm.size()>0 ? $pagerForm.serializeArray() : {}
 					}
-					
 					$panel.ajaxUrl({
-						type:"POST", url:url, data:op.data, callback:function(response){
+						type:this_method, url:url, data:op.data, callback:function(response){
 							navTab._loadUrlCallback($panel);
 							if ($.isFunction(op.callback)) op.callback(response);
 						}

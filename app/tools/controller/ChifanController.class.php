@@ -32,10 +32,10 @@ class ChifanController extends Controller {
         switch ( ACT ){
             case 'index':
                 $this->_datas['url'] = [
-                    'index' => L(PLAT, MOD, 'index'),
-                    'ad' => ['url'=>L(PLAT, MOD, 'ad'), 'rel'=>$this->_navTab.'_ad'],
-                    'upd' => ['url'=>L(PLAT, MOD, 'upd'), 'rel'=>$this->_navTab.'_upd'],
-                    'del' => L(PLAT, MOD, 'del')
+                    'index' => L('/tools/chifan/list'),
+                    'ad' => ['url'=>L('/tools/chifan/ad'), 'rel'=>$this->_navTab.'_ad'],
+                    'upd' => ['url'=>L('/tools/chifan/upd'), 'rel'=>$this->_navTab.'_upd'],
+                    'del' => L('/tools/chifan/del')
                 ];
                 $this->_datas['mustShow'] = [
                     'id' => ['ch'=>'ID', 'width'=>30], 

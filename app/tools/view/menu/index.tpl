@@ -45,7 +45,7 @@ a { text-decoration: none; color: #333; }
 <script type="text/javascript">
 /*初始化参数*/
 var navtab = '{$navTab}';
-var get_child_url = '/index.php?p=tools&m=menu&a=getChild';
+var get_child_url = '/tools/menu/getChild';
 var province = {json_encode($first['p_names'])};//一级分类集合
 var province_ids = {json_encode($first['p_ids'])};//一级分类对应的id集合
 var province_levels = {json_encode($first['p_levels'])};//一级分类对应的level集合
@@ -62,6 +62,25 @@ var act = [];
 var url_navtab = [];
 var level3_type = [];
 var level3_href = [];
+var route = [];
+
+var routeFunc = function (className) {
+		var this_plat = $('.'+className).find('input[name="plat"]').val();
+		var this_mod = $('.'+className).find('input[name="module"]').val();
+		var this_act = $('.'+className).find('input[name="act"]').val();
+
+		if (this_plat!='') {
+			this_plat = '/' + this_plat;
+		}
+		if (this_mod!='') {
+			this_mod = '/' + this_mod;
+		}
+		if (this_act!='') {
+			this_act = '/' + this_act;
+		}
+		
+		return this_plat+this_mod+this_act;
+};
 </script>
 
 
@@ -107,6 +126,10 @@ var level3_href = [];
 			<dt>外部跳转链接：</dt>
 			<dd><input name="level3_href" type="text" /></dd>
 		</dl>
+		<dl>
+			<dt>路由：</dt>
+			<dd><input name="route" type="text" /></dd>
+		</dl>
 		<dl class="nowrap"></dl>
 		<dl></dl>
 		<dl>
@@ -122,15 +145,24 @@ $('#'+navtab+'FIRE_resetCatPid').click(function (){
 });
 $('.menu_ad').find('input[name="plat"]').bind('keyup', function () {
 	
-	$('.menu_ad').find('input[name="navtab"]').val($(this).val()+'_'+$('.menu_ad').find('input[name="module"]').val()+'_'+$('.menu_ad').find('input[name="act"]').val());
+	var this_navtab = $(this).val()+'_'+$('.menu_ad').find('input[name="module"]').val()+'_'+$('.menu_ad').find('input[name="act"]').val();
+	$('.menu_ad').find('input[name="navtab"]').val(this_navtab);
+	var this_route = routeFunc('menu_ad');
+	$('.menu_ad').find('input[name="route"]').val(this_route);
 });
 $('.menu_ad').find('input[name="module"]').bind('keyup', function () {
-	
-	$('.menu_ad').find('input[name="navtab"]').val($('.menu_ad').find('input[name="plat"]').val()+'_'+$(this).val()+'_'+$('.menu_ad').find('input[name="act"]').val());
+
+	var this_navtab = $('.menu_ad').find('input[name="plat"]').val()+'_'+$(this).val()+'_'+$('.menu_ad').find('input[name="act"]').val();
+	$('.menu_ad').find('input[name="navtab"]').val(this_navtab);
+	var this_route = routeFunc('menu_ad');
+	$('.menu_ad').find('input[name="route"]').val(this_route);
 });
 $('.menu_ad').find('input[name="act"]').bind('keyup', function () {
 	
-	$('.menu_ad').find('input[name="navtab"]').val($('.menu_ad').find('input[name="plat"]').val()+'_'+$('.menu_ad').find('input[name="module"]').val()+'_'+$(this).val());
+	var this_navtab = $('.menu_ad').find('input[name="plat"]').val()+'_'+$('.menu_ad').find('input[name="module"]').val()+'_'+$(this).val();
+	$('.menu_ad').find('input[name="navtab"]').val(this_navtab);
+	var this_route = routeFunc('menu_ad');
+	$('.menu_ad').find('input[name="route"]').val(this_route);
 });
 </script>
 	{/literal}
@@ -174,6 +206,10 @@ $('.menu_ad').find('input[name="act"]').bind('keyup', function () {
 				<dt>外部跳转链接：</dt>
 				<dd><input name="level3_href" type="text" /><input name="ori_level3_href" type="hidden" /></dd>
 			</dl>
+			<dl>
+				<dt>路由：</dt>
+				<dd><input name="route" type="text" /><input name="ori_route" type="hidden" /></dd>
+			</dl>
 			<dl></dl>
 			<dl>
 				<dt><div class="buttonActive"><div class="buttonContent"><button type="submit">执行修改</button></div></div></dt>
@@ -187,15 +223,25 @@ $('.menu_ad').find('input[name="act"]').bind('keyup', function () {
 <script>
 $('.menu_upd').find('input[name="plat"]').bind('keyup', function () {
 	
-	$('.menu_upd').find('input[name="navtab"]').val($(this).val()+'_'+$('.menu_upd').find('input[name="module"]').val()+'_'+$('.menu_upd').find('input[name="act"]').val());
+	var this_navtab = $(this).val()+'_'+$('.menu_upd').find('input[name="module"]').val()+'_'+$('.menu_upd').find('input[name="act"]').val();
+	$('.menu_upd').find('input[name="navtab"]').val(this_navtab);
+	var this_route = routeFunc('menu_upd');
+	$('.menu_upd').find('input[name="route"]').val(this_route);
 });
 $('.menu_upd').find('input[name="module"]').bind('keyup', function () {
 	
-	$('.menu_upd').find('input[name="navtab"]').val($('.menu_upd').find('input[name="plat"]').val()+'_'+$(this).val()+'_'+$('.menu_upd').find('input[name="act"]').val());
+	var this_navtab = $('.menu_upd').find('input[name="plat"]').val()+'_'+$(this).val()+'_'+$('.menu_upd').find('input[name="act"]').val();
+	$('.menu_upd').find('input[name="navtab"]').val(this_navtab);
+	var this_route = routeFunc('menu_upd');
+	$('.menu_upd').find('input[name="route"]').val(this_route);
+
 });
 $('.menu_upd').find('input[name="act"]').bind('keyup', function () {
 	
-	$('.menu_upd').find('input[name="navtab"]').val($('.menu_upd').find('input[name="plat"]').val()+'_'+$('.menu_upd').find('input[name="module"]').val()+'_'+$(this).val());
+	var this_navtab = $('.menu_upd').find('input[name="plat"]').val()+'_'+$('.menu_upd').find('input[name="module"]').val()+'_'+$(this).val();
+	$('.menu_upd').find('input[name="navtab"]').val(this_navtab);
+	var this_route = routeFunc('menu_upd');
+	$('.menu_upd').find('input[name="route"]').val(this_route);
 });
 
 var expressP, expressC, expressD, expressArea, areaCont;
@@ -364,6 +410,10 @@ function tools_menu_selectC(p,c) {
 						level3_href[p] = [];
 					}
 					level3_href[p][c] = re['level3_href'];
+					if ( typeof(route[p])==='undefined' ){
+						route[p] = [];
+					}
+					route[p][c] = re['route'];
 				}
 				//b.ori
 				tools_menu_showD(p,c);
@@ -403,6 +453,8 @@ function tools_menu_selectD(p,c,d) {
 	//$('.menu_upd').find('input[name="ori_level3_type"]').val(level3_type[p][c][d]);
 	$('.menu_upd').find('input[name="level3_href"]').val(level3_href[p][c][d]);
 	$('.menu_upd').find('input[name="ori_level3_href"]').val(level3_href[p][c][d]);
+	$('.menu_upd').find('input[name="route"]').val(route[p][c][d]);
+	$('.menu_upd').find('input[name="ori_route"]').val(route[p][c][d]);
 }
 </script>
 {/literal}

@@ -212,7 +212,7 @@ function divSearch(form, rel){
 	if (rel) {
 		var $box = $("#" + rel);
 		$box.ajaxUrl({
-			type:"POST", url:$form.attr("action"), data: $form.serializeArray(), callback:function(){
+			type:"post", url:$form.attr("action"), data: $form.serializeArray(), callback:function(){
 				$box.find("[layoutH]").layoutH();
 			}
 		});
@@ -262,7 +262,9 @@ function dwzPageBreak(options){
 	} else {
 		var form = _getPagerForm($parent, op.data);
 		var params = $(form).serializeArray();
-		
+		///teclong-给分页扩展一个功能，让ajax请求追随form的method属性
+		params.push({"name":"method", "value":$(form).attr("method")});
+
 		if (op.targetType == "dialog") {
 			if (form) $.pdialog.reload($(form).attr("action"), {data: params, callback: op.callback});
 		} else {

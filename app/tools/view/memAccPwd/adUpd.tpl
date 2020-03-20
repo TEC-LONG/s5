@@ -8,7 +8,7 @@
 				<label>归属方：</label>
 				<input class="required" name="belongsToLookup.belongs_to" type="text" {if isset($row)}value="{$row.belongs_to}"{/if} readonly/>
 				<input name="belongsToLookup.belongs_to__id" type="hidden" {if isset($row)}value="{$row.mem_belongs_to__id}"{/if} />
-				<a class="btnLook" href="{$url.belongsToIndex.url}&type=lookup" lookupGroup="belongsToLookup">查找带回</a>
+				<a class="btnLook" href="{$url.belongsToIndex.url}?type=lookup" lookupGroup="belongsToLookup">查找带回</a>
 			</p>
             <p>
 				<label>标签：</label>
@@ -18,13 +18,13 @@
 				<label>acc数据：</label>
 				<input name="accLookup.mem_acc" type="text" {if isset($row)}value="{$row.mem_acc}"{/if} readonly/>
 				<input name="accLookup.mem_acc__id" type="hidden" {if isset($row)}value="{$row.mem_acc__id}"{/if} />
-				<a class="btnLook" href="{$url.accIndex.url}&type=lookup" lookupGroup="accLookup">查找带回</a>
+				<a class="btnLook" href="{$url.accIndex.url}?type=lookup" lookupGroup="accLookup">查找带回</a>
 			</p>
 			<p>
 				<label>pwd数据：</label>
 				<input name="pwdLookup.mem_pwd" type="text" {if isset($row)}value="{$row.mem_pwd}"{/if} readonly/>
 				<input name="pwdLookup.mem_pwd__id" type="hidden" {if isset($row)}value="{$row.mem_pwd__id}"{/if}/>
-				<a class="btnLook" href="{$url.pwdIndex.url}&type=lookup" lookupGroup="pwdLookup">查找带回</a>
+				<a class="btnLook" href="{$url.pwdIndex.url}?type=lookup" lookupGroup="pwdLookup">查找带回</a>
 			</p>
 			<div class="divider"></div>
 			<p>

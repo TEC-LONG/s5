@@ -28,10 +28,10 @@ class UserController extends Controller {
 
         if( ACT==='index' ){
             $this->_datas['url'] = [
-                'index' => ['url'=>L(PLAT, MOD, 'index'), 'rel'=>$this->_navTab.'_index'],
-                'ad' => ['url'=>L(PLAT, MOD, 'ad'), 'rel'=>$this->_navTab.'_ad'],
-                'upd' => ['url'=>L(PLAT, MOD, 'upd'), 'rel'=>$this->_navTab.'_upd'],
-                'del' => ['url'=>L(PLAT, MOD, 'del')]
+                'index' => ['url'=>L('/tools/user/index'), 'rel'=>$this->_navTab.'_index'],
+                'ad' => ['url'=>L('/tools/user/ad'), 'rel'=>$this->_navTab.'_ad'],
+                'upd' => ['url'=>L('/tools/user/upd'), 'rel'=>$this->_navTab.'_upd'],
+                'del' => ['url'=>L('/tools/user/del')]
             ];
 
             $this->_datas['mustShow'] = [
@@ -48,7 +48,7 @@ class UserController extends Controller {
 
         if( ACT==='ad' ){
             $this->_datas['url'] = [
-                'adh' => ['url'=>L(PLAT, MOD, 'adh')]
+                'adh' => ['url'=>L('/tools/user/adh')]
             ];
         }
 
@@ -62,7 +62,7 @@ class UserController extends Controller {
 
         if( ACT==='upd' ){
             $this->_datas['url'] = [
-                'updh' => ['url'=>L(PLAT, MOD, 'updh')]
+                'updh' => ['url'=>L('/tools/user/updh')]
             ];
         }
 

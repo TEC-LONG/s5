@@ -27,7 +27,7 @@
 	</form>
 </div>
 <script>
-var tmp_details_url = '{$url.details.url}&id={$everyday_things__id}';
+var tmp_details_url = '{$url.details.url}?id={$everyday_things__id}';
 {literal}
 var detadAjaxDone = function (re) {
 	

@@ -1,6 +1,6 @@
 
 <div class="pageHeader">
-    <form onsubmit="return navTabSearch(this);" action="{$url.index.url}" method="post" onreset="$(this).find('select.combox').comboxReset()">
+    <form onsubmit="return navTabSearch(this);" action="{$url.index.url}" method="get" onreset="$(this).find('select.combox').comboxReset()">
     <div class="searchBar">
         <table class="searchContent">
             <tr>
@@ -28,8 +28,8 @@
             <div class="panelBar">
                 <ul class="toolBar">
                     <li><a class="add" href="{$url.ad.url}" target="navTab" rel="Menu_ad"><span>添加菜单栏目</span></a></li>
-<li><a class="delete" href="{$url.del.url}&id={ldelim}sid_{$navTab}}" target="ajaxTodo" title="确定要删除吗?"><span>删除</span></a></li>
-<li><a class="edit" href="{$url.upd.url}&id={ldelim}sid_{$navTab}}" target="navTab"  rel="Menu_upd"><span>编辑菜单栏目</span></a></li>
+<li><a class="delete" href="{$url.del.url}?id={ldelim}sid_{$navTab}}" target="ajaxTodo" title="确定要删除吗?"><span>删除</span></a></li>
+<li><a class="edit" href="{$url.upd.url}?id={ldelim}sid_{$navTab}}" target="navTab"  rel="Menu_upd"><span>编辑菜单栏目</span></a></li>
 
                 </ul>
             </div>
@@ -69,7 +69,7 @@
             
             </table>
             
-        <form id="pagerForm" method="post" action="{$url.index.url}">
+        <form id="pagerForm" method="get" action="{$url.index.url}">
             <input type="hidden" name="pageNum" value="1" />
             <input type="hidden" name="numPerPage" value="{$page.numPerPage}" />
             

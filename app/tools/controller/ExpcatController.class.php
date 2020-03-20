@@ -15,10 +15,10 @@ class ExpcatController extends Controller {
         $this->_navTab = 'tools_expcat';
         
         $this->_url = [
-            'index' => L(PLAT, MOD, 'index'),
-            'adh' => L(PLAT, MOD, 'adh'),
-            'edith' => L(PLAT, MOD, 'edith'),
-            'del' => L(PLAT, MOD, 'del')
+            'index' => L('/tools/expcat/index'),
+            'adh' => L('/tools/expcat/adh'),
+            'edith' => L('/tools/expcat/edith'),
+            'del' => L('/tools/expcat/del')
         ];
     }
 

@@ -1,6 +1,6 @@
 
 <div class="pageHeader tools_event_index_pageHeader">
-	<form onsubmit="return navTabSearch(this);" action="{$url.index.url}" method="post" onreset="$(this).find('select.combox').comboxReset()">
+	<form onsubmit="return navTabSearch(this);" action="{$url.index.url}" method="get" onreset="$(this).find('select.combox').comboxReset()">
 	<div class="searchBar">
 		<table class="searchContent">
 			<tr>
@@ -40,8 +40,8 @@
 	<div class="panelBar">
 		<ul class="toolBar">
             <li><a class="add" href="{$url.ad.url}" target="dialog" rel="{$url.ad.rel}" minable="false" width="750" height="460"><span>添加事件</span></a></li>
-			<li><a class="delete" href="{$url.del.url}&id={ldelim}sid_{$navTab}}" target="ajaxTodo" title="确定要删除吗?"><span>删除事件</span></a></li>
-			<li><a class="edit" href="{$url.upd.url}&id={ldelim}sid_{$navTab}}" target="dialog"  rel="{$url.upd.rel}" minable="false" width="750" height="460"><span>修改事件</span></a></li>
+			<li><a class="delete" href="{$url.del.url}?id={ldelim}sid_{$navTab}}" target="ajaxTodo" title="确定要删除吗?"><span>删除事件</span></a></li>
+			<li><a class="edit" href="{$url.upd.url}?id={ldelim}sid_{$navTab}}" target="dialog"  rel="{$url.upd.rel}" minable="false" width="750" height="460"><span>修改事件</span></a></li>
 		</ul>
 	</div>
 {literal}
@@ -83,8 +83,8 @@
     {/foreach}
 <script>
 $('.tools_event_index_pageContent').find('.timeLine').find('input[type="radio"]').bind('click', function(){
-    $('.tools_event_index_pageContent').find('.edit').attr('href', '{$url.upd.url}&id='+$(this).val());
-    $('.tools_event_index_pageContent').find('.delete').attr('href', '{$url.del.url}&id='+$(this).val());
+    $('.tools_event_index_pageContent').find('.edit').attr('href', '{$url.upd.url}?id='+$(this).val());
+    $('.tools_event_index_pageContent').find('.delete').attr('href', '{$url.del.url}?id='+$(this).val());
 });
 </script>
 </ul>

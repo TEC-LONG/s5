@@ -1,5 +1,5 @@
 <div class="pageContent">
-	<form method="post" action="{$url.updh.url}&id={$row.id}" class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
+	<form method="post" action="{$url.updh.url}?id={$row.id}" class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
         <div class="pageFormContent" layoutH="56">
             <p>
 				<label>品牌名称：</label>

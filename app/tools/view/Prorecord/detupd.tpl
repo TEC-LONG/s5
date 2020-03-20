@@ -1,5 +1,5 @@
 <div class="pageContent">
-	<form method="post" action="{$url.updh.url}&id={$row.id}" class="pageForm required-validate" onsubmit="return validateCallback(this, detupdAjaxDone);">
+	<form method="post" action="{$url.updh.url}?id={$row.id}" class="pageForm required-validate" onsubmit="return validateCallback(this, detupdAjaxDone);">
 		<input type="hidden" name="everyday_things__id" value="{$everyday_things__id}"/>
         <div class="pageFormContent" layoutH="56">
 			<p class="nowrap">
@@ -27,7 +27,7 @@
 	</form>
 </div>
 <script>
-var tmp_details_url = '{$url.details.url}&id={$everyday_things__id}';
+var tmp_details_url = '{$url.details.url}?id={$everyday_things__id}';
 {literal}
 var detupdAjaxDone = function (re) {
 	

@@ -46,7 +46,7 @@
 			<a class="nav-link active">添加EXP</a>
 		</li>
 	</ul>
-	<form class="needs-validation" action="{$url.updh.url}&id={$row.id}" method="post">
+	<form class="needs-validation" action="{$url.updh.url}?id={$row.id}" method="post">
 		<div class="form-row d-flex mt-3">
 			<div class="col-md-1"></div>
 			<div class="col-md-2">

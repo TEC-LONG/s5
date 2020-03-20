@@ -1,5 +1,5 @@
 {literal}
-<form id="pagerForm" method="post" action="demo_page1.html">
+<form id="pagerForm" method="get" action="demo_page1.html">
 	<input type="hidden" name="status" value="${param.status}">
 	<input type="hidden" name="keywords" value="${param.keywords}" />
 	<input type="hidden" name="pageNum" value="1" />
@@ -9,7 +9,7 @@
 {/literal}
 
 <div class="pageHeader">
-	<form onsubmit="return navTabSearch(this);" action="demo_page1.html" method="post" onreset="$(this).find('select.combox').comboxReset()">
+	<form onsubmit="return navTabSearch(this);" action="demo_page1.html" method="get" onreset="$(this).find('select.combox').comboxReset()">
 	<div class="searchBar">
 		<table class="searchContent">
 			<tr>

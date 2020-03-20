@@ -1,5 +1,5 @@
 <div class="pageHeader">
-	<form rel="pagerForm" onsubmit="return navTabSearch(this);" action="{$url.index}" method="post">
+	<form rel="pagerForm" onsubmit="return navTabSearch(this);" action="{$url.index}" method="get">
 	<div class="searchBar">
 		<ul class="searchContent">
 			<li>
@@ -78,7 +78,7 @@
 			{/foreach}
 		</tbody>
 	</table>
-	<form id="pagerForm" method="post" action="#rel#">
+	<form id="pagerForm" method="get" action="{$url.index}">
 		<input type="hidden" name="pageNum" value="1" />
 		<input type="hidden" name="numPerPage" value="{$page.numPerPage}" />
 	</form>
@@ -96,7 +96,7 @@
 			<span>条，总共{$page.totalNum}条记录，合计{$page.totalPageNum}页</span>
 		</div>
 
-		<div class="pagination" targetType="navTab" totalCount="{$page.totalNum}" numPerPage="{$page.numPerPage}" pageNumShown="10" currentPage="{$page.pageNum}"></div>
+		<div class="pagination" targetType="navTab" totalCount="{$page.totalNum}" numPerPage="{$page.numPerPage}" pageNumShown="10" currentPage="{$page.pageNum}" rel=""></div>
 
 	</div>
 </div>

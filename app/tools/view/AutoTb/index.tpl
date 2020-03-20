@@ -3,8 +3,8 @@
 
 <div class="pageContent tools_AutoTb_index">
 	
-	<!-- <form method="post" id="mysql" action="http://www.adm.com/index.php/Admin/CAutotb/index" class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone, '第一步操作成功');"> -->
-	<form method="post" id="mysql" action="{$url.index}" class="pageForm required-validate">
+	<!-- <form method="get" id="mysql" action="http://www.adm.com/index.php/Admin/CAutotb/index" class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone, '第一步操作成功');"> -->
+	<form method="get" id="mysql" action="{$url.index}" class="pageForm required-validate">
 
 		<div class="pageFormContent nowrap" layoutH="97">
 			

@@ -21,7 +21,7 @@
 <div class="tools_prorecord_everyday_details_pageContent" style="border-left:1px #B8D0D6 solid;border-right:1px #B8D0D6 solid">
 	<div class="panelBar">
 		<ul class="toolBar">
-			<li><a class="add" href="{$url.ad.url}&edths_id={$everyday_things__id}" target="dialog" rel="{$url.ad.rel}" minable="false" width="650" height="440"><span>添加日程细节</span></a></li>
+			<li><a class="add" href="{$url.ad.url}?edths_id={$everyday_things__id}" target="dialog" rel="{$url.ad.rel}" minable="false" width="650" height="440"><span>添加日程细节</span></a></li>
 			<li class="line">line</li>
 			<li><a class="delete" href="javacript:void(0);" title="确定要删除吗?"><span>删除细节点</span></a></li>
 			<li class="line">line</li>
@@ -76,9 +76,9 @@
 	</ul>
 <script>
 $('.tools_prorecord_everyday_details_pageContent').find('.timeLine').find('input[type="radio"]').bind('click', function(){
-	$('.tools_prorecord_everyday_details_pageContent').find('.edit').attr('href', '{$url.upd.url}&id='+$(this).val()+'&edths_id={$everyday_things__id}');
+	$('.tools_prorecord_everyday_details_pageContent').find('.edit').attr('href', '{$url.upd.url}?id='+$(this).val()+'&edths_id={$everyday_things__id}');
 	$('.tools_prorecord_everyday_details_pageContent').find('.edit').attr('rel', '{$url.upd.rel}');
-	$('.tools_prorecord_everyday_details_pageContent').find('.delete').attr('href', '{$url.del.url}&id='+$(this).val());
+	$('.tools_prorecord_everyday_details_pageContent').find('.delete').attr('href', '{$url.del.url}?id='+$(this).val());
 });
 
 {literal}

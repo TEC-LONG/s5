@@ -18,43 +18,18 @@ class ExpController extends Controller {
 
         #当前模块的导航标识前缀，用于拼接各页面完整的导航标识
         $this->_navTab = 'tools_exp';
-        
-        #执行各动作的初始化方法
-        switch ( ACT ){
-            case 'index':
-                $this->_index();
-            break;
-            case 'ad':
-                $this->_datas['url'] = [
-                    'adh' => ['url'=>L(PLAT, MOD, 'adh')],
-                    'imgupmd' => ['url'=>L(PLAT, 'editor', 'imgupmd')]
-                ];
-            break;
-            case 'upd':
-                $this->_datas['url'] = [
-                    'updh' => ['url'=>L(PLAT, MOD, 'updh')],
-                    'imgupmd' => ['url'=>L(PLAT, 'editor', 'imgupmd')]
-                ];
-            break;
-            case 'editormd'://这个部分待优化，需要分离老的非markdown的富文本编辑器部分
-                $this->_url = [
-                    'editormdImgUp' => L(PLAT, MOD, 'imgupmd')
-                ];
-                // $this->_editormd();
-            break;
-        }
-    }
 
-    ###index综合  包括: _index(),index()
-    ##_index初始化方法，只服务于index
-    private function _index(){
         $this->_url = [
-            'info' => L(PLAT, MOD, 'info'),
-            'ad' => ['url'=>L(PLAT, MOD, 'ad'), 'rel'=>$this->_navTab.'_ad'],
-            'index' => L(PLAT, MOD, 'index'),
-            'upd' => ['url'=>L(PLAT, MOD, 'upd'), 'rel'=>$this->_navTab.'_upd'],
-            'del' => L(PLAT, MOD, 'del'),
-            'catLookup' => L(PLAT, 'expcat', 'catLookup')
+            'info' => L('/tools/exp/info'),
+            'ad' => ['url'=>L('/tools/exp/ad'), 'rel'=>$this->_navTab.'_ad'],
+            'adh' => ['url'=>L('/tools/exp/adh')],
+            'index' => L('/tools/exp/index'),
+            'upd' => ['url'=>L('/tools/exp/upd'), 'rel'=>$this->_navTab.'_upd'],
+            'updh' => ['url'=>L('/tools/exp/updh')],
+            'del' => L('/tools/exp/del'),
+            'catLookup' => L('/tools/expcat/catLookup'),
+            'imgupmd' => ['url'=>L('/tools/editormd/imgUp')],
+            'editormdImgUp' => L('/tools/exp/imgupmd')
         ];
     }
 

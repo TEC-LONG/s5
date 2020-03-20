@@ -26,22 +26,22 @@ class ProrecordController extends Controller {
             case 'index':
                 $this->_url = [
                     'info' => L('/tools/prorecord/info'),
-                    'index' => L(PLAT, MOD, 'index'),
-                    'ad' => ['url'=>L(PLAT, MOD, 'ad'), 'rel'=>$this->_navTab.'_ad'],
-                    'upd' => ['url'=>L(PLAT, MOD, 'upd'), 'rel'=>$this->_navTab.'_upd'],
-                    'del' => L(PLAT, MOD, 'del')
+                    'index' => L('/tools/prorecord/index'),
+                    'ad' => ['url'=>L('/tools/prorecord/ad'), 'rel'=>$this->_navTab.'_ad'],
+                    'upd' => ['url'=>L('/tools/prorecord/upd'), 'rel'=>$this->_navTab.'_upd'],
+                    'del' => L('/tools/prorecord/del')
                 ];
             break;
             case 'ad':
                 $this->_datas['url'] = [
-                    'adh' => ['url'=>L(PLAT, MOD, 'adh')],
-                    'imgupmd' => ['url'=>L(PLAT, 'editor', 'imgupmd')]
+                    'adh' => ['url'=>L('/tools/prorecord/adh')],
+                    'imgupmd' => ['url'=>L('/tools/editormd/imgUp')]
                 ];
             break;
             case 'upd':
                 $this->_datas['url'] = [
-                    'updh' => ['url'=>L(PLAT, MOD, 'updh')],
-                    'imgupmd' => ['url'=>L(PLAT, 'editor', 'imgupmd')]
+                    'updh' => ['url'=>L('/tools/prorecord/updh')],
+                    'imgupmd' => ['url'=>L('/tools/editormd/imgUp')]
                 ];
             break;
             case 'everyday':
@@ -54,25 +54,25 @@ class ProrecordController extends Controller {
                 $this->_datas = $this->_init;
 
                 $this->_datas['url'] = [
-                    'details' => ['url'=>L(PLAT, MOD, 'details'), 'rel'=>$this->_navTab.'_details'],
-                    'everyday' => ['url'=>L(PLAT, MOD, 'everyday'), 'rel'=>$this->_navTab.'_everyday'],
-                    'ad' => ['url'=>L(PLAT, MOD, 'edad'), 'rel'=>$this->_navTab.'_edad'],
-                    'adh' => ['url'=>L(PLAT, MOD, 'edadh')],
-                    'upd' => ['url'=>L(PLAT, MOD, 'edupd'), 'rel'=>$this->_navTab.'_edupd'],
-                    'updh' => ['url'=>L(PLAT, MOD, 'edupdh')],
-                    'del' => ['url'=>L(PLAT, MOD, 'eddel')]
+                    'details' => ['url'=>L('/tools/everyday/details'), 'rel'=>$this->_navTab.'_details'],
+                    'everyday' => ['url'=>L('/tools/everyday/index'), 'rel'=>$this->_navTab.'_everyday'],
+                    'ad' => ['url'=>L('/tools/everyday/edad'), 'rel'=>$this->_navTab.'_edad'],
+                    'adh' => ['url'=>L('/tools/everyday/edadh')],
+                    'upd' => ['url'=>L('/tools/everyday/edupd'), 'rel'=>$this->_navTab.'_edupd'],
+                    'updh' => ['url'=>L('/tools/everyday/edupdh')],
+                    'del' => ['url'=>L('/tools/everyday/eddel')]
                 ];
             break;
             case 'details':
             case 'detad':
             case 'detupd':
                 $this->_datas['url'] = [
-                    'details' => ['url'=>L(PLAT, MOD, 'details'), 'rel'=>$this->_navTab.'_details'],
-                    'ad' => ['url'=>L(PLAT, MOD, 'detad'), 'rel'=>$this->_navTab.'_detad'],
-                    'adh' => ['url'=>L(PLAT, MOD, 'detadh')],
-                    'upd' => ['url'=>L(PLAT, MOD, 'detupd'), 'rel'=>$this->_navTab.'_detupd'],
-                    'updh' => ['url'=>L(PLAT, MOD, 'detupdh')],
-                    'del' => ['url'=>L(PLAT, MOD, 'detdel')]
+                    'details' => ['url'=>L('/tools/everyday/details'), 'rel'=>$this->_navTab.'_details'],
+                    'ad' => ['url'=>L('/tools/everyday/detad'), 'rel'=>$this->_navTab.'_detad'],
+                    'adh' => ['url'=>L('/tools/everyday/detadh')],
+                    'upd' => ['url'=>L('/tools/everyday/detupd'), 'rel'=>$this->_navTab.'_detupd'],
+                    'updh' => ['url'=>L('/tools/everyday/detupdh')],
+                    'del' => ['url'=>L('/tools/everyday/detdel')]
                 ];
             break;
         }

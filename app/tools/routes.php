@@ -29,13 +29,13 @@
     Route::post('event/adh', 'Event@adh');
     Route::get('event/upd', 'Event@upd');
     Route::post('event/updh', 'Event@updh');
-    Route::get('editormd/imgUp', 'Event@del');
+    Route::get('event/del', 'Event@del');
 
     Route::get('expcat/index', 'Expcat@index');
     Route::post('expcat/getChild', 'Expcat@getChild');
     Route::post('expcat/adh', 'Expcat@adh');
     Route::post('expcat/edith', 'Expcat@edith');
-    Route::post('expcat/catLookup', 'Expcat@catLookup');
+    Route::get('expcat/catLookup', 'Expcat@catLookup');
 
     Route::get('exp/index', 'Exp@index');
     Route::get('exp/info', 'Exp@info');
@@ -43,6 +43,7 @@
     Route::post('exp/adh', 'Exp@adh');
     Route::get('exp/upd', 'Exp@upd');
     Route::post('exp/updh', 'Exp@updh');
+    Route::post('exp/imgupmd', 'Exp@imgupmd');
 
     Route::get('accPwd/index', 'MemAccPwd@index');
     Route::post('accPwd/edit', 'MemAccPwd@adUpd');
@@ -63,8 +64,8 @@
     
     Route::get('menu/index', 'Menu@index');
     Route::post('menu/getChild', 'Menu@getChild');
-    Route::post('menu/getChild', 'Menu@adh');
-    Route::post('menu/getChild', 'Menu@updh');
+    Route::post('menu/adh', 'Menu@adh');
+    Route::post('menu/updh', 'Menu@updh');
 
     Route::get('prorecord/index', 'Prorecord@index');
     Route::get('prorecord/info', 'Prorecord@info');
@@ -84,6 +85,9 @@
     Route::get('everyday/detupd', 'Prorecord@detupd');
     Route::post('everyday/detupdh', 'Prorecord@detupdh');
 
+    Route::get('robot/index', 'Robot@index');
+    Route::post('robot/adh', 'Robot@adh');
+
     Route::get('tbRecord/index', 'TBRecord@index');
     Route::get('tbRecord/tbLookup', 'TBRecord@tbLookup');
     Route::get('tbRecord/kvLookup', 'TBRecord@kvLookup');
@@ -95,9 +99,9 @@
 
     Route::get('user/index', 'User@index');
     Route::get('user/ad', 'User@ad');
-    Route::get('user/adh', 'User@adh');
-    Route::post('user/upd', 'User@updh');
-    Route::post('user/del', 'User@del');
+    Route::post('user/adh', 'User@adh');
+    Route::get('user/upd', 'User@updh');
+    Route::get('user/del', 'User@del');
 
     #
     Route::get('test/t1', 'Test@t1');

@@ -18,19 +18,19 @@ class MemAccPwdController extends Controller {
         $this->_datas['navTab'] = $this->_navTab;
 
         $this->_datas['url'] = [
-            'index' => ['url'=>L(PLAT, MOD, 'index'), 'rel'=>$this->_navTab.'_index'],
-            'adUpd' => ['url'=>L(PLAT, MOD, 'adUpd'), 'rel'=>$this->_navTab.'_adUpd'],
-            'post' => ['url'=>L(PLAT, MOD, 'post')],
-            'accIndex' => ['url'=>L(PLAT, MOD, 'accIndex'), 'rel'=>$this->_navTab.'_accIndex'],
-            'accAdUpd' => ['url'=>L(PLAT, MOD, 'accAdUpd'), 'rel'=>$this->_navTab.'_accAdUpd'],
-            'accPost' => ['url'=>L(PLAT, MOD, 'accPost')],
-            'pwdIndex' => ['url'=>L(PLAT, MOD, 'pwdIndex'), 'rel'=>$this->_navTab.'_pwdIndex'],
-            'pwdAdUpd' => ['url'=>L(PLAT, MOD, 'pwdAdUpd'), 'rel'=>$this->_navTab.'_pwdAdUpd'],
-            'pwdPost' => ['url'=>L(PLAT, MOD, 'pwdPost')],
-            'belongsToIndex' => ['url'=>L(PLAT, MOD, 'belongsToIndex'), 'rel'=>$this->_navTab.'_belongsToIndex'],
-            'belongsToAdUpd' => ['url'=>L(PLAT, MOD, 'belongsToAdUpd'), 'rel'=>$this->_navTab.'_belongsToAdUpd'],
-            'belongsToPost' => ['url'=>L(PLAT, MOD, 'belongsToPost')],
-            'del' => ['url'=>L(PLAT, MOD, 'del')]
+            'index' => ['url'=>L('/tools/accPwd/index'), 'rel'=>$this->_navTab.'_index'],
+            'adUpd' => ['url'=>L('/tools/accPwd/edit'), 'rel'=>$this->_navTab.'_adUpd'],
+            'post' => ['url'=>L('/tools/accPwd/post')],
+            'accIndex' => ['url'=>L('/tools/accPwd/accIndex'), 'rel'=>$this->_navTab.'_accIndex'],
+            'accAdUpd' => ['url'=>L('/tools/accPwd/accAdUpd'), 'rel'=>$this->_navTab.'_accAdUpd'],
+            'accPost' => ['url'=>L('/tools/accPwd/accPost')],
+            'pwdIndex' => ['url'=>L('/tools/accPwd/pwdIndex'), 'rel'=>$this->_navTab.'_pwdIndex'],
+            'pwdAdUpd' => ['url'=>L('/tools/accPwd/pwdAdUpd'), 'rel'=>$this->_navTab.'_pwdAdUpd'],
+            'pwdPost' => ['url'=>L('/tools/accPwd/pwdPost')],
+            'belongsToIndex' => ['url'=>L('/tools/accPwd/belongsToIndex'), 'rel'=>$this->_navTab.'_belongsToIndex'],
+            'belongsToAdUpd' => ['url'=>L('/tools/accPwd/belongsToAdUpd'), 'rel'=>$this->_navTab.'_belongsToAdUpd'],
+            'belongsToPost' => ['url'=>L('/tools/accPwd/belongsToPost')],
+            'del' => ['url'=>L('/tools/accPwd/del')]
         ];
     }
 

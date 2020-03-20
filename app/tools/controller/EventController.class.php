@@ -23,43 +23,15 @@ class EventController extends Controller {
         //扔进模板
         $this->_datas = $this->_init;
 
-        if( ACT==='index' ){
-            $this->_datas['url'] = [
-                'index' => ['url'=>L(PLAT, MOD, 'index'), 'rel'=>$this->_navTab.'_index'],
-                'ad' => ['url'=>L(PLAT, MOD, 'ad'), 'rel'=>$this->_navTab.'_ad'],
-                'upd' => ['url'=>L(PLAT, MOD, 'upd'), 'rel'=>$this->_navTab.'_upd'],
-                'del' => ['url'=>L(PLAT, MOD, 'del')]
-            ];
-        }
+        $this->_datas['url'] = [
+            'index' => ['url'=>L('/tools/event/index'), 'rel'=>$this->_navTab.'_index'],
+            'ad' => ['url'=>L('/tools/event/ad'), 'rel'=>$this->_navTab.'_ad'],
+            'adh' => ['url'=>L('/tools/event/adh')],
+            'upd' => ['url'=>L('/tools/event/upd'), 'rel'=>$this->_navTab.'_upd'],
+            'updh' => ['url'=>L('/tools/event/updh')],
+            'del' => ['url'=>L('/tools/event/del')]
+        ];
 
-        if( ACT==='ad' ){
-            $this->_datas['url'] = [
-                'adh' => ['url'=>L(PLAT, MOD, 'adh')]
-            ];
-        }
-
-        if( ACT==='adh' ){
-            $this->_extra['form-elems'] = [
-                'title' => ['ch'=>'标题', 'rule'=>'required']
-            ];
-        }
-
-        if( ACT==='upd' ){
-            $this->_extra['form-elems'] = [
-                'id' => ['ch'=>'ID', 'rule'=>'required']
-            ];
-            $this->_datas['url'] = [
-                'updh' => ['url'=>L(PLAT, MOD, 'updh')]
-            ];
-        }
-
-        if( ACT==='updh' ){
-            $this->_extra['form-elems'] = [
-                'id' => ['ch'=>'ID', 'rule'=>'required'],
-                'title' => ['ch'=>'标题', 'rule'=>'required']
-            ];
-        }
-        
         $this->_datas['navTab'] = $this->_navTab;
     }
 
@@ -110,7 +82,12 @@ class EventController extends Controller {
         //接收数据
         $request = REQUEST()->all();
 
+        
+
         //检查数据
+        $this->_extra['form-elems'] = [
+            'title' => ['ch'=>'标题', 'rule'=>'required']
+        ];
         //check($request,  $this->_extra['form-elems'])
 
         //构建新增数据
@@ -138,6 +115,9 @@ class EventController extends Controller {
         $request = REQUEST()->all();
 
         //检查数据
+        $this->_extra['form-elems'] = [
+            'id' => ['ch'=>'ID', 'rule'=>'required']
+        ];
         //check($request,  $this->_extra['form-elems'])
 
         //查询数据
@@ -154,6 +134,10 @@ class EventController extends Controller {
         $request = REQUEST()->all();
 
         //检查数据
+        $this->_extra['form-elems'] = [
+            'id' => ['ch'=>'ID', 'rule'=>'required'],
+            'title' => ['ch'=>'标题', 'rule'=>'required']
+        ];
         // $this->_extra['form-elems']['id'] = ['ch'=>'菜品ID', 'rule'=>'required'];
         //check($request,  $this->_extra['form-elems'])
 

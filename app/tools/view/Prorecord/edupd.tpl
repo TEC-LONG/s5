@@ -1,5 +1,5 @@
 <div class="pageContent">
-	<form method="post" action="{$url.updh.url}&id={$row.id}" class="pageForm required-validate" onsubmit="return validateCallback(this, edupdAjaxDone);">
+	<form method="post" action="{$url.updh.url}?id={$row.id}" class="pageForm required-validate" onsubmit="return validateCallback(this, edupdAjaxDone);">
         <div class="pageFormContent" layoutH="56">
             <p>
 				<label>日程标题：</label>

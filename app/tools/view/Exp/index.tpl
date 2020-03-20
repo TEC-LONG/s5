@@ -1,10 +1,10 @@
-<form id="pagerForm" method="post" action="{$url.index}">
+<form id="pagerForm" method="get" action="{$url.index}">
 	<input type="hidden" name="pageNum" value="1" />
 	<input type="hidden" name="numPerPage" value="{$page.numPerPage}" />
 </form>
 
 <div class="pageHeader">
-	<form onsubmit="return navTabSearch(this);" action="{$page.index}" method="post" onreset="$(this).find('select.combox').comboxReset()">
+	<form onsubmit="return navTabSearch(this);" action="{$page.index}" method="get" onreset="$(this).find('select.combox').comboxReset()">
 	<div class="searchBar">
 		<table class="searchContent">
 			<tr>
@@ -60,14 +60,14 @@
 		{foreach $exps as $exps_key=>$exp}
 			<tr target="sid_user" rel="{$exp.id}">
 				<td>{$exps_key+1}</td>
-				<td><a href="{$url.info}&id={$exp.id}" target="_blank">{$exp.title}</a></td>
+				<td><a href="{$url.info}?id={$exp.id}" target="_blank">{$exp.title}</a></td>
 				<td>{date('Y-m-d H:i', $exp.post_date)}</td>
 				<td>{$exp.tags}</td>
 				<td>{str_replace('|', ' >> ', $exp.crumbs_expcat_names)}</td>
 				<td>{$exp.id}</td>
 				<td>
 					<a title="确实要删除？" target="ajaxTodo" href="{$url.del}&id={$exp['id']}" class="btnDel">删除</a>
-					<a title="编辑EXP" target="_blank" href="{$url.upd.url}&id={$exp['id']}" class="btnEdit">编辑</a>
+					<a title="编辑EXP" target="_blank" href="{$url.upd.url}?id={$exp['id']}" class="btnEdit">编辑</a>
 				</td>
 			</tr>
 		{/foreach}
