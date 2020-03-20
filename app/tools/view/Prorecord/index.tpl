@@ -62,7 +62,7 @@
 				<td>{$belong_pro[$prorecord.belong_pro]}</td>
 				<td>{$prorecord.id}</td>
 				<td>
-					<a title="确实要删除？" target="ajaxTodo" href="{$url.del}&id={$prorecord['id']}" class="btnDel">删除</a>
+					<a title="确实要删除？" target="ajaxTodo" href="{$url.del}?id={$prorecord['id']}" class="btnDel">删除</a>
 					<a title="编辑工程信息" target="_blank" href="{$url.upd.url}?id={$prorecord['id']}" class="btnEdit">编辑</a>
 				</td>
 			</tr>

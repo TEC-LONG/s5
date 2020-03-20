@@ -17,7 +17,7 @@ class AutoTbController extends Controller {
         ];
 
         $this->_url = [
-            'index' => L('tools', 'AutoTb', 'index')
+            'index' => L('/tools/tbIntelligence/index')
         ];
     }
 

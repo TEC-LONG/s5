@@ -1,5 +1,5 @@
 <div class="pageContent tools_tbrecord_upd">
-	<form method="post" action="{$url.updh}&id={$row.id}" class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
+	<form method="post" action="{$url.updh}?id={$row.id}" class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
         <div class="pageFormContent" layoutH="56">
             <p class="nowrap">
 				<label>所属库名称：</label>

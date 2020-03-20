@@ -60,7 +60,7 @@ $(document).ready(function() {
 </form>
 <script type="text/javascript">
 var changeCheckCodeImgClick = function (){
-	var url = "{L('/tools/login/capture')}&rd="+Math.random();
+	var url = "{L('/tools/login/capture')}?rd="+Math.random();
 	$('.checkCodeImg').attr('src', url);
 }
 $(function(){

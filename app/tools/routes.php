@@ -11,7 +11,7 @@
     #后台页面
     Route::get('index', 'Index@index');##首页
 
-    Route::get('tbIntelligence/index', 'AutoTb@index');
+    Route::request('tbIntelligence/index', 'AutoTb@index');
     Route::post('tbIntelligence/stepOne', 'AutoTb@stepOne');
     Route::post('tbIntelligence/stepTwo', 'AutoTb@stepTwo');
 
@@ -100,7 +100,8 @@
     Route::get('user/index', 'User@index');
     Route::get('user/ad', 'User@ad');
     Route::post('user/adh', 'User@adh');
-    Route::get('user/upd', 'User@updh');
+    Route::get('user/upd', 'User@upd');
+    Route::post('user/updh', 'User@updh');
     Route::get('user/del', 'User@del');
 
     #

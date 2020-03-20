@@ -66,7 +66,7 @@
 				<td>{str_replace('|', ' >> ', $exp.crumbs_expcat_names)}</td>
 				<td>{$exp.id}</td>
 				<td>
-					<a title="确实要删除？" target="ajaxTodo" href="{$url.del}&id={$exp['id']}" class="btnDel">删除</a>
+					<a title="确实要删除？" target="ajaxTodo" href="{$url.del}?id={$exp['id']}" class="btnDel">删除</a>
 					<a title="编辑EXP" target="_blank" href="{$url.upd.url}?id={$exp['id']}" class="btnEdit">编辑</a>
 				</td>
 			</tr>

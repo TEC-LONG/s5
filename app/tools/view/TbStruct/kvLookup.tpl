@@ -1,12 +1,12 @@
 <div class="pageContent">
 	<div class="pageFormContent key_val_div" layoutH="58">
-		<select class="combox" name="database" ref="w_combox_tb" refUrl="{$url.combox_tb}&belong_db={ldelim}value{rdelim}">
+		<select class="combox" name="database" ref="w_combox_tb" refUrl="{$url.combox_tb}?belong_db={ldelim}value{rdelim}">
 		{foreach $belong_db as $belong_db_k=>$belong_db_v}
 			<option value="{$belong_db_k}">{$belong_db_v}</option>
 		{/foreach}
 		</select>
 		<br/><br/><br/>
-		<select class="combox" name="tb" id="w_combox_tb" ref="w_combox_fields" refUrl="{$url.combox_tb}&id={ldelim}value{rdelim}">
+		<select class="combox" name="tb" id="w_combox_tb" ref="w_combox_fields" refUrl="{$url.combox_tb}?id={ldelim}value{rdelim}">
 		{foreach $first_database_tbs as $first_database_tbs_k=>$first_database_tbs_v}
 			<option value="{$first_database_tbs_v.0}">{$first_database_tbs_v.1}</option>
 		{/foreach}

@@ -8,11 +8,13 @@ class Route{
 
     private static $_routes = [
         'get' => [],
-        'post' => []
+        'post' => [],
+        'request' => []
     ];
     private static $_maps = [
         'get' => [],
-        'post' => []
+        'post' => [],
+        'request' => []
     ];
 
     public static function get($route, $map){
@@ -25,6 +27,11 @@ class Route{
         self::routeAd($route, $map, 'post');
     }
 
+    public static function request($route, $map){
+    
+        self::routeAd($route, $map, 'request');
+    }
+
     private static function routeAd($route, $map, $type){
         
         if( $type=='get' ){#add get
@@ -32,10 +39,14 @@ class Route{
             $key = count(self::$_routes['get']);
             self::$_maps['get'][$key] = $map;
             self::$_routes['get'][$key] = '/' . self::$plat . '/' . $route;
-        }else {#add post
+        }elseif( $type=='post' ) {#add post
             $key = count(self::$_routes['post']);
             self::$_maps['post'][$key] = $map;
             self::$_routes['post'][$key] = '/' . self::$plat . '/' . $route;
+        }else{#add request
+            $key = count(self::$_routes['request']);
+            self::$_maps['request'][$key] = $map;
+            self::$_routes['request'][$key] = '/' . self::$plat . '/' . $route;
         }
     }
 
@@ -70,7 +81,16 @@ class Route{
         //     var_dump($URI);
         //     var_dump($routes_gather);
         // }
-        if(!in_array($URI, $routes_gather)) exit('跳转404，记录日志！匹配不到routes对应的规则');
+        if(!in_array($URI, $routes_gather)){
+            $request_method = 'request';
+            $routes_gather = self::$_routes[$request_method];
+            if(!in_array($URI, $routes_gather)){
+                var_dump($request_method);
+                var_dump($URI);
+                var_dump($routes_gather);
+            }
+            if(!in_array($URI, $routes_gather)) exit('跳转404，记录日志！匹配不到routes对应的规则');
+        }
 
         $routes_key = array_search($URI, $routes_gather);#routes的key与map的key一致
         $map = self::$_maps[$request_method][$routes_key];
