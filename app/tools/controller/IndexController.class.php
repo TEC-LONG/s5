@@ -13,7 +13,7 @@ class IndexController extends Controller {
         $this->_datas['menu3'] = M()->table('menu')->select('id,name,parent_id,level,plat,module,act,navtab,level3_type,level3_href,route')->where([['is_del', 0],['level', 3]])->get();
 
         $this->_datas['url'] = [
-            'login_out' => ['url'=>L('tools', 'login', 'logout')]
+            'login_out' => ['url'=>L('/tools/login/quit')]
         ];
 
         $this->_datas['nav_link'] = [//最多八个大数组，每个大数组中最多12个元素

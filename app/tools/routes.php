@@ -50,15 +50,15 @@
     Route::post('accPwd/post', 'MemAccPwd@post');
     Route::get('accPwd/del', 'MemAccPwd@del');
     Route::get('accPwd/accIndex', 'MemAccPwd@accIndex');
-    Route::post('accPwd/accAdUpd', 'MemAccPwd@accAdUpd');
+    Route::get('accPwd/accAdUpd', 'MemAccPwd@accAdUpd');
     Route::post('accPwd/accPost', 'MemAccPwd@accPost');
     // Route::get('accPwd/accDel', 'MemAccPwd@accDel');
     Route::get('accPwd/pwdIndex', 'MemAccPwd@pwdIndex');
-    Route::post('accPwd/pwdAdUpd', 'MemAccPwd@pwdAdUpd');
+    Route::get('accPwd/pwdAdUpd', 'MemAccPwd@pwdAdUpd');
     Route::post('accPwd/pwdPost', 'MemAccPwd@pwdPost');
     // Route::get('accPwd/pwdDel', 'MemAccPwd@pwdDel');
     Route::get('accPwd/belongsToIndex', 'MemAccPwd@belongsToIndex');
-    Route::post('accPwd/belongsToAdUpd', 'MemAccPwd@belongsToAdUpd');
+    Route::get('accPwd/belongsToAdUpd', 'MemAccPwd@belongsToAdUpd');
     Route::post('accPwd/belongsToPost', 'MemAccPwd@belongsToPost');
     // Route::get('accPwd/belongsToDel', 'MemAccPwd@belongsToDel');
     
@@ -103,6 +103,7 @@
     Route::get('user/upd', 'User@upd');
     Route::post('user/updh', 'User@updh');
     Route::get('user/del', 'User@del');
+    Route::get('user/group', 'User@groupList');
 
     #
     Route::get('test/t1', 'Test@t1');

@@ -84,11 +84,11 @@ class Route{
         if(!in_array($URI, $routes_gather)){
             $request_method = 'request';
             $routes_gather = self::$_routes[$request_method];
-            if(!in_array($URI, $routes_gather)){
-                var_dump($request_method);
-                var_dump($URI);
-                var_dump($routes_gather);
-            }
+            // if(!in_array($URI, $routes_gather)){
+            //     var_dump($request_method);
+            //     var_dump($URI);
+            //     var_dump($routes_gather);
+            // }
             if(!in_array($URI, $routes_gather)) exit('跳转404，记录日志！匹配不到routes对应的规则');
         }
 

@@ -26,6 +26,12 @@ class Model extends NiceModel{
 
     public $pagination=[];
 
+    public function __construct(){
+    
+        parent::__construct();
+        if( isset($this->table) ) $this->table($this->table);
+    }
+
     public function table($table){
         $this->table= $table;
         return $this;

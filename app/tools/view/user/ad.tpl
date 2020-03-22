@@ -9,6 +9,14 @@
 				<label>密码：</label>
 				<input name="pwd" type="text" class="required alphanumeric" minlength="6" maxlength="20" />
 			</p>
+			<p>
+				<label>所属组：</label>
+				<select class="combox" name="user_group__id">
+					<option value="">请选择...</option>
+					<option value="1">组a</option>
+					<option value="2">组b</option>
+				</select>
+			</p>
 			<div class="divider"></div>
 			<p>
 				<label>昵称：</label>

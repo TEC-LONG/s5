@@ -39,7 +39,6 @@
 	<table class="table" width="100%" layoutH="138">
 		<thead>
 			<tr>
-				<th width="30"><input type="checkbox" group="ids" class="checkboxCtrl"></th>
 				<th width="30">序号</th>
 				{foreach $thead as $col}
 				<th {if !empty($col.width)}width="{$col.width}"{/if}>{$col.ch}</th>
@@ -50,7 +49,6 @@
 		<tbody>
 			{foreach $rows as $k=>$row}
 			<tr target="sid_{$navTab}" rel="{$row.id}">
-				<td><input name="ids" value="{$row.id}" type="checkbox"></td>
 				<td>{$k+1}</td>
 				<td>{$row.id}</td>
 				<td>{$row.bt}</td>
@@ -66,7 +64,7 @@
 		</tbody>
 	</table>
 
-	<form id="pagerForm" method="post" action="{$url.index}">
+	<form id="pagerForm" method="get" action="{$url.index.url}">
 		<input type="hidden" name="pageNum" value="1" />
 		<input type="hidden" name="numPerPage" value="{$page.numPerPage}" />
 		<input type="hidden" name="s_mem_acc" value="{$search.s_mem_acc}" />

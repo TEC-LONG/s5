@@ -321,7 +321,7 @@ class MemAccPwdController extends Controller {
         if(empty($condition)) $condition=1;
 
         ///构建查询对象
-        $obj = M()->table('mem_acc__mem_pwd as map')->select('map.*, mbt.belongs_to as bt, ma.mem_acc, mp.mem_pwd')->where(1)
+        $obj = M()->table('mem_acc__mem_pwd as map')->select('map.*, mbt.belongs_to as bt, ma.mem_acc, mp.mem_pwd')->where($condition)
         ->leftjoin('mem_belongs_to as mbt', 'mbt.id=map.mem_belongs_to__id')
         ->leftjoin('mem_acc as ma', 'ma.id=map.mem_acc__id')
         ->leftjoin('mem_pwd as mp', 'mp.id=map.mem_pwd__id');

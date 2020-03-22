@@ -26,54 +26,35 @@ class UserController extends Controller {
         //扔进模板
         $this->_datas = $this->_init;
 
-        if( ACT==='index' ){
-            $this->_datas['url'] = [
-                'index' => ['url'=>L('/tools/user/index'), 'rel'=>$this->_navTab.'_index'],
-                'ad' => ['url'=>L('/tools/user/ad'), 'rel'=>$this->_navTab.'_ad'],
-                'upd' => ['url'=>L('/tools/user/upd'), 'rel'=>$this->_navTab.'_upd'],
-                'del' => ['url'=>L('/tools/user/del')]
-            ];
+        $this->_datas['url'] = [
+            'index' => ['url'=>L('/tools/user/index'), 'rel'=>$this->_navTab.'_index'],
+            'ad'    => ['url'=>L('/tools/user/ad'), 'rel'=>$this->_navTab.'_ad'],
+            'adh'   => ['url'=>L('/tools/user/adh')],
+            'upd'   => ['url'=>L('/tools/user/upd'), 'rel'=>$this->_navTab.'_upd'],
+            'updh'  => ['url'=>L('/tools/user/updh')],
+            'del'   => ['url'=>L('/tools/user/del')],
+            'group' => ['url'=>L('/tools/user/group'), 'rel'=>$this->_navTab.'_group'],
+            'gAdUpd'=> ['url'=>L('/tools/user/gedit'), 'rel'=>$this->_navTab.'_edit'],
+            'gPost' => ['url'=>L('/tools/user/gpost')]
+        ];
 
-            $this->_datas['mustShow'] = [
-                'id' => ['ch'=>'ID', 'width'=>30], 
-                'acc' => ['ch'=>'账号', 'width'=>120], 
-                'nickname' => ['ch'=>'用户昵称', 'width'=>120],
-                'cell' => ['ch'=>'手机号', 'width'=>100], 
-                'email' => ['ch'=>'邮箱', 'width'=>160], 
-                'level' => ['ch'=>'用户级别', 'width'=>60],
-                'status' => ['ch'=>'状态', 'width'=>100],
-                'ori' => ['ch'=>'新增来源', 'width'=>120]
-            ];
-        }
+        $this->_datas['mustShow'] = [
+            'id'        => ['ch'=>'ID', 'width'=>30], 
+            'acc'       => ['ch'=>'账号', 'width'=>120], 
+            'nickname'  => ['ch'=>'用户昵称', 'width'=>120],
+            'cell'      => ['ch'=>'手机号', 'width'=>100], 
+            'email'     => ['ch'=>'邮箱', 'width'=>160], 
+            'level'     => ['ch'=>'用户级别', 'width'=>60],
+            'status'    => ['ch'=>'状态', 'width'=>100],
+            'ori'       => ['ch'=>'新增来源', 'width'=>120]
+        ];
 
-        if( ACT==='ad' ){
-            $this->_datas['url'] = [
-                'adh' => ['url'=>L('/tools/user/adh')]
-            ];
-        }
+        $this->_extra['form-elems'] = [
+            'acc'       => ['ch'=>'账号', 'rule'=>'required||regex@:^[\w_]{6,20}$'],
+            'pwd'       => ['ch'=>'密码', 'rule'=>'required||regex@:^[\w_]{6,15}$'],//6~15个英文字母或数字或下划线组合
+            'nickname'  => ['ch'=>'昵称', 'rule'=>'required']
+        ];
 
-        if( ACT==='adh' ){
-            $this->_extra['form-elems'] = [
-                'acc' => ['ch'=>'账号', 'rule'=>'required||regex@:^[\w_]{6,20}$'],
-                'pwd' => ['ch'=>'密码', 'rule'=>'required||regex@:^[\w_]{6,15}$'],//6~15个英文字母或数字或下划线组合
-                'nickname' => ['ch'=>'昵称', 'rule'=>'required']
-            ];
-        }
-
-        if( ACT==='upd' ){
-            $this->_datas['url'] = [
-                'updh' => ['url'=>L('/tools/user/updh')]
-            ];
-        }
-
-        if( ACT==='updh' ){
-            $this->_extra['form-elems'] = [
-                'acc' => ['ch'=>'账号', 'rule'=>'required||regex@:^[\w_]{6,20}$'],
-                'pwd' => ['ch'=>'密码', 'rule'=>'required||regex@:^[\w_]{6,15}$'],//6~15个英文字母或数字或下划线组合
-                'nickname' => ['ch'=>'昵称', 'rule'=>'required']
-            ];
-        }
-        
         $this->_datas['navTab'] = $this->_navTab;
     }
 
@@ -103,13 +84,16 @@ class UserController extends Controller {
         $this->_datas['rows'] = M('UserModel')->select('*')->where($con)
                 ->limit($page['limitM'] . ',' . $page['numPerPage'])
                 ->get();
-                
+
         //分配模板变量&渲染模板
         $this->assign($this->_datas);
         $this->display('user/index.tpl');
     }
 
     public function ad(){ 
+
+        ///用户组数据
+        $user_group = M('UserGroupModel')->getAll();
 
         $this->assign($this->_datas);
 
@@ -211,6 +195,43 @@ class UserController extends Controller {
         }else{
             JSON()->stat(300)->msg('操作失败')->exec();
         }
+    }
+
+    public function groupList(){
+    
+        ///接收数据
+        $request = REQUEST()->all();
+        $this->_datas['search'] = $request;
+
+        ///需要搜索的字段
+        $search_form = [
+            // ['s_mem_acc', 'like'],
+            // ['s_mem_pwd', 'like']
+        ];
+        $condition = F()->S2C($request, $search_form);
+        if(empty($condition)) $condition=1;
+
+        ///构建查询对象
+        $obj = M()->table('user_group')->select('*')->where($condition)->orderby('sort desc');
+
+        #分页参数
+        $nowPage = isset($request['pageNum']) ? intval($request['pageNum']) : (isset($_COOKIE['pageNum']) ? intval($_COOKIE['pageNum']) : 1);
+        $this->_datas['page'] = $page = $obj->pagination($nowPage)->pagination;
+        $page['numPerPageList'] = [20, 30, 40, 60, 80, 100, 120, 160, 200];
+
+        #查询数据
+        $this->_datas['rows'] = $obj->limit($page['limitM'] . ',' . $page['numPerPage'])->get();
+        
+        ///表头信息
+        $this->_datas['thead'] = [
+            ['ch'=>'ID', 'width'=>30],
+            ['ch'=>'组名', 'width'=>160],
+            ['ch'=>'排序', 'width'=>120],
+        ];
+
+        ///分配模板变量&渲染模板
+        $this->assign($this->_datas);
+        $this->display('user/group.tpl');
     }
 
     

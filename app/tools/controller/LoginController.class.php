@@ -51,7 +51,7 @@ class LoginController extends Controller{
 
             //跳转后台首页
             // $this->jump('登陆成功', 'p=tools&m=index&a=index');
-            J('登陆成功', '/tools/index');
+            J('登陆成功', '/tools/index', 0);
 
         }else{//账号或密码不正确，登陆失败
             // $this->jump('密码错误！', 'p=tools&m=login&a=index');
@@ -65,7 +65,7 @@ class LoginController extends Controller{
         unset($_SESSION['admin']);
 
         // $this->jump('', 'p=tools&m=login&a=index', 0);
-        J('', '/tools/login/quit', 0);
+        J('', '/tools/login/index', 0);
     }
 }
 
