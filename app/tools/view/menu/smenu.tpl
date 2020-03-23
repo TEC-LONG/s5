@@ -1,6 +1,6 @@
 
 <div class="pageHeader">
-	<form onsubmit="return navTabSearch(this);" action="{$url.group.url}" method="post">
+	<form onsubmit="return navTabSearch(this);" action="{$url.smenu.url}" method="post">
 	<div class="searchBar">
 		<table class="searchContent">
 			<tr>
@@ -23,7 +23,7 @@
 <div class="pageContent">
 	<div class="panelBar">
 		<ul class="toolBar">
-			<li><a class="add" href="{$url.gAdUpd.url}" target="dialog" rel="{$url.gAdUpd.rel}" minable="false" width="750" height="240"><span>新增用户组</span></a></li>
+			<li><a class="add" href="{$url.smenuAdUpd.url}" target="dialog" rel="{$url.smenuAdUpd.rel}" minable="false" width="750" height="320"><span>新增子菜单</span></a></li>
 		</ul>
 	</div>
 	<table class="table" width="100%" layoutH="138">
@@ -41,11 +41,16 @@
 			<tr target="sid_{$navTab}" rel="{$row.id}">
 				<td>{$k+1}</td>
 				<td>{$row.name}</td>
-				<td>{$row.sort}</td>
+				<td>{$row.route}</td>
+				<td>{$request_type[$row.request_type]}</td>
+				<td>{$row.navtab}</td>
+				<td>{if $row.menu__id!=0}{$level3[$row['menu__id']]}{else} - {/if}</td>
+				<td>{if $row.parent_id!=0}{$parent_names[$row['parent_id']]}{else} - {/if}</td>
+				<td>{$row.link_href}</td>
 				<td>{$row.id}</td>
 				<td>
-					<a title="确实要删除？" target="ajaxTodo" href="{$url.del.url}?tb=usergroup&id={$row['id']}" class="btnDel">删除</a>
-					<a title="编辑用户组" target="dialog" href="{$url.gAdUpd.url}?id={$row['id']}" class="btnEdit" rel="{$url.gAdUpd.rel}"  minable="false" width="650" height="440">编辑</a>
+					<a title="确实要删除？" target="ajaxTodo" href="{$url.del.url}?tb=smenu&id={$row['id']}" class="btnDel">删除</a>
+					<a title="编辑子菜单" target="dialog" href="{$url.smenuAdUpd.url}?id={$row['id']}" class="btnEdit" rel="{$url.smenuAdUpd.rel}"  minable="false" width="650" height="440">编辑</a>
 				</td>
 			</tr>
 			{/foreach}

@@ -93,7 +93,7 @@ class UserController extends Controller {
     public function ad(){ 
 
         ///用户组数据
-        $user_group = M('UserGroupModel')->getAll();
+        $this->_datas['user_group'] = M('UserGroupModel')->getAll();
 
         $this->assign($this->_datas);
 
@@ -141,6 +141,9 @@ class UserController extends Controller {
         //查询数据
         $this->_datas['row'] = M('UserModel')->select('*')->where(['id', $request['id']])->find();
 
+        ///查询所有的用户组
+        $this->_datas['user_group'] = M('UserGroupModel')->getAll();
+
         //分配模板变量&渲染模板
         $this->assign($this->_datas);
         $this->display('user/upd.tpl');
@@ -187,11 +190,18 @@ class UserController extends Controller {
         // $this->_extra['form-elems']['id'] = ['ch'=>'菜品ID', 'rule'=>'required'];
         //check($request,  $this->_extra['form-elems'])
 
-        //执行删除操作  将需要删除的数据 is_del字段设置为1
-        $re = M('UserModel')->fields('is_del')->update([1])->where(['id', '=', $request['id']])->exec();
+        if( $request['tb']=='usergroup' ){
+            $navtab = $this->_navTab.'_group';
+            $re = M()->table('user_group')->where(['id', '=', $request['id']])->delete();
+        }else{
+            $navtab = $this->_navTab.'_index';
+            //执行删除操作  将需要删除的数据 is_del字段设置为1
+            $re = M('UserModel')->fields('is_del')->update([1])->where(['id', '=', $request['id']])->exec();
+        }
+        
 
         if( $re ){
-            JSON()->navtab($this->_navTab.'_index')->msg('删除成功！')->exec();
+            JSON()->navtab($navtab)->msg('删除成功！')->exec();
         }else{
             JSON()->stat(300)->msg('操作失败')->exec();
         }
@@ -205,8 +215,7 @@ class UserController extends Controller {
 
         ///需要搜索的字段
         $search_form = [
-            // ['s_mem_acc', 'like'],
-            // ['s_mem_pwd', 'like']
+            ['s_name', 'like']
         ];
         $condition = F()->S2C($request, $search_form);
         if(empty($condition)) $condition=1;
@@ -224,9 +233,9 @@ class UserController extends Controller {
         
         ///表头信息
         $this->_datas['thead'] = [
-            ['ch'=>'ID', 'width'=>30],
             ['ch'=>'组名', 'width'=>160],
             ['ch'=>'排序', 'width'=>120],
+            ['ch'=>'ID', 'width'=>30]
         ];
 
         ///分配模板变量&渲染模板
@@ -234,7 +243,62 @@ class UserController extends Controller {
         $this->display('user/group.tpl');
     }
 
+    public function gAdUpd(){
     
+        ///接收数据
+        $request = REQUEST()->all();
 
-    
+        ///编辑部分
+        if( isset($request['id']) ){
+            $this->_datas['row'] = M()->table('user_group')->select('*')->where(['id', $request['id']])->find();
+        }
+
+        ///分配模板变量&渲染模板
+        $this->assign($this->_datas);   
+        $this->display('user/gedit.tpl');
+    }
+
+    public function gPost(){
+        ///接收数据
+        $request = REQUEST()->all();
+
+        ///检查数据
+        //check($request,  $this->_extra['form-elems'])
+
+        ///模型对象
+        $obj = M()->table('user_group');
+
+        if( isset($request['id']) ){///编辑
+            #查询已有数据
+            $ori = $obj->select('*')->where(['id', $request['id']])->find();
+
+            #新老数据对比，构建编辑数据
+            $update = F()->compare($request, $ori, ['name', 'sort', 'comm']);
+
+            if( empty($update) ) JSON()->stat(300)->msg('您还没有修改任何数据！请先修改数据。')->exec();
+            $re = $obj->fields(array_keys($update))->update($update)->where(['id', $request['id']])->exec();
+
+        }else{///新增
+
+            #数据是否重复，重复了没必要新增
+            $duplicate = $obj->select('id')->where(['name', $request['name']])->limit(1)->find();
+            if(!empty($duplicate)) JSON()->stat(300)->msg('用户组"'.$request['name'].'"已经存在！无需重复添加。')->exec();
+
+            $insert = [
+                'name' => $request['name'],
+                'sort' => empty($request['sort']) ? 0 : $request['sort'],
+                'comm' => $request['comm'],
+                'post_date' => time()
+            ];
+
+            $re = $obj->insert($insert)->exec();
+        }
+        
+        ///返回结果
+        if( $re ){
+            JSON()->navtab($this->_navTab.'_group')->exec();
+        }else{
+            JSON()->stat(300)->msg('操作失败')->exec();
+        }
+    }
 }      

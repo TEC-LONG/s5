@@ -13,8 +13,9 @@
 				<label>所属组：</label>
 				<select class="combox" name="user_group__id">
 					<option value="">请选择...</option>
-					<option value="1">组a</option>
-					<option value="2">组b</option>
+					{foreach $user_group as $v}
+					<option value="{$v['id']}">{$v['name']}</option>
+					{/foreach}
 				</select>
 			</p>
 			<div class="divider"></div>

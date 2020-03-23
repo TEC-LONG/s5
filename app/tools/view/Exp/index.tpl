@@ -24,13 +24,16 @@
 					<span class="limit">-</span>
 					<input name="endDate" class="date readonly" readonly="readonly" type="text" value="">
 				</td>
+				<td>
+					<div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div>
+				</td>
 			</tr>
 		</table>
 		<div class="subBar">
 			<ul>
-				<li><div class="button"><div class="buttonContent"><button type="reset">重置1</button></div></div></li>
-				<li><div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div></li>
-				<li><a class="button" href="demo_page6.html" target="dialog" mask="true" title="查询框"><span>高级检索</span></a></li>
+				<!-- <li><div class="button"><div class="buttonContent"><button type="reset">重置1</button></div></div></li> -->
+				<li></li>
+				<!-- <li><a class="button" href="demo_page6.html" target="dialog" mask="true" title="查询框"><span>高级检索</span></a></li> -->
 			</ul>
 		</div>
 	</div>

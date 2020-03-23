@@ -17,19 +17,27 @@ class Route{
         'request' => []
     ];
 
+    private static $selfObj=NULL;
+
     public static function get($route, $map){
     
-        self::routeAd($route, $map, 'get');
+        return self::routeAd($route, $map, 'get');
     }
 
     public static function post($route, $map){
     
-        self::routeAd($route, $map, 'post');
+        return self::routeAd($route, $map, 'post');
     }
 
     public static function request($route, $map){
     
-        self::routeAd($route, $map, 'request');
+        return self::routeAd($route, $map, 'request');
+    }
+
+    private static function getObj(){
+        
+        if(self::$selfObj===NULL) self::$selfObj=new self;
+        return self::$selfObj;
     }
 
     private static function routeAd($route, $map, $type){
@@ -39,15 +47,19 @@ class Route{
             $key = count(self::$_routes['get']);
             self::$_maps['get'][$key] = $map;
             self::$_routes['get'][$key] = '/' . self::$plat . '/' . $route;
+
         }elseif( $type=='post' ) {#add post
             $key = count(self::$_routes['post']);
             self::$_maps['post'][$key] = $map;
             self::$_routes['post'][$key] = '/' . self::$plat . '/' . $route;
+
         }else{#add request
             $key = count(self::$_routes['request']);
             self::$_maps['request'][$key] = $map;
             self::$_routes['request'][$key] = '/' . self::$plat . '/' . $route;
         }
+
+        return self::getObj();
     }
 
     public static function prepare(){

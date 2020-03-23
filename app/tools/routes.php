@@ -66,6 +66,10 @@
     Route::post('menu/getChild', 'Menu@getChild');
     Route::post('menu/adh', 'Menu@adh');
     Route::post('menu/updh', 'Menu@updh');
+    Route::get('menu/del', 'Menu@del');
+    Route::get('smenu/index', 'Menu@smenuList');
+    Route::get('smenu/edit', 'Menu@smenuAdUpd');
+    Route::post('smenu/post', 'Menu@smenuPost');
 
     Route::get('prorecord/index', 'Prorecord@index');
     Route::get('prorecord/info', 'Prorecord@info');
@@ -102,8 +106,10 @@
     Route::post('user/adh', 'User@adh');
     Route::get('user/upd', 'User@upd');
     Route::post('user/updh', 'User@updh');
-    Route::get('user/del', 'User@del');
+    Route::post('user/del', 'User@del');
     Route::get('user/group', 'User@groupList');
+    Route::get('user/gedit', 'User@gAdUpd');
+    Route::post('user/gpost', 'User@gpost');
 
     #
     Route::get('test/t1', 'Test@t1');
