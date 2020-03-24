@@ -201,7 +201,6 @@ class ProrecordController extends Controller {
         ->exec();
 
         if( $re ){
-
             $this->jump('修改成功！', 'p=tools&m=prorecord&a=upd&id='.$request['id']);
         }else{
             $this->jump('修改失败！', 'p=tools&m=prorecord&a=upd&id='.$request['id']);

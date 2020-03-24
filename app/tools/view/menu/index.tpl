@@ -63,6 +63,10 @@ var url_navtab = [];
 var level3_type = [];
 var level3_href = [];
 var route = [];
+var lookup = 0;
+{if isset($search.lookup)&&$search.lookup==1}
+lookup = 1;
+{/if}
 
 var routeFunc = function (className) {
 		var this_plat = $('.'+className).find('input[name="plat"]').val();
@@ -179,6 +183,9 @@ $('.menu_ad').find('input[name="act"]').bind('keyup', function () {
 					<input type="hidden" class="{$navTab}FIRE_this_cat_id" name="id">
 					<input type="hidden" class="{$navTab}FIRE_this_cat_name" name="ori_name">
 					<input class="required {$navTab}FIRE_this_cat_name" id="{$navTab}FIRE_this_cat_name" name="name" type="text" />
+					{if isset($search.lookup)&&$search.lookup==1}
+					&nbsp;&nbsp;<a href="javascript:" id="lookup-a">所选菜单：<span id="lookup-span">无</span></a>
+					{/if}
 				</dd>
 			</dl>
 			<dl class="nowrap"></dl>
@@ -290,6 +297,13 @@ function tools_menu_showC(p){//显示二级分类
 	}
 	$("."+navtab+"FIRE_this_cat_id").val(province_ids[p]);
 	$("."+navtab+"FIRE_this_cat_name").val(province[p]);
+	if (lookup==1) {
+		$("#lookup-a").unbind('click');
+		$('#lookup-span').html(province[p]);
+		$("#lookup-a").bind('click', function () {
+			$.bringBack({_id:province_ids[p],name:province[p]});
+		});
+	}
 	$("."+navtab+"FIRE_show_cat_name").html(province[p]);
 	$('.menu_upd').find('input[name="plat"]').val('');
 	$('.menu_upd').find('input[name="ori_plat"]').val('');
@@ -349,6 +363,13 @@ function tools_menu_showD(p,c){//显示三级分类
 	// }
 	$("."+navtab+"FIRE_this_cat_id").val(city_ids[p][c]);
 	$("."+navtab+"FIRE_this_cat_name").val(city[p][c]);
+	if (lookup==1) {
+		$("#lookup-a").unbind('click');
+		$('#lookup-span').html(city[p][c]);
+		$("#lookup-a").bind('click', function () {
+			$("#lookup-a").onclick = $.bringBack({_id:city_ids[p][c],name:city[p][c]});
+		});
+	}
 	$("."+navtab+"FIRE_show_cat_name").html(city[p][c]);
 	$('.menu_upd').find('input[name="plat"]').val('');
 	$('.menu_upd').find('input[name="ori_plat"]').val('');
@@ -431,6 +452,13 @@ function tools_menu_selectD(p,c,d) {
 	$("#"+navtab+"sort3 li").eq(d).addClass("active").siblings("li").removeClass("active");
 	$("."+navtab+"FIRE_this_cat_id").val(district_ids[p][c][d]);
 	$("."+navtab+"FIRE_this_cat_name").val(district[p][c][d]);
+	if (lookup==1) {
+		$("#lookup-a").unbind('click');
+		$('#lookup-span').html(district[p][c][d]);
+		$("#lookup-a").bind('click', function () {
+			$.bringBack({_id:district_ids[p][c][d],name:district[p][c][d]});
+		});
+	}
 	$("."+navtab+"FIRE_show_cat_name").html(district[p][c][d]);
 	$('.menu_upd').find('input[name="plat"]').val(plat[p][c][d]);
 	$('.menu_upd').find('input[name="ori_plat"]').val(plat[p][c][d]);

@@ -1,11 +1,28 @@
 
 <div class="pageHeader">
-	<form onsubmit="return navTabSearch(this);" action="{$url.group.url}" method="post">
+	<form onsubmit="return navTabSearch(this);" action="{$url.mpindex.url}" method="post">
 	<div class="searchBar">
 		<table class="searchContent">
 			<tr>
 				<td>
-					组名：<input type="text" name="s_name" value="{$search.s_name}" />
+					所属menu：<input type="text" name="s_menu_name" value="{$search.s_menu_name}" />
+				</td>
+				<td>
+					页面名称：<input type="text" name="s_display_name" value="{$search.s_display_name}" />
+				</td>
+				<td>
+					路由：<input type="text" name="s_route" value="{$search.s_route}" />
+				</td>
+				<td>
+					请求方式：
+				</td>
+				<td>
+					<select class="combox" name="s_request">
+						<option value="">请选择...</option>
+					{foreach $request as $k=>$v}	
+						<option value="{$k}">{$v}</option>
+					{/foreach}
+					</select>
 				</td>
 				<td>
 					<div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div>
@@ -23,7 +40,7 @@
 <div class="pageContent">
 	<div class="panelBar">
 		<ul class="toolBar">
-			<li><a class="add" href="{$url.gAdUpd.url}" target="dialog" rel="{$url.gAdUpd.rel}" minable="false" width="750" height="240"><span>新增用户组</span></a></li>
+			<li><a class="add" href="{$url.mpAdUpd.url}" target="dialog" rel="{$url.mpAdUpd.rel}" minable="false" width="450" height="280"><span>新增权限菜单</span></a></li>
 		</ul>
 	</div>
 	<table class="table" width="100%" layoutH="138">
@@ -40,25 +57,30 @@
 			{foreach $rows as $k=>$row}
 			<tr target="sid_{$navTab}" rel="{$row.id}">
 				<td>{$k+1}</td>
+				<td>{$row.display_name}</td>
+				<td>{if empty($row.route)}无{else}{$row.route}{/if}</td>
+				<td>{$request[$row.request]}</td>
+				<td>{$row.navtab}</td>
 				<td>{$row.name}</td>
-				<td>{$row.sort}</td>
+				<td>{$flag[$row.flag]}</td>
+				<td>{$row.menu_name}</td>
 				<td>{$row.id}</td>
 				<td>
-					<a title="确实要删除？" target="ajaxTodo" href="{$url.del.url}?tb=usergroup&id={$row['id']}" class="btnDel">删除</a>
-					<a title="编辑用户组" target="dialog" href="{$url.gAdUpd.url}?id={$row['id']}" class="btnEdit" rel="{$url.gAdUpd.rel}"  minable="false" width="650" height="440">编辑用户组</a>
-					<a title="设置用户组权限" target="dialog" href="{$url.gpermission.url}?id={$row['id']}" class="btnAssign" rel="{$url.gpermission.rel}"  minable="false" width="650" height="440">设置用户组权限</a>
+					<a title="确实要删除？" target="ajaxTodo" href="{$url.del.url}?tb=mpermission&id={$row['id']}" class="btnDel">删除</a>
+					<a title="编辑权限菜单" target="dialog" href="{$url.mpAdUpd.url}?id={$row['id']}" class="btnEdit" rel="{$url.mpAdUpd.rel}"  minable="false" width="450" height="280">编辑</a>
 				</td>
 			</tr>
 			{/foreach}
 		</tbody>
 	</table>
 
-	<form id="pagerForm" method="get" action="{$url.group.url}">
+	<form id="pagerForm" method="get" action="{$url.mpindex.url}">
 		<input type="hidden" name="pageNum" value="1" />
 		<input type="hidden" name="numPerPage" value="{$page.numPerPage}" />
-		<input type="hidden" name="s_name" value="{$search.s_name}" />
-		<!-- <input type="hidden" name="s_mem_acc" value="{$search.s_mem_acc}" />
-		<input type="hidden" name="s_mem_pwd" value="{$search.s_mem_pwd}" /> -->
+		<input type="hidden" name="s_menu_name" value="{$search.s_menu_name}" />
+		<input type="hidden" name="s_display_name" value="{$search.s_display_name}" />
+		<input type="hidden" name="s_route" value="{$search.s_route}" />
+		<input type="hidden" name="s_request" value="{$search.s_request}" />
 	</form>
 	<div class="panelBar">
 		<div class="pages">

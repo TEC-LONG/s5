@@ -36,6 +36,9 @@ class MenuController extends Controller {
     }
 
     public function index(){ 
+        ///接收数据
+        $request = REQUEST()->all();
+        $this->_datas['search'] = $request;
 
         #查询列表页数据
         $rows = M()->table('menu')->select('*')

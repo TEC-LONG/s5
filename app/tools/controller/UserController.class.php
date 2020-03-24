@@ -35,7 +35,8 @@ class UserController extends Controller {
             'del'   => ['url'=>L('/tools/user/del')],
             'group' => ['url'=>L('/tools/user/group'), 'rel'=>$this->_navTab.'_group'],
             'gAdUpd'=> ['url'=>L('/tools/user/gedit'), 'rel'=>$this->_navTab.'_edit'],
-            'gPost' => ['url'=>L('/tools/user/gpost')]
+            'gPost' => ['url'=>L('/tools/user/gpost')],
+            'gpermission' => ['url'=>L('/tools/user/gpermission'), 'rel'=>$this->_navTab.'_gpermission']
         ];
 
         $this->_datas['mustShow'] = [
@@ -199,7 +200,6 @@ class UserController extends Controller {
             $re = M('UserModel')->fields('is_del')->update([1])->where(['id', '=', $request['id']])->exec();
         }
         
-
         if( $re ){
             JSON()->navtab($navtab)->msg('删除成功！')->exec();
         }else{
@@ -300,5 +300,30 @@ class UserController extends Controller {
         }else{
             JSON()->stat(300)->msg('操作失败')->exec();
         }
+    }
+
+    public function gpermission(){
+    
+        ///接收数据
+        $request = REQUEST()->all();
+        $this->_datas['search'] = $request;
+
+        ///查询当前组所有有权限的菜单数据
+        $this->_datas['rows'] = M()->table('user_group_permission as ugp')->select('mp.*')
+        ->leftjoin('menu_permission as mp', 'ugp.menu_permission__id=mp.id')
+        ->where(['ugp.user_group__id', $request['id']])->get();
+
+        ///查询所有的权限菜单
+        $menuP = M()->table('menu_permission')->select('*')->where(1)->get();
+
+        echo '<pre>';
+        var_dump($menuP);
+        echo '<pre>';
+        exit;
+        
+        
+        ///分配模板变量&渲染模板
+        $this->assign($this->_datas);
+        $this->display('user/gpermission.tpl');
     }
 }      

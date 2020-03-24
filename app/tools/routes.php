@@ -67,9 +67,9 @@
     Route::post('menu/adh', 'Menu@adh');
     Route::post('menu/updh', 'Menu@updh');
     Route::get('menu/del', 'Menu@del');
-    Route::get('smenu/index', 'Menu@smenuList');
-    Route::get('smenu/edit', 'Menu@smenuAdUpd');
-    Route::post('smenu/post', 'Menu@smenuPost');
+    // Route::get('smenu/index', 'Menu@smenuList');
+    // Route::get('smenu/edit', 'Menu@smenuAdUpd');
+    // Route::post('smenu/post', 'Menu@smenuPost');
 
     Route::get('prorecord/index', 'Prorecord@index');
     Route::get('prorecord/info', 'Prorecord@info');
@@ -109,7 +109,18 @@
     Route::post('user/del', 'User@del');
     Route::get('user/group', 'User@groupList');
     Route::get('user/gedit', 'User@gAdUpd');
-    Route::post('user/gpost', 'User@gpost');
+    Route::post('user/gpost', 'User@gPost');
+    Route::get('user/gpermission', 'User@gpermission');
+    Route::get('user/gpedit', 'User@gpermissionEdit');
+    Route::post('user/gppost', 'User@gpermissionPost');
+
+    Route::get('permission/index', 'Permission@index');
+    Route::get('permission/pedit', 'Permission@pAdUpd');
+    Route::post('permission/ppost', 'Permission@pPost');
+    Route::get('permission/del', 'Permission@del');
+    Route::get('permission/mpindex', 'Permission@menuPermissionIndex');
+    Route::get('permission/mpedit', 'Permission@menuPermissionEdit');
+    Route::post('permission/mppost', 'Permission@menuPermissionPost');
 
     #
     Route::get('test/t1', 'Test@t1');

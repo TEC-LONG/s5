@@ -233,7 +233,15 @@ class FuncTool{
 
                 // $counter = count($v);
                 $name = substr($v[0], 2);
-                if(isset($request[$v[0]])) $condition[] = [$name, $v[1], $request[$v[0]]];
+                if(isset($request[$v[0]])){
+
+                    if( isset($v[2]) ){//user.name
+                        $condition[] = [$v[2].$name, $v[1], $request[$v[0]]];
+                    }else{
+                        $condition[] = [$name, $v[1], $request[$v[0]]];
+                    }
+                    
+                }
             }
         }
         return $condition;
