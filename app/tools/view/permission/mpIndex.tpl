@@ -40,7 +40,7 @@
 <div class="pageContent">
 	<div class="panelBar">
 		<ul class="toolBar">
-			<li><a class="add" href="{$url.mpAdUpd.url}" target="dialog" rel="{$url.mpAdUpd.rel}" minable="false" width="450" height="280"><span>新增权限菜单</span></a></li>
+			<li><a class="add" href="{$url.mpAdUpd.url}" target="dialog" rel="{$url.mpAdUpd.rel}" minable="false" width="450" height="330"><span>新增权限菜单</span></a></li>
 		</ul>
 	</div>
 	<table class="table" width="100%" layoutH="138">
@@ -58,6 +58,7 @@
 			<tr target="sid_{$navTab}" rel="{$row.id}">
 				<td>{$k+1}</td>
 				<td>{$row.display_name}</td>
+				<td>{$row.parent_name}</td>
 				<td>{if empty($row.route)}无{else}{$row.route}{/if}</td>
 				<td>{$request[$row.request]}</td>
 				<td>{$row.navtab}</td>
@@ -67,7 +68,7 @@
 				<td>{$row.id}</td>
 				<td>
 					<a title="确实要删除？" target="ajaxTodo" href="{$url.del.url}?tb=mpermission&id={$row['id']}" class="btnDel">删除</a>
-					<a title="编辑权限菜单" target="dialog" href="{$url.mpAdUpd.url}?id={$row['id']}" class="btnEdit" rel="{$url.mpAdUpd.rel}"  minable="false" width="450" height="280">编辑</a>
+					<a title="编辑权限菜单" target="dialog" href="{$url.mpAdUpd.url}?id={$row['id']}" class="btnEdit" rel="{$url.mpAdUpd.rel}"  minable="false" width="450" height="330">编辑</a>
 				</td>
 			</tr>
 			{/foreach}

@@ -143,8 +143,8 @@ class PermissionController extends Controller {
             $navtab = $this->_navTab.'_index';
             $re = M()->table('permission')->where(['id', '=', $request['id']])->delete();
         }elseif( $request['tb']=='mpermission' ){
-            $navtab = $this->_navTab.'_index';
-            $re = M()->table('menu_permission')->where(['id', '=', $request['id']])->delete();
+            $navtab = $this->_navTab.'_mpindex';
+            $re = M()->table('menu_permission')->where(['id', $request['id']])->delete();
         }else{
             // $navtab = $this->_navTab.'_index';
             // //执行删除操作  将需要删除的数据 is_del字段设置为1
@@ -177,8 +177,9 @@ class PermissionController extends Controller {
         
 
         ///构建查询对象
-        $obj = M()->table('menu_permission as mp')->select('mp.*, m.name as menu_name, p.name, p.flag')
+        $obj = M()->table('menu_permission as mp')->select('mp.*, m.name as menu_name, p.name, p.flag, mp1.display_name as parent_name')
         ->leftjoin('menu as m', 'mp.menu__id=m.id')
+        ->leftjoin('menu_permission as mp1', 'mp.parent_id=mp1.id')
         ->leftjoin('permission as p', 'mp.permission__id=p.id')->where($condition);
 
         #分页参数
@@ -187,21 +188,18 @@ class PermissionController extends Controller {
         $page['numPerPageList'] = [20, 30, 40, 60, 80, 100, 120, 160, 200];
 
         #查询数据
-        $this->_datas['rows'] = $obj->limit($page['limitM'] . ',' . $page['numPerPage'])->get();
-
-        // var_dump(M()->dbug());
-        // exit;
-        
+        $this->_datas['rows'] = $obj->orderby('post_date desc')->limit($page['limitM'] . ',' . $page['numPerPage'])->get();
 
         ///表头信息
         $this->_datas['thead'] = [
             ['ch'=>'页面名称', 'width'=>160],
+            ['ch'=>'上级页面', 'width'=>160],
             ['ch'=>'路由', 'width'=>120],
             ['ch'=>'请求方式', 'width'=>120],
             ['ch'=>'navtab', 'width'=>120],
             ['ch'=>'权限名称', 'width'=>120],
             ['ch'=>'权限标识', 'width'=>120],
-            ['ch'=>'所属menu', 'width'=>120],
+            ['ch'=>'对应菜单', 'width'=>120],
             ['ch'=>'ID', 'width'=>30]
         ];
 
@@ -242,7 +240,7 @@ class PermissionController extends Controller {
             $ori = $obj->select('*')->where(['id', $request['id']])->find();
 
             #新老数据对比，构建编辑数据
-            $update = F()->compare($request, $ori, ['display_name', 'permission__id', 'route', 'menu__id', 'request', 'navtab']);
+            $update = F()->compare($request, $ori, ['display_name', 'permission__id', 'route', 'menu__id', 'request', 'navtab', 'parent_id']);
             if( empty($update) ) JSON()->stat(300)->msg('您还没有修改任何数据！请先修改数据。')->exec();
             
             $update['update_time'] = time();
@@ -263,6 +261,7 @@ class PermissionController extends Controller {
                 'route' => $request['route'],
                 'display_name' => $request['display_name'],
                 'menu__id' => $request['menu__id'],
+                'parent_id' => $request['parent_id'],
                 'request' => $request['request'],
                 'navtab' => $request['navtab'],
                 'post_date' => time()

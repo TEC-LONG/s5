@@ -11,7 +11,7 @@
     #后台页面
     Route::get('index', 'Index@index');##首页
 
-    Route::request('tbIntelligence/index', 'AutoTb@index');
+    Route::request('tbIntelligence/index', 'AutoTb@index')->navtab('AutoTb_index');
     Route::post('tbIntelligence/stepOne', 'AutoTb@stepOne');
     Route::post('tbIntelligence/stepTwo', 'AutoTb@stepTwo');
 
@@ -20,7 +20,7 @@
     Route::post('chifan/adh', 'Chifan@adh');
     Route::get('chifan/upd', 'Chifan@upd');
     Route::post('chifan/updh', 'Chifan@updh');
-    Route::get('chifan/del', 'Chifan@del');
+    Route::post('chifan/del', 'Chifan@del');
 
     Route::post('editormd/imgUp', 'Editor@imgupmd');
 
@@ -29,7 +29,7 @@
     Route::post('event/adh', 'Event@adh');
     Route::get('event/upd', 'Event@upd');
     Route::post('event/updh', 'Event@updh');
-    Route::get('event/del', 'Event@del');
+    Route::post('event/del', 'Event@del');
 
     Route::get('expcat/index', 'Expcat@index');
     Route::post('expcat/getChild', 'Expcat@getChild');
@@ -48,25 +48,25 @@
     Route::get('accPwd/index', 'MemAccPwd@index');
     Route::post('accPwd/edit', 'MemAccPwd@adUpd');
     Route::post('accPwd/post', 'MemAccPwd@post');
-    Route::get('accPwd/del', 'MemAccPwd@del');
+    Route::post('accPwd/del', 'MemAccPwd@del');
     Route::get('accPwd/accIndex', 'MemAccPwd@accIndex');
     Route::get('accPwd/accAdUpd', 'MemAccPwd@accAdUpd');
     Route::post('accPwd/accPost', 'MemAccPwd@accPost');
-    // Route::get('accPwd/accDel', 'MemAccPwd@accDel');
+    // Route::post('accPwd/accDel', 'MemAccPwd@accDel');
     Route::get('accPwd/pwdIndex', 'MemAccPwd@pwdIndex');
     Route::get('accPwd/pwdAdUpd', 'MemAccPwd@pwdAdUpd');
     Route::post('accPwd/pwdPost', 'MemAccPwd@pwdPost');
-    // Route::get('accPwd/pwdDel', 'MemAccPwd@pwdDel');
+    // Route::post('accPwd/pwdDel', 'MemAccPwd@pwdDel');
     Route::get('accPwd/belongsToIndex', 'MemAccPwd@belongsToIndex');
     Route::get('accPwd/belongsToAdUpd', 'MemAccPwd@belongsToAdUpd');
     Route::post('accPwd/belongsToPost', 'MemAccPwd@belongsToPost');
-    // Route::get('accPwd/belongsToDel', 'MemAccPwd@belongsToDel');
+    // Route::post('accPwd/belongsToDel', 'MemAccPwd@belongsToDel');
     
     Route::get('menu/index', 'Menu@index');
     Route::post('menu/getChild', 'Menu@getChild');
     Route::post('menu/adh', 'Menu@adh');
     Route::post('menu/updh', 'Menu@updh');
-    Route::get('menu/del', 'Menu@del');
+    Route::post('menu/del', 'Menu@del');
     // Route::get('smenu/index', 'Menu@smenuList');
     // Route::get('smenu/edit', 'Menu@smenuAdUpd');
     // Route::post('smenu/post', 'Menu@smenuPost');
@@ -77,7 +77,7 @@
     Route::post('prorecord/adh', 'Prorecord@adh');
     Route::get('prorecord/upd', 'Prorecord@upd');
     Route::post('prorecord/updh', 'Prorecord@updh');
-    Route::get('prorecord/del', 'Prorecord@del');
+    Route::post('prorecord/del', 'Prorecord@del');
     Route::get('everyday/index', 'Prorecord@everyday');
     Route::get('everyday/edad', 'Prorecord@edad');
     Route::post('everyday/edadh', 'Prorecord@edadh');
@@ -92,13 +92,13 @@
     Route::get('robot/index', 'Robot@index');
     Route::post('robot/adh', 'Robot@adh');
 
-    Route::get('tbRecord/index', 'TBRecord@index');
+    Route::get('tbRecord/index', 'TBRecord@index')->navtab('tools_TBRecord_index');
     Route::get('tbRecord/tbLookup', 'TBRecord@tbLookup');
     Route::get('tbRecord/kvLookup', 'TBRecord@kvLookup');
-    Route::get('tbRecord/del', 'TBRecord@del');
-    Route::get('tbRecord/upd', 'TBRecord@upd');
+    Route::post('tbRecord/del', 'TBRecord@del');
+    Route::get('tbRecord/upd', 'TBRecord@upd')->navtab('tools_TBRecord_upd');
     Route::post('tbRecord/updh', 'TBRecord@updh');
-    Route::get('tbRecord/ad', 'TBRecord@ad');
+    Route::get('tbRecord/ad', 'TBRecord@ad')->navtab('tools_TBRecord_add');
     Route::post('tbRecord/adh', 'TBRecord@adh');
 
     Route::get('user/index', 'User@index');
@@ -110,14 +110,14 @@
     Route::get('user/group', 'User@groupList');
     Route::get('user/gedit', 'User@gAdUpd');
     Route::post('user/gpost', 'User@gPost');
-    Route::get('user/gpermission', 'User@gpermission');
-    Route::get('user/gpedit', 'User@gpermissionEdit');
-    Route::post('user/gppost', 'User@gpermissionPost');
+    Route::get('user/gpermission', 'User@groupPermission')->navtab('tools_user_gpermission');
+    Route::get('user/gpedit', 'User@groupPermissionEdit')->navtab('tools_user_gpedit');
+    Route::post('user/gppost', 'User@groupPermissionPost');
 
     Route::get('permission/index', 'Permission@index');
     Route::get('permission/pedit', 'Permission@pAdUpd');
     Route::post('permission/ppost', 'Permission@pPost');
-    Route::get('permission/del', 'Permission@del');
+    Route::post('permission/del', 'Permission@del');
     Route::get('permission/mpindex', 'Permission@menuPermissionIndex');
     Route::get('permission/mpedit', 'Permission@menuPermissionEdit');
     Route::post('permission/mppost', 'Permission@menuPermissionPost');

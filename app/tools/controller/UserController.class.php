@@ -1,6 +1,7 @@
 <?php
 namespace tools\controller;
 use \core\controller;
+use \model\MenuPermissionModel;
 
 class UserController extends Controller {
 
@@ -302,25 +303,27 @@ class UserController extends Controller {
         }
     }
 
-    public function gpermission(){
-    
+    public function groupPermission(){
         ///接收数据
         $request = REQUEST()->all();
         $this->_datas['search'] = $request;
 
-        ///查询当前组所有有权限的菜单数据
-        $this->_datas['rows'] = M()->table('user_group_permission as ugp')->select('mp.*')
-        ->leftjoin('menu_permission as mp', 'ugp.menu_permission__id=mp.id')
-        ->where(['ugp.user_group__id', $request['id']])->get();
+        ///查询当前组所具有的权限
+        $power_arr = M()->table('user_group_permission')->select('menu_permission__id')
+        ->where(['user_group__id', $request['id']])->get();
+
+        $power = [];
+        foreach( $power_arr as $k=>$v){
+        
+            $power[] = $v['menu_permission__id'];
+        }
+        $this->_datas['power'] = $power;
 
         ///查询所有的权限菜单
-        $menuP = M()->table('menu_permission')->select('*')->where(1)->get();
-
-        echo '<pre>';
-        var_dump($menuP);
-        echo '<pre>';
-        exit;
-        
+        $this->_datas['menu'] = M('MenuPermissionModel')->getAllLevelMenu();
+        // echo '<pre>';
+        // var_dump($this->_datas['menu']);
+        // echo '<pre>';
         
         ///分配模板变量&渲染模板
         $this->assign($this->_datas);

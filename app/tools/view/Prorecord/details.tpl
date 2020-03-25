@@ -35,22 +35,22 @@
 * {margin: 0;padding: 0;}
 
 .timeLine {margin: 20px auto 0;overflow: hidden;position: relative;}
-.timeLine li {background: url(public/tools/cssjz/back1.png) repeat-y 179px 0;padding-bottom: 30px;zoom: 1;display: flex;}
+.timeLine li {background: url(/public/tools/cssjz/back1.png) repeat-y 179px 0;padding-bottom: 30px;zoom: 1;display: flex;}
 .timeLine li:after {content:" ";display: block;height: 0;clear: both;visibility: hidden;}
 .timeLine li:last-child {background:none !important;}
-.timeLine li p {background:url(public/tools/cssjz/icon1.jpg) no-repeat 172px 0;display:inline-block;width:168px;font-size: 16px;text-align:right;padding-right:20px;color:#1296db;}
+.timeLine li p {background:url(/public/tools/cssjz/icon1.jpg) no-repeat 172px 0;display:inline-block;width:168px;font-size: 16px;text-align:right;padding-right:20px;color:#1296db;}
 .timeLine li p span {display: block;color: #6fceff;font-size: 12px;}
 .timeLine li .con {width: calc(100% - 230px);display:inline-block;padding-left: 30px;}
 .timeLine li .con img{max-width: 100%;}
 
 /* .on  */
-.timeLine li.on{background: url(public/tools/cssjz/back2.png) repeat-y 179px 0;}
-.timeLine li.on p {background:url(public/tools/cssjz/images/icon2.jpg) no-repeat 172px 0;color: #1db702;}
+.timeLine li.on{background: url(/public/tools/cssjz/back2.png) repeat-y 179px 0;}
+.timeLine li.on p {background:url(/public/tools/cssjz/images/icon2.jpg) no-repeat 172px 0;color: #1db702;}
 .timeLine li.on p span {color: #a8dda3;}
 
 /* .on 下面的li  */
-.timeLine li.on ~ li{background: url(public/tools/cssjz/back3.png) repeat-y 179px 0;}
-.timeLine li.on ~ li p {background:url(public/tools/cssjz/icon3.jpg) no-repeat 172px 0;color: #c3c3c3;}
+.timeLine li.on ~ li{background: url(/public/tools/cssjz/back3.png) repeat-y 179px 0;}
+.timeLine li.on ~ li p {background:url(/public/tools/cssjz/icon3.jpg) no-repeat 172px 0;color: #c3c3c3;}
 .timeLine li.on ~ li p span {color: #d0d0d0;}
 </style>
 {/literal}
@@ -83,7 +83,6 @@ $('.tools_prorecord_everyday_details_pageContent').find('.timeLine').find('input
 
 {literal}
 $('.tools_prorecord_everyday_details_pageContent').find('.edit').bind('click', function () {
-	console.log(this.href)
 	if (this.href!=='javacript:void(0);') {
 		$.pdialog.open(this.href, this.rel, this.title, {'width':650,'height':440,'minable':false,'mask':true,'resizable':true,'drawable':true});
 	}

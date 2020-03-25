@@ -82,7 +82,7 @@ background-color:rgb(99, 98, 97)
 			<div class="panelBar">
 				<div class="pages">
 					<span>显示</span>
-					<select class="combox" name="numPerPage" onchange="navTabPageBreak(, 'tools_everyday_things')">
+					<select class="combox" name="numPerPage" {literal}onchange="navTabPageBreak({numPerPage:this.value}, 'tools_everyday_things')"{/literal}>
 						<option value="20">20</option>
 						<option value="50">50</option>
 						<option value="100">100</option>

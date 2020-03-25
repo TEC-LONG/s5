@@ -19,10 +19,17 @@
 				<input name="route" type="text" value="{if isset($row)}{$row.route}{/if}"/>
 			</p>
 			<p>
-				<label>所属menu：</label>
+				<label>对应菜单：</label>
 				<input class="required" name="menu.name" type="text" value="{if isset($row)}{$row.name}{/if}" readonly/>
 				<input  name="menu._id" type="hidden" value="{if isset($row)}{$row.menu__id}{/if}"/>
 				<a class="btnLook" href="{$url.menuLookup.url}?lookup=1" lookupGroup="menu" width="1700" height="600">查找带回</a>
+			</p>
+			<p>
+				<label>上级id：</label>
+				<input name="parent_id" type="text" value="{if isset($row)}{$row.parent_id}{else}0{/if}"/>
+				<!-- <input class="required" name="menu.name" type="text" value="{if isset($row)}{$row.name}{/if}" readonly/> -->
+				<!-- <input  name="menu._id" type="hidden" value="{if isset($row)}{$row.menu__id}{/if}"/>
+				<a class="btnLook" href="{$url.menuLookup.url}?lookup=1" lookupGroup="menu" width="1700" height="600">查找带回</a> -->
 			</p>
 			<p>
 				<label>请求方式：</label>

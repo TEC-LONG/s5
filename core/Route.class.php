@@ -6,15 +6,22 @@ class Route{
     public static $controller;
     public static $method;
 
+    private static $count=[];
+
     private static $_routes = [
-        'get' => [],
-        'post' => [],
-        'request' => []
+        'get'       => [],
+        'post'      => [],
+        'request'   => []
     ];
     private static $_maps = [
-        'get' => [],
-        'post' => [],
-        'request' => []
+        'get'       => [],
+        'post'      => [],
+        'request'   => []
+    ];
+    private static $_navtab = [
+        'get'       => [],
+        'post'      => [],
+        'request'   => []
     ];
 
     private static $selfObj=NULL;
@@ -34,10 +41,22 @@ class Route{
         return self::routeAd($route, $map, 'request');
     }
 
+    public function navtab($navtab){
+        
+        self::$_navtab[self::$count[1]][self::$count[0]] = $navtab;
+        return self::$selfObj;
+    }
+
     private static function getObj(){
         
         if(self::$selfObj===NULL) self::$selfObj=new self;
         return self::$selfObj;
+    }
+
+    private static function setCount($key, $request){
+
+        ///              2       'get'
+        self::$count = [$key, $request];
     }
 
     private static function routeAd($route, $map, $type){
@@ -49,16 +68,17 @@ class Route{
             self::$_routes['get'][$key] = '/' . self::$plat . '/' . $route;
 
         }elseif( $type=='post' ) {#add post
-            $key = count(self::$_routes['post']);
+            self::$count = $key = count(self::$_routes['post']);
             self::$_maps['post'][$key] = $map;
             self::$_routes['post'][$key] = '/' . self::$plat . '/' . $route;
 
         }else{#add request
-            $key = count(self::$_routes['request']);
+            self::$count = $key = count(self::$_routes['request']);
             self::$_maps['request'][$key] = $map;
             self::$_routes['request'][$key] = '/' . self::$plat . '/' . $route;
         }
 
+        self::setCount($key, $type);
         return self::getObj();
     }
 

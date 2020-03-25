@@ -46,7 +46,7 @@
 				<td>
 					<a title="确实要删除？" target="ajaxTodo" href="{$url.del.url}?tb=usergroup&id={$row['id']}" class="btnDel">删除</a>
 					<a title="编辑用户组" target="dialog" href="{$url.gAdUpd.url}?id={$row['id']}" class="btnEdit" rel="{$url.gAdUpd.rel}"  minable="false" width="650" height="440">编辑用户组</a>
-					<a title="设置用户组权限" target="dialog" href="{$url.gpermission.url}?id={$row['id']}" class="btnAssign" rel="{$url.gpermission.rel}"  minable="false" width="650" height="440">设置用户组权限</a>
+					<a title="设置用户组权限" target="dialog" href="{$url.gpermission.url}?id={$row['id']}" class="btnAssign" rel="{$url.gpermission.rel}"  minable="false" width="1250" height="740">设置用户组权限</a>
 				</td>
 			</tr>
 			{/foreach}
