@@ -37,7 +37,8 @@ class UserController extends Controller {
             'group' => ['url'=>L('/tools/user/group'), 'rel'=>$this->_navTab.'_group'],
             'gAdUpd'=> ['url'=>L('/tools/user/gedit'), 'rel'=>$this->_navTab.'_edit'],
             'gPost' => ['url'=>L('/tools/user/gpost')],
-            'gpermission' => ['url'=>L('/tools/user/gpermission'), 'rel'=>$this->_navTab.'_gpermission']
+            'gpermission' => ['url'=>L('/tools/user/gpermission'), 'rel'=>$this->_navTab.'_gpermission'],
+            'gpPost' => ['url'=>L('/tools/user/gppost')]
         ];
 
         $this->_datas['mustShow'] = [
@@ -321,12 +322,84 @@ class UserController extends Controller {
 
         ///查询所有的权限菜单
         $this->_datas['menu'] = M('MenuPermissionModel')->getAllLevelMenu();
-        // echo '<pre>';
-        // var_dump($this->_datas['menu']);
-        // echo '<pre>';
         
         ///分配模板变量&渲染模板
         $this->assign($this->_datas);
         $this->display('user/gpermission.tpl');
+    }
+
+    public function groupPermissionPost(){
+        ///接收数据
+        $request = REQUEST()->all();
+
+        ///检查数据
+        //check($request,  $this->_extra['form-elems'])
+
+        // print_r($request);//mp_id
+        // exit;
+        $mp_id = isset($request['mp_id']) ? $request['mp_id'] : [];
+        
+
+        ///模型对象
+        $obj = M()->table('user_group_permission');
+
+        ///调整数据
+        #查询已有数据
+        $ori = $obj->select('menu_permission__id')->where(['user_group__id', $request['user_group__id']])->get();
+        $ori = empty($ori) ? [] : $ori;
+
+        $ori_mp_id = [];
+        foreach( $ori as $v){
+        
+            $ori_mp_id[] = $v['menu_permission__id'];
+        }
+
+        #比对数据
+        ##交集 不变
+        // $id_intersect = array_intersect($mp_id, $ori_mp_id);
+
+        ##在提交中不在原始的 新增
+        $id_ad = array_diff($mp_id, $ori_mp_id);
+
+        ##在原始中不在提交的 删除
+        $id_del = array_diff($ori_mp_id, $mp_id);
+
+        ///操作数据表
+        #新增
+        $ad_flag = 0;
+        if( !empty($id_ad) ){
+        
+            $data_ad = [];
+            $post_date = time();
+            foreach( $id_ad as $v){
+                array_push($data_ad, [$v, $post_date, $request['user_group__id']]);
+            }
+            $re = M()->table('user_group_permission')
+            ->fields('menu_permission__id, post_date, user_group__id')
+            ->insert($data_ad)
+            ->exec();
+
+            if($re) $ad_flag=1;
+        }
+
+        #删除
+        $del_flag = 0;
+        if( !empty($id_del) ){
+
+            $re = M()->table('user_group_permission')
+            ->where([
+                ['menu_permission__id', 'in', '('.implode(',', $id_del).')'],
+                ['user_group__id', $request['user_group__id']]
+            ])
+            ->delete();
+
+            if($re) $del_flag=1;
+        }
+
+        if( $ad_flag||$del_flag ){
+            JSON()->navtab($this->_navTab.'_gpermission')->exec();
+        }else{
+            JSON()->stat(300)->msg('请先修改数据再提交！')->exec();
+        }
     }
 }      
