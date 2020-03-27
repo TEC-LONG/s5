@@ -104,6 +104,10 @@ class Route{
 
         ///当前请求的方式
         $request_method = strtolower($_SERVER['REQUEST_METHOD']);
+        // echo '<pre>';
+        // var_dump($_SERVER);
+        // echo '<pre>';
+        // var_dump($request_method);
         if(!in_array($request_method, ['get', 'post'])) exit('跳转404，记录日志！请求方式非法');
         
         ///匹配routes规则，确定指向哪个控制器下的哪个方法

@@ -2,7 +2,7 @@
 {literal}
 <style>
 label {padding-right: 35px;}
-.gp_contro {vertical-align:middle;margin-left:4px;}
+ input {vertical-align:middle;margin-left: 3px;}
 </style>
 {/literal}
 <form method="post" action="{$url.gpPost.url}" class="pageForm required-validate" onsubmit="return validateCallback(this, gpAjaxDone);">
@@ -10,20 +10,27 @@ label {padding-right: 35px;}
 <div class="pageContent" layoutH="42" style="vertical-align:middle;">
 {foreach $menu as $v1}
 <div>
-	<h1 style="margin-top:4px;margin-left:3px;">{$v1.lv1.display_name}<input type="checkbox" class="gp_contro gpc1"/></h1>
+	<h1 class="gpc1 p1-{$v1.lv1.id}">
+		<span class="gp_contro" style="margin-top:4px;margin-left:3px;cursor:pointer;">{$v1.lv1.display_name}</span>
+		<input class="gp_main" type="checkbox" name="mp_id[]" value="{$v1.lv1.id}" {if in_array($v1.lv1.id, $power)}checked{/if}/>
+	</h1>
 	<div class="divider"></div>
 	{foreach $v1.lv2 as $v2}
 	<div class="panel collapse" minH="100" defH="{if isset($v2.son)}{count($v2.son)*66}{/if}">
-		<h1>{$v2.menu.display_name}<input type="checkbox" class="gp_contro gpc2"/></h1>
+		<h1 class="p2-{$v2.menu.id}">
+			<span class="gp_contro gpc2" lv="p1-{$v1.lv1.id}" style="padding-top:7px;cursor:pointer;">{$v2.menu.display_name}</span>
+			<input class="gp_main" type="checkbox" name="mp_id[]" value="{$v2.menu.id}" {if in_array($v2.menu.id, $power)}checked{/if}/ lv="p1-{$v1.lv1.id}">
+		</h1>
 		{if isset($v2.son)}
 		<div>
 			{foreach $v2.son as $v3}
 			<div>
-				<h2>{$v3.display_name}<input type="checkbox" class="gp_contro gpc3"/></h2>
+				<h2 style="cursor:pointer;"><span class="gp_contro" lv="p1-{$v1.lv1.id}|p2-{$v2.menu.id}">{$v3.display_name}</span></h2>
 				<div class="divider"></div>
+				<label>{$v3.display_name}<input class="gp_son" type="checkbox" name="mp_id[]" value="{$v3.id}" {if in_array($v3.id, $power)}checked{/if} lv="p1-{$v1.lv1.id}|p2-{$v2.menu.id}" /></label>
 				{if isset($v3.son)}
 					{foreach $v3.son as $v4}
-				<label><input type="checkbox" name="mp_id[]" value="{$v4.id}" {if in_array($v4.id, $power)}checked{/if} />{$v4.display_name}</label>
+				<label>{$v4.display_name}<input class="gp_son" type="checkbox" name="mp_id[]" value="{$v4.id}" {if in_array($v4.id, $power)}checked{/if} lv="p1-{$v1.lv1.id}|p2-{$v2.menu.id}"/></label>
 					{/foreach}
 				{/if}
 				<br/><br/><br/>
@@ -61,16 +68,38 @@ var gpAjaxDone = function (re) {
 	{/literal}
 }
 
-$('.gp_contro').bind('click', function () {
-	console.log(123);
-	if ($(this).hasClass('gpc2')) {
-		var checkboxes = $(this).parent().parent().parent().parent().find('input[name="mp_id[]"]');
-		var all_checkboxes = $(this).parent().parent().parent().parent().find('input[type="checkbox"]');
-	}else{
-		var checkboxes = $(this).parent().parent().find('input[name="mp_id[]"]');
-		var all_checkboxes = $(this).parent().parent().find('input[type="checkbox"]');
+var parentCheck = function (gp_lv) {
+	
+	if (typeof(gp_lv)=='undefined') {
+		return false;
+	}
+
+	var arr = gp_lv.split('|');
+
+	for (const key in arr) {
+		$('.'+arr[key]).find('input[type="checkbox"]').prop("checked",true);
+	}
+}
+
+$('input[type="checkbox"]').bind('click', function () {
+
+	var gp_lv = $(this).attr('lv');
+	if ($(this).is(":checked")) {
+		parentCheck(gp_lv);
 	}
 	
+
+});
+
+$('.gp_contro').bind('click', function () {
+
+	if ($(this).hasClass('gpc2')) {
+		var checkboxes = $(this).parent().parent().parent().parent().find('.gp_son');
+		var all_checkboxes = $(this).parent().parent().parent().parent().find('input[type="checkbox"]');
+	}else{
+		var checkboxes = $(this).parent().parent().find('.gp_son');
+		var all_checkboxes = $(this).parent().parent().find('input[type="checkbox"]');
+	}
 	
 	var all_checked = true;//是否已全选
 	checkboxes.each(function(){
@@ -80,12 +109,13 @@ $('.gp_contro').bind('click', function () {
 	});
 	if (all_checked) {
 		checkboxes.prop("checked",false); 
-		// gp_contro_checkboxes.prop("checked",false); 
 		all_checkboxes.prop("checked",false); 
 	}else{
 		checkboxes.prop("checked",true);
-		// gp_contro_checkboxes.prop("checked",true);
 		all_checkboxes.prop("checked",true);
+		var gp_lv = $(this).attr('lv');
+		console.log(gp_lv);
+		parentCheck(gp_lv);
 	}
 });
 
@@ -95,20 +125,20 @@ var gpinit = function (class_name){
 
 	obj.each(function(index1, this1){
 		var checkboxes = $(this1).parent().parent().find('input[name="mp_id[]"]');
-		var all_checked = true;//是否已全选
+		var has_one_checked = false;//是否有任何一个被选中的
 		checkboxes.each(function(index2, this2){
-			if (!$(this2).is(":checked")) {
-				return all_checked = false;
+			if ($(this2).is(":checked")) {
+				has_one_checked = true;
+				return false;
 			}
 		});
 
-		if (all_checked) {
-			$(this1).prop("checked",true); 
+		if (has_one_checked) {
+			$(this1).find('input[type="checkbox"]').prop("checked",true); 
 		}
 	});
 }
 
-gpinit('.gpc3');
 gpinit('.gpc2');
 gpinit('.gpc1');
 </script>

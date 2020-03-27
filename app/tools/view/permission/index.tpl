@@ -45,7 +45,7 @@
 				<td>{$k+1}</td>
 				<td>
 					{if isset($search.lookup)&&$search.lookup==1}
-					<a href="javascript:" onclick="$.bringBack({ldelim}_id:{$row.id},name:'{$row.name}'{rdelim})">{$row.name}</a>
+					<a href="javascript:" onclick="$.bringBack({ldelim}_id:{$row.id},name:'{$row.name}',flag:'{$flag[$row.flag]}'{rdelim})">{$row.name}</a>
 					{else}
 					{$row.name}
 					{/if}

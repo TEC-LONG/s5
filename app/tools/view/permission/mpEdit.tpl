@@ -12,17 +12,12 @@
 				<label>权限名称：</label>
 				<input class="required" name="permission.name" type="text" value="{if isset($row)}{$row.pname}{/if}" readonly/>
 				<input name="permission._id" type="hidden" value="{if isset($row)}{$row.permission__id}{/if}"/>
+				<input name="permission.flag" type="hidden" value="{if isset($row)}{$flag[$row.flag]}{/if}"/>
 				<a class="btnLook" href="{$url.index.url}?lookup=1" lookupGroup="permission">查找带回</a>
 			</p>
             <p>
 				<label>路由：</label>
 				<input name="route" type="text" value="{if isset($row)}{$row.route}{/if}"/>
-			</p>
-			<p>
-				<label>对应菜单：</label>
-				<input class="required" name="menu.name" type="text" value="{if isset($row)}{$row.name}{/if}" readonly/>
-				<input  name="menu._id" type="hidden" value="{if isset($row)}{$row.menu__id}{/if}"/>
-				<a class="btnLook" href="{$url.menuLookup.url}?lookup=1" lookupGroup="menu" width="1700" height="600">查找带回</a>
 			</p>
 			<p>
 				<label>上级id：</label>
@@ -39,9 +34,25 @@
 					{/foreach}
 				</select>
 			</p>
+			<p>
+				<label>3级菜单跳转类型：</label>
+				<select class="combox" name="level3_type">
+					{foreach $level3_type as $k=>$v}
+					<option value="{$k}" {if isset($row)&&$k==$row.level3_type}selected{/if}>{$v}</option>
+					{/foreach}
+				</select>
+			</p>
+            <p>
+				<label>外部跳转链接：</label>
+				<input name="level3_href" type="text" value="{if isset($row)}{$row.level3_href}{/if}"/>
+			</p>
             <p>
 				<label>navtab：</label>
 				<input name="navtab" type="text" value="{if isset($row)}{$row.navtab}{/if}"/>
+			</p>
+            <p>
+				<label>排序：</label>
+				<input name="sort" type="text" class="digits" min="0" max="100" value="{if isset($row)}{$row.sort}{/if}"/>
 			</p>
 		</div>
 		<div class="formBar">

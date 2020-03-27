@@ -46,32 +46,26 @@
 				<div class="toggleCollapse"><h2>主菜单</h2><div>收缩</div></div>
 				<div class="accordion" fillSpace="sidebar">
 				{foreach $menu1 as $k1=>$v1}
-				{if in_array($v1.id, $mp_ids)}
 					<div class="accordionHeader">
-						<h2><span>Folder</span>{$v1.display_name}</h2>
+						<h2><span>Folder</span>{$v1.name}</h2>
 					</div>
 					<div class="accordionContent">
 						<ul class="tree">
 							{foreach $menu2 as $k2=>$v2}
-							{if in_array($v2.id, $mp_ids)}
 							{if $v1.id==$v2.parent_id}
-							<li><a>{$v2.display_name}</a>
+							<li><a>{$v2.name}</a>
 								<ul>
 								{foreach $menu3 as $k3=>$v3}
-								{if in_array($v3.id, $mp_ids)}
 								{if $v2.id==$v3.parent_id}
-									<li><a href="{if $v3.level3_type==1}{$v3.level3_href}{else}{L($v3.route)}{/if}" target="navTab" rel="{$v3['navtab']}">{$v3.display_name}</a></li>
-								{/if}
+									<li><a href="{if $v3.level3_type!=0}{$v3.level3_href}{else}{L($v3.route)}{/if}" target="navTab" rel="{$v3['navtab']}">{$v3.name}</a></li>
 								{/if}
 								{/foreach}
 								</ul>
 							</li>
 							{/if}
-							{/if}
 							{/foreach}
 						</ul>
 					</div>
-				{/if}
 				{/foreach}
 				</div>
 			</div>

@@ -1,12 +1,13 @@
 
 <div class="pageHeader">
-	<form onsubmit="return navTabSearch(this);" action="{$url.mpindex.url}" method="post">
+	<form onsubmit="return navTabSearch(this);" action="{$url.mpindex.url}" method="get">
 	<div class="searchBar">
 		<table class="searchContent">
 			<tr>
-				<td>
+				<!-- <td>
 					所属menu：<input type="text" name="s_menu_name" value="{$search.s_menu_name}" />
-				</td>
+				</td> -->
+				<input type="hidden" name="s_menu_name" value="" />
 				<td>
 					页面名称：<input type="text" name="s_display_name" value="{$search.s_display_name}" />
 				</td>
@@ -19,8 +20,8 @@
 				<td>
 					<select class="combox" name="s_request">
 						<option value="">请选择...</option>
-					{foreach $request as $k=>$v}	
-						<option value="{$k}">{$v}</option>
+					{foreach $request as $k=>$v}
+						<option value="{$k}"{if isset($search.s_request)&&$search.s_request!==''&&$search.s_request==$k}selected{/if}>{$v}</option>
 					{/foreach}
 					</select>
 				</td>
@@ -40,7 +41,7 @@
 <div class="pageContent">
 	<div class="panelBar">
 		<ul class="toolBar">
-			<li><a class="add" href="{$url.mpAdUpd.url}" target="dialog" rel="{$url.mpAdUpd.rel}" minable="false" width="450" height="330"><span>新增权限菜单</span></a></li>
+			<li><a class="add" href="{$url.mpAdUpd.url}" target="dialog" rel="{$url.mpAdUpd.rel}" minable="false" width="450" height="400"><span>新增权限菜单</span></a></li>
 		</ul>
 	</div>
 	<table class="table" width="100%" layoutH="138">
@@ -50,7 +51,7 @@
 				{foreach $thead as $col}
 				<th {if !empty($col.width)}width="{$col.width}"{/if}>{$col.ch}</th>
 				{/foreach}
-				<th width="120">操作</th>
+				<th width="70">操作</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -64,11 +65,12 @@
 				<td>{$row.navtab}</td>
 				<td>{$row.name}</td>
 				<td>{$flag[$row.flag]}</td>
-				<td>{$row.menu_name}</td>
+				<td>{$level3_type[$row.level3_type]}</td>
+				<td>{$row.level3_href}</td>
 				<td>{$row.id}</td>
 				<td>
 					<a title="确实要删除？" target="ajaxTodo" href="{$url.del.url}?tb=mpermission&id={$row['id']}" class="btnDel">删除</a>
-					<a title="编辑权限菜单" target="dialog" href="{$url.mpAdUpd.url}?id={$row['id']}" class="btnEdit" rel="{$url.mpAdUpd.rel}"  minable="false" width="450" height="330">编辑</a>
+					<a title="编辑权限菜单" target="dialog" href="{$url.mpAdUpd.url}?id={$row['id']}" class="btnEdit" rel="{$url.mpAdUpd.rel}"  minable="false" width="450" height="400">编辑</a>
 				</td>
 			</tr>
 			{/foreach}
@@ -78,7 +80,7 @@
 	<form id="pagerForm" method="get" action="{$url.mpindex.url}">
 		<input type="hidden" name="pageNum" value="1" />
 		<input type="hidden" name="numPerPage" value="{$page.numPerPage}" />
-		<input type="hidden" name="s_menu_name" value="{$search.s_menu_name}" />
+		<!-- <input type="hidden" name="s_menu_name" value="{$search.s_menu_name}" /> -->
 		<input type="hidden" name="s_display_name" value="{$search.s_display_name}" />
 		<input type="hidden" name="s_route" value="{$search.s_route}" />
 		<input type="hidden" name="s_request" value="{$search.s_request}" />

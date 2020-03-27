@@ -10,6 +10,8 @@ class PermissionController extends Controller {
     protected $_datas = [];
     private $_navTab;
 
+    private $flag = ['PLAT'=>1, 'M-LV2'=>2, 'M-LV3'=>3];
+
     public function __construct(){
 
         parent::__construct();
@@ -33,6 +35,7 @@ class PermissionController extends Controller {
         ///数据表值对字段
         $this->_datas['flag'] = PermissionModel::C_FLAG;
         $this->_datas['request'] = MenuPermissionModel::C_REQUEST;
+        $this->_datas['level3_type'] = MenuPermissionModel::C_LEVEL3_TYPE;
     }
 
     public function index(){
@@ -163,11 +166,12 @@ class PermissionController extends Controller {
         ///接收数据
         $request = REQUEST()->all();
         $this->_datas['search'] = $request;
+        if(isset($request['s_request'])&&$request['s_request']=='') unset($request['s_request']);
 
         ///需要搜索的字段
         $search_form = [
             ['s_route', 'like', 'mp.'],
-            ['s_request', 'like', 'mp.'],
+            ['s_request', '=', 'mp.'],
             ['s_display_name', 'like', 'mp.']
         ];
         $condition = [];
@@ -177,8 +181,7 @@ class PermissionController extends Controller {
         
 
         ///构建查询对象
-        $obj = M()->table('menu_permission as mp')->select('mp.*, m.name as menu_name, p.name, p.flag, mp1.display_name as parent_name')
-        ->leftjoin('menu as m', 'mp.menu__id=m.id')
+        $obj = M()->table('menu_permission as mp')->select('mp.*, p.name, p.flag, mp1.display_name as parent_name')
         ->leftjoin('menu_permission as mp1', 'mp.parent_id=mp1.id')
         ->leftjoin('permission as p', 'mp.permission__id=p.id')->where($condition);
 
@@ -193,13 +196,14 @@ class PermissionController extends Controller {
         ///表头信息
         $this->_datas['thead'] = [
             ['ch'=>'页面名称', 'width'=>160],
-            ['ch'=>'上级页面', 'width'=>160],
+            ['ch'=>'上级页面', 'width'=>80],
             ['ch'=>'路由', 'width'=>120],
-            ['ch'=>'请求方式', 'width'=>120],
+            ['ch'=>'请求方式', 'width'=>60],
             ['ch'=>'navtab', 'width'=>120],
-            ['ch'=>'权限名称', 'width'=>120],
-            ['ch'=>'权限标识', 'width'=>120],
-            ['ch'=>'对应菜单', 'width'=>120],
+            ['ch'=>'权限名称', 'width'=>140],
+            ['ch'=>'权限标识', 'width'=>60],
+            ['ch'=>'三级跳转类型', 'width'=>60],
+            ['ch'=>'外部跳转链接', 'width'=>140],
             ['ch'=>'ID', 'width'=>30]
         ];
 
@@ -215,7 +219,7 @@ class PermissionController extends Controller {
 
         ///编辑部分
         if( isset($request['id']) ){
-            $this->_datas['row'] = M()->table('menu_permission as mp')->select('mp.*, m.name, p.name as pname')
+            $this->_datas['row'] = M()->table('menu_permission as mp')->select('mp.*, m.name, p.name as pname, p.flag')
             ->leftjoin('menu as m', 'mp.menu__id=m.id')
             ->leftjoin('permission as p', 'p.id=mp.permission__id')->where(['mp.id', $request['id']])->find();
         }
@@ -240,7 +244,8 @@ class PermissionController extends Controller {
             $ori = $obj->select('*')->where(['id', $request['id']])->find();
 
             #新老数据对比，构建编辑数据
-            $update = F()->compare($request, $ori, ['display_name', 'permission__id', 'route', 'menu__id', 'request', 'navtab', 'parent_id']);
+            $request['level'] = isset($this->flag[$request['permission_flag']]) ? $this->flag[$request['permission_flag']] : 4;
+            $update = F()->compare($request, $ori, ['display_name', 'permission__id', 'route', 'request', 'navtab', 'parent_id', 'level3_type', 'level3_href', 'level', 'sort']);
             if( empty($update) ) JSON()->stat(300)->msg('您还没有修改任何数据！请先修改数据。')->exec();
             
             $update['update_time'] = time();
@@ -260,10 +265,14 @@ class PermissionController extends Controller {
                 'permission__id' => $request['permission__id'],
                 'route' => $request['route'],
                 'display_name' => $request['display_name'],
-                'menu__id' => $request['menu__id'],
                 'parent_id' => $request['parent_id'],
                 'request' => $request['request'],
                 'navtab' => $request['navtab'],
+                'level3_type' => $request['level3_type'],
+                'level3_href' => $request['level3_href'],
+                'level' => isset($this->flag[$request['permission_flag']]) ? $this->flag[$request['permission_flag']] : 4,
+                'navtab' => $request['navtab'],
+                'sort' => $request['sort'],
                 'post_date' => time()
             ];
 

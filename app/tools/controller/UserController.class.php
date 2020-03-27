@@ -49,7 +49,8 @@ class UserController extends Controller {
             'email'     => ['ch'=>'邮箱', 'width'=>160], 
             'level'     => ['ch'=>'用户级别', 'width'=>60],
             'status'    => ['ch'=>'状态', 'width'=>100],
-            'ori'       => ['ch'=>'新增来源', 'width'=>120]
+            'ori'       => ['ch'=>'新增来源', 'width'=>120],
+            'gname'     => ['ch'=>'所属组', 'width'=>160]
         ];
 
         $this->_extra['form-elems'] = [
@@ -84,9 +85,11 @@ class UserController extends Controller {
         $this->_datas['page'] = $page = $this->_page('user', $con, $request);
 
         //查询数据
-        $this->_datas['rows'] = M('UserModel')->select('*')->where($con)
-                ->limit($page['limitM'] . ',' . $page['numPerPage'])
-                ->get();
+        $this->_datas['rows'] = M()->table('user as u')->select('u.*, ug.name as gname')
+        ->leftjoin('user_group as ug', 'ug.id=u.user_group__id')
+        ->where($con)
+        ->limit($page['limitM'] . ',' . $page['numPerPage'])
+        ->get();
 
         //分配模板变量&渲染模板
         $this->assign($this->_datas);
@@ -120,6 +123,7 @@ class UserController extends Controller {
             'salt' => M('UserModel')->make_salt(),
             'level' => 1,
             'ori' => 1,
+            'user_group__id' => $request['user_group__id'],
             'post_date' => time()
         ];
 
@@ -165,7 +169,7 @@ class UserController extends Controller {
         #查询已有数据
         $row = M('UserModel')->select('*')->where(['id', $request['id']])->find();
         $request['pwd'] = $request['pwd']=='' ? $row['pwd'] : M('UserModel')->make_pwd($request['pwd'], $row['salt']);
-        $update_data = F()->compare($request, $row, ['acc', 'pwd', 'nickname', 'cell', 'email']);
+        $update_data = F()->compare($request, $row, ['acc', 'pwd', 'nickname', 'cell', 'email', 'user_group__id']);
 
         if( empty($update_data) ){
             JSON()->stat(300)->msg('您还没有修改任何数据！请先修改数据。')->exec();
@@ -334,12 +338,8 @@ class UserController extends Controller {
 
         ///检查数据
         //check($request,  $this->_extra['form-elems'])
-
-        // print_r($request);//mp_id
-        // exit;
         $mp_id = isset($request['mp_id']) ? $request['mp_id'] : [];
         
-
         ///模型对象
         $obj = M()->table('user_group_permission');
 

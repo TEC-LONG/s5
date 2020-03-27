@@ -56,6 +56,7 @@ var city_levels = [];
 var district = [];//三级分类集合
 var district_ids = [];
 //var district_levels = [];
+/*  2020-03-27
 var plat = [];
 var mod = [];
 var act = [];
@@ -63,11 +64,12 @@ var url_navtab = [];
 var level3_type = [];
 var level3_href = [];
 var route = [];
+*/
 var lookup = 0;
 {if isset($search.lookup)&&$search.lookup==1}
 lookup = 1;
 {/if}
-
+/*  2020-03-27
 var routeFunc = function (className) {
 		var this_plat = $('.'+className).find('input[name="plat"]').val();
 		var this_mod = $('.'+className).find('input[name="module"]').val();
@@ -85,6 +87,7 @@ var routeFunc = function (className) {
 		
 		return this_plat+this_mod+this_act;
 };
+*/
 </script>
 
 
@@ -106,7 +109,7 @@ var routeFunc = function (className) {
 			<dd><input class="required" name="name" type="text" /></dd>
 		</dl>
 		<dl class="nowrap"></dl>
-		<dl>
+		{* 2020-03-27<!-- <dl>
 			<dt>PLAT参数：</dt>
 			<dd><input name="plat" type="text" /></dd>
 		</dl>
@@ -134,7 +137,7 @@ var routeFunc = function (className) {
 			<dt>路由：</dt>
 			<dd><input name="route" type="text" /></dd>
 		</dl>
-		<dl class="nowrap"></dl>
+		<dl class="nowrap"></dl> -->*}
 		<dl></dl>
 		<dl>
 			<dt><div class="buttonActive"><div class="buttonContent"><button type="submit">执行新增</button></div></div></dt>
@@ -147,6 +150,7 @@ $('#'+navtab+'FIRE_resetCatPid').click(function (){
 	tools_menu_intProvince();
 	return false;
 });
+/*  2020-03-27
 $('.menu_ad').find('input[name="plat"]').bind('keyup', function () {
 	
 	var this_navtab = $(this).val()+'_'+$('.menu_ad').find('input[name="module"]').val()+'_'+$('.menu_ad').find('input[name="act"]').val();
@@ -168,6 +172,7 @@ $('.menu_ad').find('input[name="act"]').bind('keyup', function () {
 	var this_route = routeFunc('menu_ad');
 	$('.menu_ad').find('input[name="route"]').val(this_route);
 });
+*/
 </script>
 	{/literal}
 	</form>
@@ -189,7 +194,7 @@ $('.menu_ad').find('input[name="act"]').bind('keyup', function () {
 				</dd>
 			</dl>
 			<dl class="nowrap"></dl>
-			<dl>
+			{*  2020-03-27<!-- <dl>
 				<dt>PLAT参数：</dt>
 				<dd><input name="plat" type="text" /><input name="ori_plat" type="hidden" /></dd>
 			</dl>
@@ -216,7 +221,7 @@ $('.menu_ad').find('input[name="act"]').bind('keyup', function () {
 			<dl>
 				<dt>路由：</dt>
 				<dd><input name="route" type="text" /><input name="ori_route" type="hidden" /></dd>
-			</dl>
+			</dl> -->*}
 			<dl></dl>
 			<dl>
 				<dt><div class="buttonActive"><div class="buttonContent"><button type="submit">执行修改</button></div></div></dt>
@@ -228,6 +233,7 @@ $('.menu_ad').find('input[name="act"]').bind('keyup', function () {
 </div>
 {literal}
 <script>
+/*  2020-03-27
 $('.menu_upd').find('input[name="plat"]').bind('keyup', function () {
 	
 	var this_navtab = $(this).val()+'_'+$('.menu_upd').find('input[name="module"]').val()+'_'+$('.menu_upd').find('input[name="act"]').val();
@@ -250,7 +256,7 @@ $('.menu_upd').find('input[name="act"]').bind('keyup', function () {
 	var this_route = routeFunc('menu_upd');
 	$('.menu_upd').find('input[name="route"]').val(this_route);
 });
-
+*/
 var expressP, expressC, expressD, expressArea, areaCont;
 var arrow = " <font>&gt;</font> ";
 
@@ -276,6 +282,9 @@ function tools_menu_intProvince() {
 	$("."+navtab+"FIRE_show_cat_name").html("菜单栏目");
 }
 tools_menu_intProvince();
+$("#lookup-a").bind('click', function () {
+	$.bringBack({_id:0,name:'无'});
+});
 
 /*选择一级目录*/
 function tools_menu_showC(p){//显示二级分类
@@ -305,6 +314,7 @@ function tools_menu_showC(p){//显示二级分类
 		});
 	}
 	$("."+navtab+"FIRE_show_cat_name").html(province[p]);
+	/*  2020-03-27
 	$('.menu_upd').find('input[name="plat"]').val('');
 	$('.menu_upd').find('input[name="ori_plat"]').val('');
 	$('.menu_upd').find('input[name="module"]').val('');
@@ -313,6 +323,7 @@ function tools_menu_showC(p){//显示二级分类
 	$('.menu_upd').find('input[name="ori_act"]').val('');
 	$('.menu_upd').find('input[name="navtab"]').val('');
 	$('.menu_upd').find('input[name="ori_navtab"]').val('');
+	*/
 }
 function tools_menu_selectP(p) {
 	//b.wxg.2018/6/18.ad.取得当前一级分类所属的二级分类
@@ -371,6 +382,7 @@ function tools_menu_showD(p,c){//显示三级分类
 		});
 	}
 	$("."+navtab+"FIRE_show_cat_name").html(city[p][c]);
+	/*  2020-03-27
 	$('.menu_upd').find('input[name="plat"]').val('');
 	$('.menu_upd').find('input[name="ori_plat"]').val('');
 	$('.menu_upd').find('input[name="module"]').val('');
@@ -379,6 +391,7 @@ function tools_menu_showD(p,c){//显示三级分类
 	$('.menu_upd').find('input[name="ori_act"]').val('');
 	$('.menu_upd').find('input[name="navtab"]').val('');
 	$('.menu_upd').find('input[name="ori_navtab"]').val('');
+	*/
 	if (district[p][c].length==0) {
 		return false;
 	}
@@ -407,6 +420,7 @@ function tools_menu_selectC(p,c) {
 						district_ids[p] = [];
 					}
 					district_ids[p][c] = re['child_ids'];
+					/*  2020-03-27
 					if ( typeof(plat[p])==='undefined' ){
 						plat[p] = [];
 					}
@@ -435,6 +449,7 @@ function tools_menu_selectC(p,c) {
 						route[p] = [];
 					}
 					route[p][c] = re['route'];
+					*/
 				}
 				//b.ori
 				tools_menu_showD(p,c);
@@ -460,6 +475,7 @@ function tools_menu_selectD(p,c,d) {
 		});
 	}
 	$("."+navtab+"FIRE_show_cat_name").html(district[p][c][d]);
+	/*  2020-03-27
 	$('.menu_upd').find('input[name="plat"]').val(plat[p][c][d]);
 	$('.menu_upd').find('input[name="ori_plat"]').val(plat[p][c][d]);
 	$('.menu_upd').find('input[name="module"]').val(mod[p][c][d]);
@@ -483,6 +499,7 @@ function tools_menu_selectD(p,c,d) {
 	$('.menu_upd').find('input[name="ori_level3_href"]').val(level3_href[p][c][d]);
 	$('.menu_upd').find('input[name="route"]').val(route[p][c][d]);
 	$('.menu_upd').find('input[name="ori_route"]').val(route[p][c][d]);
+	*/
 }
 </script>
 {/literal}
