@@ -1,14 +1,18 @@
 <?php
+
 namespace tools\controller;
+
 use \core\controller;
 
-class EditorController extends Controller {
+class EditorController extends Controller
+{
 
     private $_datas = [];
     private $_url = [];
     private $_navTab;
 
-    public function __construct(){
+    public function __construct()
+    {
 
         parent::__construct();
 
@@ -16,10 +20,10 @@ class EditorController extends Controller {
         $this->_url = [
             'editormdImgUp' => L('/tools/editormd/imgUp')
         ];
-        
     }
 
-    public function imgupmd(){ 
+    public function imgupmd()
+    {
         ///跨域传输
         //header( 'Access-Control-Allow-Origin:*' ); 
 
@@ -34,7 +38,7 @@ class EditorController extends Controller {
         $first_folder = date('Y');
         $first_folder_path = EDITORMD_IMG . $first_folder;
 
-        if(!is_dir($first_folder_path)){
+        if (!is_dir($first_folder_path)) {
             mkdir($first_folder_path);
             chmod($first_folder_path, 0757);
         }
@@ -42,39 +46,159 @@ class EditorController extends Controller {
         $second_folder = date('m');
         $path = $first_folder_path . '/' . $second_folder;
 
-        if ( !is_dir($path) ){
+        if (!is_dir($path)) {
             mkdir($path, 0757);
             chmod($path, 0757);
         }
 
         ///构建新图片的数据id
         $arr_maxid = M()->table('editormd_img')->select('max(id) as maxid')->where('1')->find();
-        if(!$arr_maxid) $arr_maxid=['maxid'=>0];
+        if (!$arr_maxid) $arr_maxid = ['maxid' => 0];
         #图片的命名规则：前缀_随机字符串年月日时分秒.editormd_img表ID.jpg
-        $imgName = uniqid('editormd_') . date('YmdHis') . '.' . ($arr_maxid['maxid']+1);
+        $imgName = uniqid('editormd_') . date('YmdHis') . '.' . ($arr_maxid['maxid'] + 1);
 
-        if ( $file=F()->file('editormd-image-file', $path)->up('editormd_', $imgName) ){
+        if ($file = F()->file('editormd-image-file', $path)->up('editormd_', $imgName)) {
             //$img = 'http://xx.xxxx.com/upload/editormdimg/2019/11/xx.jpg';
             $img = 'upload/editormdimg/' . $first_folder . '/' . $second_folder . '/' . $file->getNameWithExtension();
 
             #存储入editormd_img表
             M()->table('editormd_img')->insert([
-                'id'=>($arr_maxid['maxid']+1), 
-                'img'=>$img,
-                'post_date'=>time()
+                'id' => ($arr_maxid['maxid'] + 1),
+                'img' => $img,
+                'post_date' => time()
             ])->exec();
 
             JSON()->arr()->vars([
-                ['url', '/'.$img],
+                ['url', '/' . $img],
                 ['success', 1],
                 ['message', '上传成功！']
             ])->exec();
-        }else{
+        } else {
             JSON()->arr([
-                'success'=>0,
-                'message'=>'上传失败！'
+                'success' => 0,
+                'message' => '上传失败！'
             ])->exec();
         }
+    }
+
+    public function imgupbd()
+    {
+        header('Content-Type: text/html; charset=UTF-8');
+
+        $inputName = 'filedata'; //表单文件域name
+        ///以年份和月份分别来创建保存editor图片的一级和二级目录
+        $first_folder = date('Y');
+        $first_folder_path = EDITORBD_IMG . $first_folder;
+
+        if (!is_dir($first_folder_path)) {
+            mkdir($first_folder_path);
+            chmod($first_folder_path, 0757);
+        }
+
+        $second_folder = date('m');
+        $path = $first_folder_path . '/' . $second_folder;
+
+        if (!is_dir($path)) {
+            mkdir($path, 0757);
+            chmod($path, 0757);
+        }
+        $attachDir = $path; //上传文件保存路径，结尾不要带/
+        $dirType = 1; //1:按天存入目录 2:按月存入目录 3:按扩展名存目录  建议使用按天存
+        $maxAttachSize = 2097152; //最大上传大小，默认是2M
+        $upExt = 'txt,rar,zip,jpg,jpeg,gif,png,swf,wmv,avi,wma,mp3,mid'; //上传扩展名
+        $msgType = 2; //返回上传参数的格式：1，只返回url，2，返回参数数组
+        // $immediate = isset($_GET['immediate']) ? $_GET['immediate'] : 0; //立即上传模式，仅为演示用
+        $immediate = 0; 
+        // ini_set('date.timezone', 'Asia/Shanghai'); //时区
+
+        $err = "";
+        $msg = "''";
+        $tempPath = $attachDir . '/' . date("YmdHis") . mt_rand(10000, 99999) . '.tmp';
+        $localName = '';
+
+        if (isset($_SERVER['HTTP_CONTENT_DISPOSITION']) && preg_match('/attachment;\s+name="(.+?)";\s+filename="(.+?)"/i', $_SERVER['HTTP_CONTENT_DISPOSITION'], $info)) { //HTML5上传
+            file_put_contents($tempPath, file_get_contents("php://input"));
+            $localName = urldecode($info[2]);
+        } else { //标准表单式上传
+            $upfile = @$_FILES[$inputName];
+            if (!isset($upfile)) $err = '文件域的name错误';
+            elseif (!empty($upfile['error'])) {
+                switch ($upfile['error']) {
+                    case '1':
+                        $err = '文件大小超过了php.ini定义的upload_max_filesize值';
+                        break;
+                    case '2':
+                        $err = '文件大小超过了HTML定义的MAX_FILE_SIZE值';
+                        break;
+                    case '3':
+                        $err = '文件上传不完全';
+                        break;
+                    case '4':
+                        $err = '无文件上传';
+                        break;
+                    case '6':
+                        $err = '缺少临时文件夹';
+                        break;
+                    case '7':
+                        $err = '写文件失败';
+                        break;
+                    case '8':
+                        $err = '上传被其它扩展中断';
+                        break;
+                    case '999':
+                    default:
+                        $err = '无有效错误代码';
+                }
+            } elseif (empty($upfile['tmp_name']) || $upfile['tmp_name'] == 'none') $err = '无文件上传';
+            else {
+                move_uploaded_file($upfile['tmp_name'], $tempPath);
+                $localName = $upfile['name'];
+            }
+        }
+
+        if ($err == '') {
+            $fileInfo = pathinfo($localName);
+            $extension = $fileInfo['extension'];
+            if (preg_match('/^(' . str_replace(',', '|', $upExt) . ')$/i', $extension)) {
+                $bytes = filesize($tempPath);
+                if ($bytes > $maxAttachSize) $err = '请不要上传大小超过' . $this->formatBytes($maxAttachSize) . '的文件';
+                else {
+                    PHP_VERSION < '4.2.0' && mt_srand((float) microtime() * 1000000);
+                    $newFilename = uniqid('editorbd_') . mt_rand(0, 100000) . '.' . date('YmdHis') . '.' . $extension;
+                    $targetPath = $attachDir . '/' . $newFilename;
+
+                    rename($tempPath, $targetPath);
+                    @chmod($targetPath, 0755);
+                    // $targetPath = $this->jsonString($targetPath);
+                    // if ($immediate == '1') $targetPath = '!' . $targetPath;
+                    $url = 'upload/editormdimg/' . $first_folder . '/' . $second_folder . '/' . $newFilename;
+                    if ($msgType == 1) $msg = "'$url'";
+                    else $msg = "{'url':'" . $url . "','localname':'" . $this->jsonString($localName) . "','id':'".mt_rand(0, 100000)."'}"; //id参数固定不变，仅供演示，实际项目中可以是数据库ID
+                }
+            } else $err = '上传文件扩展名必需为：' . $upExt;
+
+            @unlink($tempPath);
+        }
+
+        echo "{'err':'" . $err . "','msg':" . $msg . "}";
+    }
+
+    private function jsonString($str)
+    {
+        return preg_replace("/([\\\\\/'])/", '\\\$1', $str);
+    }
+
+    private function formatBytes($bytes) {
+        if($bytes >= 1073741824) {
+            $bytes = round($bytes / 1073741824 * 100) / 100 . 'GB';
+        } elseif($bytes >= 1048576) {
+            $bytes = round($bytes / 1048576 * 100) / 100 . 'MB';
+        } elseif($bytes >= 1024) {
+            $bytes = round($bytes / 1024 * 100) / 100 . 'KB';
+        } else {
+            $bytes = $bytes . 'Bytes';
+        }
+        return $bytes;
     }
 
 
@@ -107,16 +231,20 @@ class EditorController extends Controller {
 
 
 
-    public function editormd(){ 
+
+
+    public function editormd()
+    {
 
         $this->assign([
-            'url'=>$this->_url
+            'url' => $this->_url
         ]);
 
         $this->display('Editor/editormd.tpl');
     }
 
-    public function editormdupd(){ 
+    public function editormdupd()
+    {
 
         $tbname = $_GET['tbname'];
         $id = $_GET['id'];
@@ -128,16 +256,15 @@ class EditorController extends Controller {
         // var_dump($prorecord['content']);
 
         // exit;
-        
+
         $this->assign([
-            'prorecord'=>$prorecord,
-            'url'=>$this->_url
+            'prorecord' => $prorecord,
+            'url' => $this->_url
         ]);
 
         $this->display('Editor/editormdupd.tpl');
     }
 
-    
 
 
 
@@ -157,6 +284,7 @@ class EditorController extends Controller {
 
 
 
+    /*
     public function imgup(){ 
         #跨域传输
         //header( 'Access-Control-Allow-Origin:*' ); 
@@ -252,4 +380,5 @@ class EditorController extends Controller {
 
         exit;
     }
-}      
+    */
+}

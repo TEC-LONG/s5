@@ -21,8 +21,10 @@
     Route::get('chifan/upd', 'Chifan@upd');
     Route::post('chifan/updh', 'Chifan@updh');
     Route::post('chifan/del', 'Chifan@del');
+    Route::get('chifan/edit', 'Chifan@adUpd');
 
     Route::post('editormd/imgUp', 'Editor@imgupmd');
+    Route::post('editorbd/imgUp', 'Editor@imgupbd');
 
     Route::get('event/index', 'Event@index');
     Route::get('event/ad', 'Event@ad');

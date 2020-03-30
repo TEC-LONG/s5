@@ -133,6 +133,7 @@ var tools_exp_add_get_child_expcat = function (now, type) {
 	});
 	{/literal}
 }
+
 $(function() {
 	var editor = editormd("editormd", {
 		htmlDecode: "style,script,iframe",
@@ -152,8 +153,35 @@ $(function() {
 		// You can also custom css class .editormd-preview-theme-xxxx
 		previewTheme : "default", 
 		// Added @v1.5.0 & after version is CodeMirror (editor area) theme
-		editorTheme  : "blackboard", 
+		editorTheme  : "blackboard"
 	});
+
+	// $("#editormd").on('paste', function (ev) {
+	// 	console.log(123);
+	// 	var data = ev.clipboardData;
+	// 	var items = (event.clipboardData || event.originalEvent.clipboardData).items;
+	// 	for (var index in items) {
+	// 		var item = items[index];
+	// 		if (item.kind === 'file') {
+	// 			var blob = item.getAsFile();
+	// 			var reader = new FileReader();
+	// 			reader.onload = function (event) {
+	// 				var base64 = event.target.result;
+	// 				console.log(2333);
+	// 				console.log(base64);
+	// 				//ajax上传图片
+	// 				// $.post("{*:url('api/uploader/upEditorImg')*}",{*base:base64*}, function (ret) {
+	// 				// 	layer.msg(ret.msg);
+	// 				// 	if (ret.code === 1) {
+	// 				// 		//新一行的图片显示
+	// 				// 		editor.insertValue("\n![" + ret.data.title + "](" + ret.data.path + ")");
+	// 				// 	}
+	// 				// });
+	// 			}; // data url!
+	// 			// var url = reader.readAsDataURL(blob);
+	// 		}
+	// 	}
+	// });
 });
 // 			/*
 //  上传的后台只需要返回一个 JSON 数据，结构如下：

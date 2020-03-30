@@ -1,14 +1,13 @@
 <?php
 namespace tools\controller;
 use \core\controller;
+use \model\ChifanModel;
 
 class ChifanController extends Controller {
 
     ##标准预定义属性
     protected $_datas = [];
-    private $_init=[];
     private $_extra=[];
-    private $_model;
     private $_navTab;
 
     public function __construct(){
@@ -16,27 +15,25 @@ class ChifanController extends Controller {
         parent::__construct();
 
         $this->_navTab = 'tools_chifan';
+        $this->_datas['navTab'] = $this->_navTab;
 
-        //非标准预定义属性赋值与转换
-        $this->_init['types'] = '{"0":"早餐", "1":"午餐", "2":"晚餐", "3":"睡前", "4":"休闲"}';
-        $this->_init['food_types'] = '{"0":"粥", "1":"粉", "2":"面", "3":"饭", "4":"点心", "5":"汤", "6":"大菜", "7":"下饭菜", "8":"小菜", "9":"配菜", "10":"蔬菜"}';
-        $this->_init['taste'] = '{"0":"酸", "1":"甜", "2":"苦", "3":"辣", "4":"咸", "5":"香", "6":"鲜", "7":"无味", "8":"辛辣"}';
-        $this->_init['mouthfeel'] = '{"0":"软", "1":"硬", "2":"糯", "3":"脆", "4":"Q弹", "5":"丝滑", "6":"入口即化", "7":"嫩"}';
-        $this->_init['effects'] = '{"0":"温补", "1":"清热", "2":"解毒", "3":"去湿", "4":"安神", "5":"镇痛"}';
-        $this->JD($this->_init);
+        ///数据表值对字段
+        $this->_datas['types'] = ChifanModel::C_TYPES;
+        $this->_datas['main_type'] = ChifanModel::C_MAIN_TYPE;
+        $this->_datas['second_type'] = ChifanModel::C_SECOND_TYPE;
 
-        //扔进模板
-        $this->_datas = $this->_init;
+        $this->_datas['url'] = [
+            'index' => ['url'=>L('/tools/chifan/list'), 'rel'=>$this->_navTab.'_index'],
+            'edit' => ['url'=>L('/tools/chifan/edit'), 'rel'=>$this->_navTab.'_AdUpd'],
+            'post' => ['url'=>L('/tools/chifan/post')],
+            'del' => ['url'=>L('/tools/chifan/del')],
+            'editorImgUp' => ['url'=>L('/tools/editorbd/imgUp')]
+        ];
+
         
         //不同页面的个性化需求
         switch ( ACT ){
             case 'index':
-                $this->_datas['url'] = [
-                    'index' => L('/tools/chifan/list'),
-                    'ad' => ['url'=>L('/tools/chifan/ad'), 'rel'=>$this->_navTab.'_ad'],
-                    'upd' => ['url'=>L('/tools/chifan/upd'), 'rel'=>$this->_navTab.'_upd'],
-                    'del' => L('/tools/chifan/del')
-                ];
                 $this->_datas['mustShow'] = [
                     'id' => ['ch'=>'ID', 'width'=>30], 
                     'cai' => ['ch'=>'菜品', 'width'=>60], 
@@ -48,14 +45,7 @@ class ChifanController extends Controller {
                     'byeffect' => ['ch'=>'副作用', 'width'=>150]
                 ];
 
-                $this->_model = M();
             break;
-            case 'ad':
-                $this->_datas['url'] = [
-                    'adh' => L(PLAT, MOD, 'adh')
-                ];
-            break;
-            case 'adh':
             case 'updh':
                 //rule:  required  int  int:min0:max10   int:min0  int:max10   int:regex@xxx  mul-int  mul-int:min0:max10  mul-int:max10  mul-int:min0  mul-mixd   mul-mixd:regex@xxx   regex@xxx
                 $this->_extra['form-elems'] = [
@@ -77,9 +67,6 @@ class ChifanController extends Controller {
                 ];
             break;
             case 'upd':
-                $this->_datas['url'] = [
-                    'updh' => L(PLAT, MOD, 'updh')
-                ];
                 $this->_extra['form-elems'] = [
                     'id' => ['ch'=>'菜品ID', 'rule'=>'required']
                 ];
@@ -94,59 +81,64 @@ class ChifanController extends Controller {
             break;
         }
 
-        $this->_datas['navTab'] = $this->_navTab;
+        
     }
 
     public function index(){ 
 
-        //接收数据
-        $request = $_REQUEST;
+        ///接收数据
+        $request = REQUEST()->all();
+        $this->_datas['search'] = $request;
 
-        //查询条件(融合搜索条件)
-        $con_arr = ['is_del', '=0'];
-
-        $form_elems = [
-            ['cai', 'like'],
-            ['types', 'mul'],//   0号下标对应的是字段名；1号下标为可选参，对应的是字段特殊处理标记，比如mul表示这个字段将会是一个包含多个值的数组
-            ['food_types', 'mul'],
-            ['taste', 'mul'],
-            ['mouthfeel', 'mul'],
-            ['effects', 'mul']
+        ///需要搜索的字段
+        $search_form = [
+            // ['s_name', 'like'],
+            // ['s_flag', 'like']
         ];
-        $con = $this->_condition_string($request, $form_elems, $con_arr);//将条件数组数据转换为条件字符串
-        // var_dump($con);
-        // echo '<hr/>';
+        $condition = F()->S2C($request, $search_form);
+        if(empty($condition)) $condition=1;
 
-        //将搜索的原始数据扔进模板
-        $this->_datas['search'] = $this->_get_ori_search_datas($request, $form_elems);
+        ///构建查询对象
+        $obj = M()->table('chifan')->select('*')->where($condition);
 
-        //分页参数
-        $this->_datas['page'] = $page = $this->_page('chifan', $con, $request);
+        #分页参数
+        $nowPage = isset($request['pageNum']) ? intval($request['pageNum']) : (isset($_COOKIE['pageNum']) ? intval($_COOKIE['pageNum']) : 1);
+        $this->_datas['page'] = $page = $obj->pagination($nowPage)->pagination;
+        $page['numPerPageList'] = [20, 30, 40, 60, 80, 100, 120, 160, 200];
 
-        //查询数据
-        $cais = M()->table('chifan')
-                ->select('*')
-                ->where($con)
-                ->limit($page['limitM'] . ',' . $page['numPerPage'])
-                ->get();
+        #查询数据
+        $this->_datas['rows'] = $obj->limit($page['limitM'] . ',' . $page['numPerPage'])->get();
 
-        if( $cais ){
-            foreach( $cais as &$cai ){ 
-                if( !empty($cai['expnew_ids']) ){
-                    $cai['expnew_titles'] = explode('|', $cai['expnew_titles']);
-                    $cai['expnew_ids'] = explode('|', $cai['expnew_ids']);
-                }
-                $cai['has_descr'] = !empty($cai['descr']) ? '是' : '否';
-            }
-            $this->_datas['cais'] = $cais;//扔到模板中
-        }
+        ///表头信息
+        $this->_datas['thead'] = [
+            ['ch'=>'菜品', 'width'=>160],
+            ['ch'=>'适用时段', 'width'=>120],
+            ['ch'=>'主类型', 'width'=>120],
+            ['ch'=>'副类型', 'width'=>120],
+            ['ch'=>'口味', 'width'=>120],
+            ['ch'=>'口感', 'width'=>120],
+            ['ch'=>'功效', 'width'=>120],
+            ['ch'=>'副作用', 'width'=>120],
+            ['ch'=>'ID', 'width'=>30]
+        ];
 
-        //列表html 扔到模板中
-        $this->_datas['tbhtml'] = $this->_tbhtml($this->_datas['mustShow'], $cais, $this->_navTab, $this->_init);
-
-        //分配模板变量&渲染模板
+        ///分配模板变量&渲染模板
         $this->assign($this->_datas);
         $this->display('Chifan/index.tpl');
+    }
+
+    public function adUpd(){ 
+        ///接收数据
+        $request = REQUEST()->all();
+
+        ///编辑部分
+        if( isset($request['id']) ){
+            $this->_datas['row'] = M()->table('chifan')->select('*')->where(['id', $request['id']])->find();
+        }
+
+        ///分配模板变量&渲染模板
+        $this->assign($this->_datas);   
+        $this->display('Chifan/adUpd.tpl');
     }
 
     public function ad(){ 
