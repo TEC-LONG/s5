@@ -32,16 +32,21 @@
 			<dl class="nowrap">
 				<dt>描述：</dt>
 				<dd>
-					<textarea class="editor" cols="135" rows="12" name="descr"
-					tools="
-					Cut,Copy,Paste,Pastetext,|,
-					Blocktag,Fontface,FontSize,Bold,Italic,Underline,Strikethrough,FontColor,BackColor,SelectAll,Removeformat,|,
-					Align,List,Outdent,Indent,|,
-					Link,Unlink,Anchor,Img,Hr,Emot,Table,|,
-					Source,Preview,Fullscreen,About"
-					upImgUrl="{$url.editorImgUp.url}" upImgExt="jpg,jpeg,gif,png"></textarea>
+					<textarea class="editor" cols="135" rows="21" name="descr" id="chifan_descr"></textarea>
 				</dd>
 			</dl>
+<script>
+var imgUrl = "{$url.editorImgUp.url}";
+{literal}
+$('#chifan_descr').xheditor({
+	upImgUrl:imgUrl,
+	upImgExt:"jpg,jpeg,gif,png",
+	tools:'Cut,Copy,Paste,Pastetext,|,Blocktag,Fontface,FontSize,Bold,Italic,Underline,Strikethrough,FontColor,BackColor,SelectAll,Removeformat,|,Align,List,Outdent,Indent,|,Link,Unlink,Anchor,Img,Hr,Emot,Table,|,Source,Preview,Fullscreen,About',
+	onUpload:function(re){
+	// console.log(re);
+}});
+{/literal}
+</script>
 			<dl class="nowrap">
 				<dt>口味：</dt>
 				<dd>
@@ -63,16 +68,20 @@
 			<dl class="nowrap">
 				<dt>功效描述：</dt>
 				<dd>
-					<textarea class="editor" cols="135" rows="12" name="effects_comm"
-					tools="
-					Cut,Copy,Paste,Pastetext,|,
-					Blocktag,Fontface,FontSize,Bold,Italic,Underline,Strikethrough,FontColor,BackColor,SelectAll,Removeformat,|,
-					Align,List,Outdent,Indent,|,
-					Link,Unlink,Anchor,Img,Hr,Emot,Table,|,
-					Source,Preview,Fullscreen,About"
-					upImgUrl="upload.php" upImgExt="jpg,jpeg,gif,png"></textarea>
+					<textarea class="editor" cols="135" rows="12" name="effects_comm" id="chifan_effects_comm"></textarea>
 				</dd>
 			</dl>
+<script>
+{literal}
+$('#chifan_effects_comm').xheditor({
+	upImgUrl:imgUrl,
+	upImgExt:"jpg,jpeg,gif,png",
+	tools:'Cut,Copy,Paste,Pastetext,|,Blocktag,Fontface,FontSize,Bold,Italic,Underline,Strikethrough,FontColor,BackColor,SelectAll,Removeformat,|,Align,List,Outdent,Indent,|,Link,Unlink,Anchor,Img,Hr,Emot,Table,|,Source,Preview,Fullscreen,About',
+	onUpload:function(re){
+	// console.log(re);
+}});
+{/literal}
+</script>
 			<dl class="nowrap">
 				<dt>副作用：</dt>
 				<input type="text" name="byeffect" size="60" value="" />&nbsp;&nbsp;&nbsp;&nbsp;

@@ -171,7 +171,7 @@ class EditorController extends Controller
                     @chmod($targetPath, 0755);
                     // $targetPath = $this->jsonString($targetPath);
                     // if ($immediate == '1') $targetPath = '!' . $targetPath;
-                    $url = 'upload/editormdimg/' . $first_folder . '/' . $second_folder . '/' . $newFilename;
+                    $url = C('URL') . '/upload/editorbdimg/' . $first_folder . '/' . $second_folder . '/' . $newFilename;
                     if ($msgType == 1) $msg = "'$url'";
                     else $msg = "{'url':'" . $url . "','localname':'" . $this->jsonString($localName) . "','id':'".mt_rand(0, 100000)."'}"; //id参数固定不变，仅供演示，实际项目中可以是数据库ID
                 }
