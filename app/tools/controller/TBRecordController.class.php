@@ -7,7 +7,7 @@ class TBRecordController extends Controller {
     private $_datas=[];
     private $_extra=[];
     private $_model;
-    private $_navTab;
+    protected $_navTab;
     private $_requ;
 
     public function __construct(){

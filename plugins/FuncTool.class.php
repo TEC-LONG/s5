@@ -246,6 +246,5 @@ class FuncTool{
         }
         return $condition;
     }
-    
 
 }

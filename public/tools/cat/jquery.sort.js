@@ -97,7 +97,7 @@ var arrow = " <font>&gt;</font> ";
 // }
 var navtab = '';
 if (typeof(get_child_url)=='undefined') {
-	var get_child_url = '/index.php?p=tools&m=expcat&a=getChild';
+	var get_child_url = '/tools/expcat/getChild';
 }
 
 /*初始化一级目录*/

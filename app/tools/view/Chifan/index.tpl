@@ -19,11 +19,14 @@
 					<input type="checkbox" name="s_main_type[]" value="{$key}" {if in_array($key, $search.s_main_type)}checked{/if} />{$val}&nbsp;&nbsp;&nbsp;&nbsp;
 					{/foreach}
 				</td>
+				<td>
+					<div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div>
+				</td>
 			</tr>
 		</table>
 		<div class="subBar">
 			<ul>
-				<li><div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div></li>
+				<!-- <li><div class="buttonActive"><div class="buttonContent"><button type="submit">检索</button></div></div></li> -->
 				<!-- <li><a class="button" href="demo_page6.html" target="dialog" mask="true" title="查询框"><span>高级检索</span></a></li> -->
 			</ul>
 		</div>
@@ -34,8 +37,8 @@
 	<div class="panelBar">
 		<ul class="toolBar">
 			<li><a class="add" href="{$url.edit.url}" target="navTab" rel="{$url.edit.rel}"><span>添加菜品</span></a></li>
-			<li><a class="delete" href="{$url.del}&id={ldelim}sid_{$navTab}}" target="ajaxTodo" title="确定要删除吗?"><span>删除</span></a></li>
-			<li><a class="edit" href="{$url.edit.url}?id={ldelim}sid_{$navTab}}" target="navTab"  rel="{$url.upd.rel}"><span>修改菜品</span></a></li>
+			<li><a class="delete" href="{$url.del.url}?id={ldelim}sid_{$navTab}}" target="ajaxTodo" title="确定要删除吗?"><span>删除</span></a></li>
+			<li><a class="edit" href="{$url.edit.url}?id={ldelim}sid_{$navTab}}" target="navTab"  rel="{$url.edit.rel}"><span>修改菜品</span></a></li>
 			<!-- <li class="line">line</li>
 			<li><a class="icon" href="demo/common/dwz-team.xls" target="dwzExport" targetType="navTab" title="实要导出这些记录吗?"><span>导出EXCEL</span></a></li> -->
 		</ul>
@@ -45,7 +48,7 @@
 			<tr>
 				<th width="30">序号</th>
 				{foreach $thead as $col}
-				<th {if !isset($col.width)}width="{$col.width}"{/if}>{$col.ch}</th>
+				<th {if isset($col.width)}width="{$col.width}"{/if}>{$col.ch}</th>
 				{/foreach}
 			</tr>
 		</thead>

@@ -8,7 +8,7 @@ class PermissionController extends Controller {
 
     ##标准预定义属性
     protected $_datas = [];
-    private $_navTab;
+    protected $_navTab;
 
     private $flag = ['PLAT'=>1, 'M-LV2'=>2, 'M-LV3'=>3];
 
@@ -56,7 +56,7 @@ class PermissionController extends Controller {
         $obj = M()->table('permission')->select('*')->where($condition);
 
         #分页参数
-        $nowPage = isset($request['pageNum']) ? intval($request['pageNum']) : (isset($_COOKIE['pageNum']) ? intval($_COOKIE['pageNum']) : 1);
+        $nowPage = isset($request['pageNum']) ? intval($request['pageNum']) : 1;
         $this->_datas['page'] = $page = $obj->pagination($nowPage)->pagination;
         $page['numPerPageList'] = [20, 30, 40, 60, 80, 100, 120, 160, 200];
 
@@ -167,6 +167,7 @@ class PermissionController extends Controller {
         $request = REQUEST()->all();
         $this->_datas['search'] = $request;
         if(isset($request['s_request'])&&$request['s_request']=='') unset($request['s_request']);
+        if(isset($request['s_display_name'])&&$request['s_display_name']=='') unset($request['s_display_name']);
 
         ///需要搜索的字段
         $search_form = [
@@ -186,7 +187,7 @@ class PermissionController extends Controller {
         ->leftjoin('permission as p', 'mp.permission__id=p.id')->where($condition);
 
         #分页参数
-        $nowPage = isset($request['pageNum']) ? intval($request['pageNum']) : (isset($_COOKIE['pageNum']) ? intval($_COOKIE['pageNum']) : 1);
+        $nowPage = isset($request['pageNum']) ? intval($request['pageNum']) : 1;
         $this->_datas['page'] = $page = $obj->pagination($nowPage)->pagination;
         $page['numPerPageList'] = [20, 30, 40, 60, 80, 100, 120, 160, 200];
 

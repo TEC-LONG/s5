@@ -301,14 +301,16 @@ var navTab = {
 		}
 	},
 	reload: function(url, options){
+		var form_method_arr = options.data;
+		var this_form_method = form_method_arr[(form_method_arr.length-1)].value
+		options.data.length = form_method_arr.length-1;
 		var op = $.extend({data:{}, navTabId:"", callback:null}, options);
 		var $tab = op.navTabId ? this._getTab(op.navTabId) : this._getTabs().eq(this._currentIndex);
 		var $panel =  op.navTabId ? this.getPanel(op.navTabId) : this._getPanels().eq(this._currentIndex);
 		///teclong-给分页扩展一个功能，让ajax请求追随form的method属性
 		var this_method = "POST";
-		if (typeof(options.data[2])!='undefined') {
-			var tmp_json = options.data[2];
-			var this_method = tmp_json.value.toUpperCase();
+		if (typeof(this_form_method)!='undefined') {
+			var this_method = this_form_method;
 		}
 		if ($panel){
 			if (!url) {

@@ -6,7 +6,7 @@ class MenuController extends Controller {
 
     private $_datas = [];
     private $_init = [];
-    private $_navTab;
+    protected $_navTab;
     private $_requ;
 
     public function __construct(){
@@ -14,12 +14,7 @@ class MenuController extends Controller {
         parent::__construct();
 
         $this->_navTab = 'tools_menu';
-        // $this->_init['level3_type'] = '0:内部跳转链接|1:外部跳转链接';
-        // handler_init_special_fields($this->_init);
-
-        //扔进模板
-        $this->_datas = $this->_init;
-
+        
         $this->_requ = M('RequestTool');
 
         $this->_datas['navTab'] = $this->_navTab;

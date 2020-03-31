@@ -8,7 +8,7 @@ class ProrecordController extends Controller {
     private $_datas = [];
     private $_init = [];
     private $_url = [];
-    private $_navTab;
+    protected $_navTab;
 
     ##非标准预定义属性
     private $_belong_pro;
@@ -159,9 +159,9 @@ class ProrecordController extends Controller {
         ///录入数据
         if( M()->table('prorecord')->insert($datas)->exec() ){
 
-            $this->jump('添加成功！', 'p=tools&m=prorecord&a=ad');
+            J('添加成功！', '/tools/prorecord/ad');
         }else{
-            $this->jump('添加失败！', 'p=tools&m=prorecord&a=ad');
+            J('添加失败！', '/tools/prorecord/ad');
         }
     }
 
@@ -201,9 +201,10 @@ class ProrecordController extends Controller {
         ->exec();
 
         if( $re ){
-            $this->jump('修改成功！', 'p=tools&m=prorecord&a=upd&id='.$request['id']);
+            J('修改成功！', '/tools/prorecord/upd?id='.$request['id']);
+            
         }else{
-            $this->jump('修改失败！', 'p=tools&m=prorecord&a=upd&id='.$request['id']);
+            J('修改失败！', '/tools/prorecord/upd?id='.$request['id']);
         }
     }
 

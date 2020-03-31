@@ -2,13 +2,14 @@
 namespace tools\controller;
 use \core\controller;
 use \model\ChifanModel;
+use \model\ImagesModel;
 
 class ChifanController extends Controller {
 
     ##标准预定义属性
     protected $_datas = [];
     private $_extra=[];
-    private $_navTab;
+    protected $_navTab;
 
     public function __construct(){
 
@@ -30,22 +31,8 @@ class ChifanController extends Controller {
             'editorImgUp' => ['url'=>L('/tools/editorbd/imgUp')]
         ];
 
-        
         //不同页面的个性化需求
         switch ( ACT ){
-            case 'index':
-                $this->_datas['mustShow'] = [
-                    'id' => ['ch'=>'ID', 'width'=>30], 
-                    'cai' => ['ch'=>'菜品', 'width'=>60], 
-                    'food_types' => ['ch'=>'食物类型', 'width'=>60, 'is_set'=>1], //is_set表示是否为集合型数据字段，即格式类似"1,2,4,5"这样的多项字符串
-                    'types' => ['ch'=>'适用场景', 'width'=>100, 'is_set'=>1], 
-                    'taste' => ['ch'=>'口味', 'width'=>60, 'is_set'=>1], 
-                    'mouthfeel' => ['ch'=>'口感', 'width'=>60, 'is_set'=>1],
-                    'effects' => ['ch'=>'功效', 'width'=>100, 'is_set'=>1],
-                    'byeffect' => ['ch'=>'副作用', 'width'=>150]
-                ];
-
-            break;
             case 'updh':
                 //rule:  required  int  int:min0:max10   int:min0  int:max10   int:regex@xxx  mul-int  mul-int:min0:max10  mul-int:max10  mul-int:min0  mul-mixd   mul-mixd:regex@xxx   regex@xxx
                 $this->_extra['form-elems'] = [
@@ -80,8 +67,6 @@ class ChifanController extends Controller {
                 ];
             break;
         }
-
-        
     }
 
     public function index(){ 
@@ -102,7 +87,7 @@ class ChifanController extends Controller {
         $obj = M()->table('chifan')->select('*')->where($condition);
 
         #分页参数
-        $nowPage = isset($request['pageNum']) ? intval($request['pageNum']) : (isset($_COOKIE['pageNum']) ? intval($_COOKIE['pageNum']) : 1);
+        $nowPage = isset($request['pageNum']) ? intval($request['pageNum']) : 1;
         $this->_datas['page'] = $page = $obj->pagination($nowPage)->pagination;
         $page['numPerPageList'] = [20, 30, 40, 60, 80, 100, 120, 160, 200];
 
@@ -111,16 +96,34 @@ class ChifanController extends Controller {
 
         ///表头信息
         $this->_datas['thead'] = [
-            ['ch'=>'菜品', 'width'=>160],
-            ['ch'=>'适用时段', 'width'=>120],
-            ['ch'=>'主类型', 'width'=>120],
-            ['ch'=>'副类型', 'width'=>120],
-            ['ch'=>'口味', 'width'=>120],
-            ['ch'=>'口感', 'width'=>120],
-            ['ch'=>'功效', 'width'=>120],
-            ['ch'=>'副作用', 'width'=>120],
+            ['ch'=>'菜品', 'width'=>80],
+            ['ch'=>'适用时段', 'width'=>80],
+            ['ch'=>'主类型', 'width'=>80],
+            ['ch'=>'副类型', 'width'=>80],
+            ['ch'=>'口味', 'width'=>80],
+            ['ch'=>'口感', 'width'=>80],
+            ['ch'=>'功效', 'width'=>80],
+            ['ch'=>'副作用', 'width'=>160],
             ['ch'=>'ID', 'width'=>30]
         ];
+
+        ///处理集合数据
+        foreach( $this->_datas['rows'] as $k=>$v){
+        
+            // $this->_datas['rows'][$k]['types'] = explode(',', $v['types']);
+            // $this->_datas['rows'][$k]['main_type'] = explode(',', $v['main_type']);
+            // $this->_datas['rows'][$k]['second_type'] = explode(',', $v['second_type']);
+            $need = ['types', 'main_type', 'second_type'];
+            foreach( $need as $v1){
+            
+                $tmp_arr = explode(',', $v[$v1]);
+                $tmp_arr1 = [];
+                foreach( $tmp_arr as $v2){
+                    $tmp_arr1[] = $this->_datas[$v1][$v2];
+                }
+                $this->_datas['rows'][$k][$v1] = implode(',', $tmp_arr1);
+            }
+        }
 
         ///分配模板变量&渲染模板
         $this->assign($this->_datas);
@@ -134,6 +137,9 @@ class ChifanController extends Controller {
         ///编辑部分
         if( isset($request['id']) ){
             $this->_datas['row'] = M()->table('chifan')->select('*')->where(['id', $request['id']])->find();
+            $this->_datas['row']['types'] = explode(',', $this->_datas['row']['types']);
+            $this->_datas['row']['main_type'] = explode(',', $this->_datas['row']['main_type']);
+            $this->_datas['row']['second_type'] = explode(',', $this->_datas['row']['second_type']);
         }
 
         ///分配模板变量&渲染模板
@@ -141,110 +147,91 @@ class ChifanController extends Controller {
         $this->display('Chifan/adUpd.tpl');
     }
 
-    public function ad(){ 
+    public function post(){
+        ///接收数据
+        $request = REQUEST()->all();
+        if(isset($request['types'])) $request['types']=implode(',', $request['types']);
+        if(isset($request['main_type'])) $request['main_type']=implode(',', $request['main_type']);
+        if(isset($request['second_type'])) $request['second_type']=implode(',', $request['second_type']);
 
-        $this->assign($this->_datas);
+        #匹配出文本中的所有图片
+        $editorImages = REGEX()->htmlImgSrc(htmlspecialchars_decode($request['descr']));
 
-        $this->display('Chifan/ad.tpl');
-    }
+        #获取富文本记录下的上传图片
+        $xhimages = unserialize(urldecode(trim($_COOKIE['xhimages'])));
 
-    public function adh(){ 
-        //接收数据
-        $request = $_REQUEST;
-
-        //检查数据
-        //check($request,  $this->_extra['form-elems'])
-
-        //构建新增数据
-        $insert = [
-            'cai' => $request['cai'],
-            'descr' => $request['descr'],
-            'types' => implode(',', $request['types']),
-            'food_types' => implode(',', $request['food_types']),
-            'taste' => implode(',', $request['taste']),
-            'mouthfeel' => implode(',', $request['mouthfeel']),
-            'effects' => implode(',', $request['effects']),
-            'effects_comm' => $request['effects_comm'],
-            'byeffect' => $request['byeffect'],
-            'post_date' => time()
-        ];
-
-        $re = M()->table('chifan')->insert($insert)->exec();
-
-        //执行新增
-        if( $re ){
-            $re = AJAXre();
-            $re->navTabId = $this->_navTab.'_ad';
-            $re->message = '菜品添加成功！';
-        }else{
-            $re = AJAXre(1);
-        }
-
-        #返回结果
-        echo json_encode($re); 
-        exit;
-    }
-
-    public function upd(){ 
+        #符合条件的图片录入数据库
+        $insert = [];
+        foreach( $xhimages as $k=>$v){
         
-        //接收数据
-        $request = $_REQUEST;
-
-        //检查数据
-        //check($request,  $this->_extra['form-elems'])
-
-        //查询数据
-        $row = M()->table('chifan')->select('*')->where(['id', $request['id']])->find();
-
-        //特殊字段处理
-        $this->_datas['row'] = $this->_special_fields($this->_extra['special_fields'], $row);
-
-        //分配模板变量&渲染模板
-        $this->assign($this->_datas);
-        $this->display('Chifan/upd.tpl');
-    }
-
-    public function updh(){ 
-
-        //接收数据
-        $request = $_REQUEST;
-
-        //检查数据
-        // $this->_extra['form-elems']['id'] = ['ch'=>'菜品ID', 'rule'=>'required'];
-        //check($request,  $this->_extra['form-elems'])
-
-        //构建更新的数据
-        #需要确认是否被修改了，修改了的才更新
-        $datas = [
-            'cai' => $request['cai'],
-            'descr' => $request['descr'],
-            'types' => empty($request['types']) ? '' : implode(',', $request['types']),
-            'food_types' => empty($request['food_types']) ? '' : implode(',', $request['food_types']),
-            'taste' => empty($request['taste']) ? '' : implode(',', $request['taste']),
-            'mouthfeel' => empty($request['mouthfeel']) ? '' : implode(',', $request['mouthfeel']),
-            'effects' => empty($request['effects']) ? '' : implode(',', $request['effects']),
-            'effects_comm' => $request['effects_comm'],
-            'byeffect' => $request['byeffect']
-        ];
-
-        $re = M()->table('chifan')
-        ->fields(array_keys($datas))
-        ->update($datas)
-        ->where(['id', '=', $request['id']])
-        ->exec();
-
-        //执行更新
-        if( $re ){
-            $re = AJAXre();
-            $re->navTabId = $this->_navTab.'_upd';
-            $re->message = '更新菜品成功！';
-        }else{
-            $re = AJAXre(1);
+            if( in_array($v['name'], $editorImages) ){
+                $insert[] = [
+                    'path' => $v['path'],
+                    'uniqid' => $v['name'],
+                    'name' => $v['name'],
+                    'type' => array_search('xheditor', ImagesModel::C_TYPE),
+                    'post_date' => time(),
+                    'is_use' => 1
+                ];
+                unset($xhimages[$k]);
+            }
         }
 
-        #返回结果
-        echo json_encode($re); 
-        exit;
+        if(!empty($insert)){
+            M('ImagesModel')->fields(array_keys($insert[0]))->insert($insert)->exec();
+            setcookie('xhimages', urlencode(serialize($xhimages)), time()+7200, '/');
+        }
+        
+        
+        ///检查数据
+        #check($request,  $this->_extra['form-elems'])
+
+        ///模型对象
+        $obj = M()->table('chifan');
+
+        if( isset($request['id']) ){///编辑
+            #查询已有数据
+            $ori = $obj->select('*')->where(['id', $request['id']])->find();
+
+            #新老数据对比，构建编辑数据
+            $update = F()->compare($request, $ori, ['cai', 'types', 'main_type', 'second_type', 'descr', 'taste', 'mouthfeel', 'effects', 'effects_comm', 'byeffect']);
+
+            if( empty($update) ) JSON()->stat(300)->msg('您还没有修改任何数据！请先修改数据。')->exec();
+
+            $re = $obj->fields(array_keys($update))->update($update)->where(['id', $request['id']])->exec();
+
+            ///处理文本中的图片  编辑不删图，避免删除了其他区域复用的图（删图需要单独的定时任务来执行）
+            
+
+        }else{///新增
+
+            #数据是否重复，重复了没必要新增
+            $duplicate = $obj->select('id')->where(['cai', $request['cai']])->limit(1)->find();
+            if(!empty($duplicate)) JSON()->stat(300)->msg('菜品"'.$request['cai'].'"已经存在！无需重复添加。')->exec();
+
+            $insert = [
+                'cai' => $request['cai'],
+                'types' => isset($request['types'])?$request['types']:'',
+                'main_type' => isset($request['main_type'])?$request['main_type']:'',
+                'second_type' => isset($request['second_type'])?$request['second_type']:'',
+                'descr' => $request['descr'],
+                'taste' => $request['taste'],
+                'mouthfeel' => $request['mouthfeel'],
+                'effects' => $request['effects'],
+                'effects_comm' => $request['effects_comm'],
+                'byeffect' => $request['byeffect'],
+                'post_date' => time()
+            ];
+
+            $re = $obj->insert($insert)->exec();
+        }
+        
+        ///返回结果
+        if( $re ){
+            JSON()->navtab($this->_navTab.'_AdUpd')->exec();
+        }else{
+            JSON()->stat(300)->msg('操作失败')->exec();
+        }
     }
 
     public function del(){
@@ -257,7 +244,7 @@ class ChifanController extends Controller {
         //check($request,  $this->_extra['form-elems'])
 
         //执行删除操作
-        $re = M()->table('chifan')->fields('is_del')->update([1])->where(['id', '=', $request['id']])->exec();
+        $re = M()->table('chifan')->where(['id', '=', $request['id']])->delete();
 
         //将需要删除的数据 is_del字段设置为1
         if( $re ){
@@ -273,7 +260,4 @@ class ChifanController extends Controller {
         exit;
     }
 
-    
-
-    
 }      

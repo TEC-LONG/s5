@@ -8,7 +8,7 @@ class EventController extends Controller {
     protected $_datas = [];
     private $_init = [];
     private $_extra = [];
-    private $_navTab;
+    protected $_navTab;
 
     public function __construct(){
 

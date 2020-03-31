@@ -199,6 +199,11 @@ function J($msg='操作成功！', $route='default', $time=2){
     exit;
 }
 
+function REGEX(){
+    return M('RegexTool');
+}
+
+
 
 
 

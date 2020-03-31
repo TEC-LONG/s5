@@ -7,7 +7,7 @@ class ExpController extends Controller {
     ##标准预定义属性
     private $_datas = [];
     private $_url = [];
-    private $_navTab;
+    protected $_navTab;
 
     ##非标准预定义属性
 
@@ -28,8 +28,8 @@ class ExpController extends Controller {
             'updh' => ['url'=>L('/tools/exp/updh')],
             'del' => L('/tools/exp/del'),
             'catLookup' => L('/tools/expcat/catLookup'),
-            'imgupmd' => ['url'=>L('/tools/editormd/imgUp')],
-            'editormdImgUp' => L('/tools/exp/imgupmd')
+            'imgupmd' => ['url'=>L('/tools/editormd/imgUp')]
+            // 'editormdImgUp' => L('/tools/exp/imgupmd')
         ];
     }
 

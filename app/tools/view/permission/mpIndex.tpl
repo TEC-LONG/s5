@@ -4,10 +4,6 @@
 	<div class="searchBar">
 		<table class="searchContent">
 			<tr>
-				<!-- <td>
-					所属menu：<input type="text" name="s_menu_name" value="{$search.s_menu_name}" />
-				</td> -->
-				<input type="hidden" name="s_menu_name" value="" />
 				<td>
 					页面名称：<input type="text" name="s_display_name" value="{$search.s_display_name}" />
 				</td>

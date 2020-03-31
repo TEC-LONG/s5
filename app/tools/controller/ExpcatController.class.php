@@ -6,7 +6,7 @@ class ExpcatController extends Controller {
 
     private $_datas = [];
     private $_url = [];
-    private $_navTab;
+    protected $_navTab;
 
     public function __construct(){
 

@@ -59,8 +59,8 @@ class Controller extends \Smarty{
         #分页参数
         $page = [];
         $page['numPerPageList'] = [20, 30, 40, 60, 80, 100, 120, 160, 200];
-        $page['pageNum'] = $pageNum = isset($request['pageNum']) ? intval($request['pageNum']) : (isset($_COOKIE['pageNum']) ? intval($_COOKIE['pageNum']) : 1);
-        setcookie('pageNum', $pageNum);
+        $page['pageNum'] = $pageNum = isset($request['pageNum']) ? intval($request['pageNum']) : (isset($_COOKIE[$this->_navTab.'pageNum']) ? intval($_COOKIE[$this->_navTab.'pageNum']) : 1);
+        setcookie($this->_navTab.'pageNum', $pageNum);
         $page['numPerPage'] = $numPerPage = isset($request['numPerPage']) ? intval($request['numPerPage']) : $num_per_page;
         $tmp_arr_totalNum = M()->table($tb)->select('count(*) as num')->where($condition)->find();
         $page['totalNum'] = $totalNum = $tmp_arr_totalNum['num'];
@@ -79,7 +79,7 @@ class Controller extends \Smarty{
      */
     protected function _paginate($request, $obj, $numPerPageList=[20, 30, 40, 60, 80, 100, 120, 160, 200]){
 
-        $nowPage = isset($request['pageNum']) ? intval($request['pageNum']) : (isset($_COOKIE['pageNum']) ? intval($_COOKIE['pageNum']) : 1);
+        $nowPage = isset($request['pageNum']) ? intval($request['pageNum']) : (isset($_COOKIE[$this->_navTab.'pageNum']) ? intval($_COOKIE[$this->_navTab.'pageNum']) : 1);
         $page = $obj->pagination($nowPage)->pagination;
         $page['numPerPageList'] = $numPerPageList;
 

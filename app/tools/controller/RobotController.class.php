@@ -6,7 +6,7 @@ use \plugins\RequestTool;
 class RobotController extends Controller {
 
     private $_datas=[];
-    private $_navTab;
+    protected $_navTab;
     private $_requ;
 
     //记录处理过程中需要的数据

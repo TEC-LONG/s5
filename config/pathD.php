@@ -39,4 +39,4 @@ define('STORAGE_LOG_PATH', STORAGE_PATH . 'log/');
 ##others
 define('EDITOR_IMG', PUBLIC_PATH . 'tools/editorimg/' );
 define('EDITORMD_IMG', UPLOAD_PATH . 'editormdimg/' );
-define('EDITORBD_IMG', UPLOAD_PATH . 'editorbdimg/' );
+define('XHEDITOR_IMG', UPLOAD_PATH . 'xheditorimg/' );

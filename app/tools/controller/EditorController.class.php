@@ -9,7 +9,7 @@ class EditorController extends Controller
 
     private $_datas = [];
     private $_url = [];
-    private $_navTab;
+    protected $_navTab;
 
     public function __construct()
     {
@@ -88,7 +88,7 @@ class EditorController extends Controller
         $inputName = 'filedata'; //表单文件域name
         ///以年份和月份分别来创建保存editor图片的一级和二级目录
         $first_folder = date('Y');
-        $first_folder_path = EDITORBD_IMG . $first_folder;
+        $first_folder_path = XHEDITOR_IMG . $first_folder;
 
         if (!is_dir($first_folder_path)) {
             mkdir($first_folder_path);
@@ -164,20 +164,31 @@ class EditorController extends Controller
                 if ($bytes > $maxAttachSize) $err = '请不要上传大小超过' . $this->formatBytes($maxAttachSize) . '的文件';
                 else {
                     PHP_VERSION < '4.2.0' && mt_srand((float) microtime() * 1000000);
-                    $newFilename = uniqid('editorbd_') . mt_rand(0, 100000) . '.' . date('YmdHis') . '.' . $extension;
+                    $newName = uniqid('editorbd') . mt_rand(0, 100000) . date('YmdHis');
+                    $newFilename = $newName . '.' . $extension;
                     $targetPath = $attachDir . '/' . $newFilename;
 
                     rename($tempPath, $targetPath);
                     @chmod($targetPath, 0755);
                     // $targetPath = $this->jsonString($targetPath);
                     // if ($immediate == '1') $targetPath = '!' . $targetPath;
-                    $url = C('URL') . '/upload/editorbdimg/' . $first_folder . '/' . $second_folder . '/' . $newFilename;
+                    $thisPath = '/upload/xheditorimg/' . $first_folder . '/' . $second_folder . '/' . $newFilename;
+                    $url = C('URL') . $thisPath;
                     if ($msgType == 1) $msg = "'$url'";
                     else $msg = "{'url':'" . $url . "','localname':'" . $this->jsonString($localName) . "','id':'".mt_rand(0, 100000)."'}"; //id参数固定不变，仅供演示，实际项目中可以是数据库ID
                 }
             } else $err = '上传文件扩展名必需为：' . $upExt;
 
             @unlink($tempPath);
+
+            ///生成对应的cookie
+            $images = isset($_COOKIE['xhimages']) ? unserialize(urldecode(trim($_COOKIE['xhimages']))) : [];
+
+            $images[] = [
+                'path' => $thisPath,
+                'name' => $newFilename
+            ];
+            setcookie('xhimages', urlencode(serialize($images)), time()+7200, '/');
         }
 
         echo "{'err':'" . $err . "','msg':" . $msg . "}";

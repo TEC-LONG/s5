@@ -6,9 +6,7 @@ class MemAccPwdController extends Controller {
 
     ##标准预定义属性
     protected $_datas = [];
-    private $_init = [];
-    private $_extra = [];
-    private $_navTab;
+    protected $_navTab;
 
     public function __construct(){
 

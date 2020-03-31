@@ -184,7 +184,10 @@ function dialogAjaxDone(json){
 function navTabSearch(form, navTabId){
 	var $form = $(form);
 	if (form[DWZ.pageInfo.pageNum]) form[DWZ.pageInfo.pageNum].value = 1;
-	navTab.reload($form.attr('action'), {data: $form.serializeArray(), navTabId:navTabId});
+	///teclong-给分页扩展一个功能，让ajax请求追随form的method属性
+	var thisFormArr = $form.serializeArray();
+	thisFormArr[thisFormArr.length] = {"name":"form_method", "value":$form.context.method};
+	navTab.reload($form.attr('action'), {data: thisFormArr, navTabId:navTabId});
 	return false;
 }
 /**
