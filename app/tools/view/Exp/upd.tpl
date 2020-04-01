@@ -43,7 +43,7 @@
 
 	<ul class="nav nav-tabs">
 		<li class="nav-item">
-			<a class="nav-link active">添加EXP</a>
+			<a class="nav-link active">编辑EXP</a>
 		</li>
 	</ul>
 	<form class="needs-validation" action="{$url.updh.url}?id={$row.id}" method="post">
@@ -93,7 +93,7 @@
 var tools_exp_add_get_child_expcat = function (now, type) {
 
 	var pid = $(now).val().split('|')[0];
-	var url = '{L(PLAT, "expcat", "getChild")}';
+	var url = '{L("/tools/expcat/getChild")}';
 	if (typeof(arguments[2])=='function') {
 		var func = arguments[2];
 	}

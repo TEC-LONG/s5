@@ -93,7 +93,7 @@
 var tools_exp_add_get_child_expcat = function (now, type) {
 
 	var pid = $(now).val().split('|')[0];
-	var url = '{L(PLAT, "expcat", "getChild")}';
+	var url = '{L("/tools/expcat/getChild")}';
 
 	if (pid==0) {
 		

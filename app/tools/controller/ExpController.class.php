@@ -19,7 +19,7 @@ class ExpController extends Controller {
         #当前模块的导航标识前缀，用于拼接各页面完整的导航标识
         $this->_navTab = 'tools_exp';
 
-        $this->_url = [
+        $this->_datas['url'] = $this->_url = [
             'info' => L('/tools/exp/info'),
             'ad' => ['url'=>L('/tools/exp/ad'), 'rel'=>$this->_navTab.'_ad'],
             'adh' => ['url'=>L('/tools/exp/adh')],
@@ -128,9 +128,9 @@ class ExpController extends Controller {
         #录入数据
         if( M()->table('expnew')->insert($datas)->exec() ){
 
-            $this->jump('添加成功！', 'p=tools&m=exp&a=ad');
+            J('添加成功！', '/tools/exp/ad');
         }else{
-            $this->jump('添加失败！', 'p=tools&m=exp&a=ad');
+            J('添加失败！', '/tools/exp/ad');
         }
     }
 
@@ -187,41 +187,41 @@ class ExpController extends Controller {
 
         if( $re ){
 
-            $this->jump('修改成功！', 'p=tools&m=exp&a=upd&id='.$request['id']);
+            J('修改成功！', '/tools/exp/upd?id='.$request['id']);
         }else{
-            $this->jump('修改失败！', 'p=tools&m=exp&a=upd&id='.$request['id']);
+            J('修改成功！', '/tools/exp/upd?id='.$request['id']);
         }
         
-        #接收数据
-        //条件
-        $con = ['id'=>$_GET['id']];
-        //数据
-        $datas = [];
-        $datas['title'] = $_POST['title'];
-        $datas['tags'] = $_POST['tags'];
-        $datas['post_date'] = time();
-        if(!empty($_POST['content_upd'])){
+        // #接收数据
+        // //条件
+        // $con = ['id'=>$_GET['id']];
+        // //数据
+        // $datas = [];
+        // $datas['title'] = $_POST['title'];
+        // $datas['tags'] = $_POST['tags'];
+        // $datas['post_date'] = time();
+        // if(!empty($_POST['content_upd'])){
 
-            $datas['content'] = str_replace('\\', '\\\\', $_POST['content_upd']);
-            $datas['content'] = str_replace('"', '&quot;', $datas['content']);
-        } 
-        $datas['expcat__id'] = $_POST['expcat_cat1id'];
-        $datas['expcat__name'] = $_POST['expcat_cat1name'];
-        $datas['crumbs_expcat_ids'] = $_POST['expcat_cat1id'] . '|' . $_POST['expcat_cat2id'] . '|' . $_POST['expcat_cat3id'];
-        $datas['crumbs_expcat_names'] = $_POST['expcat_cat1name'] . '|' . $_POST['expcat_cat2name'] . '|' . $_POST['expcat_cat3name'];
+        //     $datas['content'] = str_replace('\\', '\\\\', $_POST['content_upd']);
+        //     $datas['content'] = str_replace('"', '&quot;', $datas['content']);
+        // } 
+        // $datas['expcat__id'] = $_POST['expcat_cat1id'];
+        // $datas['expcat__name'] = $_POST['expcat_cat1name'];
+        // $datas['crumbs_expcat_ids'] = $_POST['expcat_cat1id'] . '|' . $_POST['expcat_cat2id'] . '|' . $_POST['expcat_cat3id'];
+        // $datas['crumbs_expcat_names'] = $_POST['expcat_cat1name'] . '|' . $_POST['expcat_cat2name'] . '|' . $_POST['expcat_cat3name'];
 
-        //执行更新操作
-        if( M()->setData('expnew', $datas, 2, $con) ){
-            $re = AJAXre();
-            $re->navTabId = $this->_navTab.'_upd';
-            $re->message = '更新成功！';
-        }else{
-            $re = AJAXre(1);
-        }
+        // //执行更新操作
+        // if( M()->setData('expnew', $datas, 2, $con) ){
+        //     $re = AJAXre();
+        //     $re->navTabId = $this->_navTab.'_upd';
+        //     $re->message = '更新成功！';
+        // }else{
+        //     $re = AJAXre(1);
+        // }
         
-        #返回结果
-        echo json_encode($re); 
-        exit;
+        // #返回结果
+        // echo json_encode($re); 
+        // exit;
     }
 
     ###del综合  包括: del()

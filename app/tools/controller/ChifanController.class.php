@@ -154,35 +154,6 @@ class ChifanController extends Controller {
         if(isset($request['main_type'])) $request['main_type']=implode(',', $request['main_type']);
         if(isset($request['second_type'])) $request['second_type']=implode(',', $request['second_type']);
 
-        #匹配出文本中的所有图片
-        $editorImages = REGEX()->htmlImgSrc(htmlspecialchars_decode($request['descr']));
-
-        #获取富文本记录下的上传图片
-        $xhimages = unserialize(urldecode(trim($_COOKIE['xhimages'])));
-
-        #符合条件的图片录入数据库
-        $insert = [];
-        foreach( $xhimages as $k=>$v){
-        
-            if( in_array($v['name'], $editorImages) ){
-                $insert[] = [
-                    'path' => $v['path'],
-                    'uniqid' => $v['name'],
-                    'name' => $v['name'],
-                    'type' => array_search('xheditor', ImagesModel::C_TYPE),
-                    'post_date' => time(),
-                    'is_use' => 1
-                ];
-                unset($xhimages[$k]);
-            }
-        }
-
-        if(!empty($insert)){
-            M('ImagesModel')->fields(array_keys($insert[0]))->insert($insert)->exec();
-            setcookie('xhimages', urlencode(serialize($xhimages)), time()+7200, '/');
-        }
-        
-        
         ///检查数据
         #check($request,  $this->_extra['form-elems'])
 
@@ -195,13 +166,10 @@ class ChifanController extends Controller {
 
             #新老数据对比，构建编辑数据
             $update = F()->compare($request, $ori, ['cai', 'types', 'main_type', 'second_type', 'descr', 'taste', 'mouthfeel', 'effects', 'effects_comm', 'byeffect']);
-
             if( empty($update) ) JSON()->stat(300)->msg('您还没有修改任何数据！请先修改数据。')->exec();
 
             $re = $obj->fields(array_keys($update))->update($update)->where(['id', $request['id']])->exec();
-
-            ///处理文本中的图片  编辑不删图，避免删除了其他区域复用的图（删图需要单独的定时任务来执行）
-            
+            $id = $request['id'];
 
         }else{///新增
 
@@ -224,7 +192,12 @@ class ChifanController extends Controller {
             ];
 
             $re = $obj->insert($insert)->exec();
+            $id = M()->last_insert_id();
         }
+
+        ///富文本图片入库处理
+        M('EditorTool')->textarea('descr')->cookie('xhimages')->type('xheditor', ImagesModel::C_TYPE)->table('chifan')->id($id)->field('descr')->editorimg($request);
+        M('EditorTool')->textarea('effects_comm')->cookie('xhimages')->type('xheditor', ImagesModel::C_TYPE)->table('chifan')->id($id)->field('effects_comm')->editorimg($request);
         
         ///返回结果
         if( $re ){
@@ -242,6 +215,9 @@ class ChifanController extends Controller {
         //检查数据
         // $this->_extra['form-elems']['id'] = ['ch'=>'菜品ID', 'rule'=>'required'];
         //check($request,  $this->_extra['form-elems'])
+
+        M('EditorTool')->type('xheditor', ImagesModel::C_TYPE)->table('chifan')->id($request['id'])->field('descr')->clear();
+        M('EditorTool')->type('xheditor', ImagesModel::C_TYPE)->table('chifan')->id($request['id'])->field('effects_comm')->clear();
 
         //执行删除操作
         $re = M()->table('chifan')->where(['id', '=', $request['id']])->delete();
