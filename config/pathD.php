@@ -22,6 +22,11 @@ define('APP_HOME_PATH', APP_PATH . 'home/');
 define('APP_HOME_VIEW_PATH', APP_HOME_PATH . 'view/');
 define('APP_HOME_CONTROLLER_PATH', APP_HOME_PATH . 'controller/');
 
+## blog
+define('APP_BLOG_PATH', APP_PATH . 'blog/');
+define('APP_BLOG_VIEW_PATH', APP_BLOG_PATH . 'view/');
+define('APP_BLOG_CONTROLLER_PATH', APP_BLOG_PATH . 'controller/');
+
 ## admin
 define('APP_ADMIN_PATH', APP_PATH . 'admin/');//APP_ADMIN_PATH =>  xx/mvc/app/admin/
 define('APP_ADMIN_VIEW_PATH', APP_ADMIN_PATH . 'view/');//APP_ADMIN_VIEW_PATH  =>  xx/mvc/app/admin/view/

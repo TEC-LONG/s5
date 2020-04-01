@@ -3,13 +3,13 @@
 <head>
 	<meta charset="UTF-8">
 	<title>XXXXX</title>
-	<script type="text/javascript" src="{$smarty.const.PUBLIC_TOOLS_PRETTIFY}src/run_prettify.js?autoload=true&amp;skin=sunburst&amp;lang=css"></script>
-	<script src="{$smarty.const.PUBLIC_TOOLS_JUI}js/jquery-2.1.4.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="{$smarty.const.PUBLIC_TOOLS_PRETTIFY}/src/run_prettify.js?autoload=true&amp;skin=sunburst&amp;lang=css"></script>
+	<script src="{$smarty.const.PUBLIC_TOOLS_JUI}/js/jquery-2.1.4.min.js" type="text/javascript"></script>
 </head>
 <body>
 <!-- wx.2019/11/25.编辑器.start -->
-<!-- <link rel="stylesheet" href="{$smarty.const.PUBLIC_TOOLS}editor_md/examples/css/style.css" /> -->
-<link rel="stylesheet" href="{$smarty.const.PUBLIC_TOOLS}editor_md/css/editormd.css" />
+<!-- <link rel="stylesheet" href="{$smarty.const.PUBLIC_TOOLS}/editor_md/examples/css/style.css" /> -->
+<link rel="stylesheet" href="{$smarty.const.PUBLIC_TOOLS}/editor_md/css/editormd.css" />
 <div id="layout" style="height: 900px;background: #f6f6f6;">
 	<header>
 		<h1>内容</h1>
@@ -19,14 +19,14 @@
 		<textarea style="display:none;" name="content" id="content">{htmlspecialchars_decode($prorecord.content)}</textarea>
 	</div>
 </div>        
-<script src="{$smarty.const.PUBLIC_TOOLS}editor_md/editormd.js"></script>
+<script src="{$smarty.const.PUBLIC_TOOLS}/editor_md/editormd.js"></script>
 <script type="text/javascript">$(function() {                
 		var testEditor = editormd("test-editormd", {
 			width: "90%",
 			height: 720,
 			markdown : "",
 			watch : false,
-			path : '{$smarty.const.PUBLIC_TOOLS}editor_md/lib/',
+			path : '{$smarty.const.PUBLIC_TOOLS}/editor_md/lib/',
 			//dialogLockScreen : false,   // 设置弹出层对话框不锁屏，全局通用，默认为 true
 			//dialogShowMask : false,     // 设置弹出层对话框显示透明遮罩层，全局通用，默认为 true
 			//dialogDraggable : false,    // 设置弹出层对话框不可拖动，全局通用，默认为 true

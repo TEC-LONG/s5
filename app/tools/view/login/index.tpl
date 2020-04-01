@@ -4,8 +4,8 @@
 <meta charset="utf-8"/>
 <title>后台登录</title>
 <meta name="author" content="DeathGhost" />
-<link rel="shortcut icon" href="{$smarty.const.PUBLIC_TOOLS}image/ico.ico" type="image/x-icon" />
-<link rel="stylesheet" type="text/css" href="{$smarty.const.PUBLIC_TOOLS}Login/css/style.css" tppabs="{$smarty.const.PUBLIC_TOOLS}Login/css/style.css" />
+<link rel="shortcut icon" href="{$smarty.const.PUBLIC_TOOLS}/image/ico.ico" type="image/x-icon" />
+<link rel="stylesheet" type="text/css" href="{$smarty.const.PUBLIC_TOOLS}/Login/css/style.css" tppabs="{$smarty.const.PUBLIC_TOOLS}/Login/css/style.css" />
 {literal}
 <style>
 body{height:100%;background:#16a085;overflow:hidden;}
@@ -13,9 +13,9 @@ canvas{z-index:-1;position:absolute;}
 img{padding:3px;background-color:#fff;width:85px;height:40px;z-index:0;position:absolute;}
 </style>
 {/literal}
-<script src="{$smarty.const.PUBLIC_TOOLS}Login/js/jquery1.11.3.js"></script>
-<script src="{$smarty.const.PUBLIC_TOOLS}Login/js/verificationNumbers.js" tppabs="{$smarty.const.PUBLIC_TOOLS}Login/js/verificationNumbers.js"></script>
-<script src="{$smarty.const.PUBLIC_TOOLS}Login/js/Particleground.js" tppabs="{$smarty.const.PUBLIC_TOOLS}Login/js/Particleground.js"></script>
+<script src="{$smarty.const.PUBLIC_TOOLS}/Login/js/jquery1.11.3.js"></script>
+<script src="{$smarty.const.PUBLIC_TOOLS}/Login/js/verificationNumbers.js" tppabs="{$smarty.const.PUBLIC_TOOLS}/Login/js/verificationNumbers.js"></script>
+<script src="{$smarty.const.PUBLIC_TOOLS}/Login/js/Particleground.js" tppabs="{$smarty.const.PUBLIC_TOOLS}/Login/js/Particleground.js"></script>
 <script>
 $(document).ready(function() {
   //粒子背景特效

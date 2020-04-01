@@ -5,13 +5,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>{$row.title}</title>
-	<link rel="shortcut icon" href="{$smarty.const.PUBLIC_TOOLS}image/ico.ico" type="image/x-icon" />
-	<link rel="stylesheet" href="{$smarty.const.BOOTSTRAP4}css/bootstrap.min.css"/>
-	<link rel="stylesheet" href="{$smarty.const.PUBLIC_TOOLS}edmd/css/editormd.css"/>
-	<script src="{$smarty.const.PUBLIC_TOOLS_JUI}js/jquery-2.1.4.min.js"></script>
-	<script src="{$smarty.const.PUBLIC_TOOLS_PRETTIFY}src/run_prettify.js?autoload=true&amp;skin=doxy&amp;lang=basic"></script>
-	<!-- <script src="{$smarty.const.PUBLIC_TOOLS}js/popper.min.js"></script> -->
-    <script src="{$smarty.const.BOOTSTRAP4}js/bootstrap.min.js"></script>
+	<link rel="shortcut icon" href="{$smarty.const.PUBLIC_TOOLS}/image/ico.ico" type="image/x-icon" />
+	<link rel="stylesheet" href="{$smarty.const.BOOTSTRAP4}/css/bootstrap.min.css"/>
+	<link rel="stylesheet" href="{$smarty.const.PUBLIC_TOOLS}/edmd/css/editormd.css"/>
+	<script src="{$smarty.const.PUBLIC_TOOLS_JUI}/js/jquery-2.1.4.min.js"></script>
+	<script src="{$smarty.const.PUBLIC_TOOLS_PRETTIFY}/src/run_prettify.js?autoload=true&amp;skin=doxy&amp;lang=basic"></script>
+	<!-- <script src="{$smarty.const.PUBLIC_TOOLS}/js/popper.min.js"></script> -->
+    <script src="{$smarty.const.BOOTSTRAP4}/js/bootstrap.min.js"></script>
 {literal}
 <style>
 body {padding: 40px;}
@@ -73,14 +73,14 @@ pre { border: 4px solid #88c; }
         <textarea style="display:none;"></textarea>
     </div>
 </div>
-<script src="{$smarty.const.PUBLIC_TOOLS}edmd/lib/marked.min.js"></script>
-<script src="{$smarty.const.PUBLIC_TOOLS}edmd/lib/prettify.min.js"></script>
-<script src="{$smarty.const.PUBLIC_TOOLS}edmd/lib/raphael.min.js"></script>
-<script src="{$smarty.const.PUBLIC_TOOLS}edmd/lib/underscore.min.js"></script>
-<script src="{$smarty.const.PUBLIC_TOOLS}edmd/lib/sequence-diagram.min.js"></script>
-<script src="{$smarty.const.PUBLIC_TOOLS}edmd/lib/flowchart.min.js"></script>
-<script src="{$smarty.const.PUBLIC_TOOLS}edmd/lib/jquery.flowchart.min.js"></script>
-<script src="{$smarty.const.PUBLIC_TOOLS}edmd/editormd.js"></script>
+<script src="{$smarty.const.PUBLIC_TOOLS}/edmd/lib/marked.min.js"></script>
+<script src="{$smarty.const.PUBLIC_TOOLS}/edmd/lib/prettify.min.js"></script>
+<script src="{$smarty.const.PUBLIC_TOOLS}/edmd/lib/raphael.min.js"></script>
+<script src="{$smarty.const.PUBLIC_TOOLS}/edmd/lib/underscore.min.js"></script>
+<script src="{$smarty.const.PUBLIC_TOOLS}/edmd/lib/sequence-diagram.min.js"></script>
+<script src="{$smarty.const.PUBLIC_TOOLS}/edmd/lib/flowchart.min.js"></script>
+<script src="{$smarty.const.PUBLIC_TOOLS}/edmd/lib/jquery.flowchart.min.js"></script>
+<script src="{$smarty.const.PUBLIC_TOOLS}/edmd/editormd.js"></script>
 <script>
 $(function() {
 

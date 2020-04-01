@@ -55,7 +55,7 @@
 	margin: 100px auto;
 }
 </style>
-<script type="text/javascript" src="{$smarty.const.PUBLIC_TOOLS}zzsc.js"></script>
+<script type="text/javascript" src="{$smarty.const.PUBLIC_TOOLS}/zzsc.js"></script>
 			<div class="col-md-12 col-sm-12">
 				<div id="zzsc">
 					<canvas id="canvas" width="920" height="200"></canvas>

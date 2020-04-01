@@ -119,7 +119,7 @@ $('#FIRE_resetCatPid').click(function (){
 
 
 
-<script src="{$smarty.const.PUBLIC_TOOLS}cat/jquery.sort.js"></script>
+<script src="{$smarty.const.PUBLIC_TOOLS}/cat/jquery.sort.js"></script>
 
 </div>
         

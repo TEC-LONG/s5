@@ -6,15 +6,15 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>编辑工程信息【{$row.id}】</title>
-	<link rel="shortcut icon" href="{$smarty.const.PUBLIC_TOOLS}image/ico.ico" type="image/x-icon" />
-	<link rel="stylesheet" href="{$smarty.const.BOOTSTRAP4}css/bootstrap.min.css"/>
-	<link rel="stylesheet" href="{$smarty.const.PUBLIC_TOOLS}edmd/css/editormd.css"/>
-	<!-- <script src="{$smarty.const.PUBLIC_TOOLS}js/jquery-3.3.1.slim.min.js"></script> -->
-	<script src="{$smarty.const.PUBLIC_TOOLS_JUI}js/jquery-2.1.4.min.js"></script>
-	<script src="{$smarty.const.PUBLIC_TOOLS_PRETTIFY}src/run_prettify.js?autoload=true&amp;skin=sunburst&amp;lang=css"></script>
-	<script src="{$smarty.const.PUBLIC_TOOLS}js/popper.min.js"></script>
-	<script src="{$smarty.const.BOOTSTRAP4}js/bootstrap.min.js"></script>
-	<script src="{$smarty.const.PUBLIC_TOOLS}editor_md/editormd.js"></script>
+	<link rel="shortcut icon" href="{$smarty.const.PUBLIC_TOOLS}/image/ico.ico" type="image/x-icon" />
+	<link rel="stylesheet" href="{$smarty.const.BOOTSTRAP4}/css/bootstrap.min.css"/>
+	<link rel="stylesheet" href="{$smarty.const.PUBLIC_TOOLS}/edmd/css/editormd.css"/>
+	<!-- <script src="{$smarty.const.PUBLIC_TOOLS}/js/jquery-3.3.1.slim.min.js"></script> -->
+	<script src="{$smarty.const.PUBLIC_TOOLS_JUI}/js/jquery-2.1.4.min.js"></script>
+	<script src="{$smarty.const.PUBLIC_TOOLS_PRETTIFY}/src/run_prettify.js?autoload=true&amp;skin=sunburst&amp;lang=css"></script>
+	<script src="{$smarty.const.PUBLIC_TOOLS}/js/popper.min.js"></script>
+	<script src="{$smarty.const.BOOTSTRAP4}/js/bootstrap.min.js"></script>
+	<script src="{$smarty.const.PUBLIC_TOOLS}/editor_md/editormd.js"></script>
 </head>
 <body>
 	<ul class="nav nav-tabs">
@@ -61,7 +61,7 @@ $(function() {
 		imageUpload: true,
 		watch:false,
 		imageFormats   : ["jpg", "jpeg", "gif", "png", "bmp", "webp","zip","rar"],
-		path   : "{$smarty.const.PUBLIC_TOOLS}edmd/lib/",
+		path   : "{$smarty.const.PUBLIC_TOOLS}/edmd/lib/",
 		imageUploadURL : "{$url.imgupmd.url}", //文件提交请求路径
 		saveHTMLToTextarea : true, //注意3：这个配置，方便post提交表单
 		theme        : "default",
