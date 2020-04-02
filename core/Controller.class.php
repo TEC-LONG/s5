@@ -5,6 +5,7 @@ namespace core;
 class Controller extends \Smarty{
 
     //protected $smarty;
+    protected $manager;
 
     public function __construct(){ 
 
@@ -44,6 +45,9 @@ class Controller extends \Smarty{
                 J('请先登陆！', '/tools/login/index');
             //}
         }
+
+        ///唤起登录的用户数据
+        $this->manager = $_SESSION['admin'];
     }
 
     /**

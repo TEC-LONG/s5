@@ -1,5 +1,6 @@
 <?php
 
+///命名空间为全局
 class Route{
 
     public static $plat;
@@ -94,7 +95,7 @@ class Route{
         }
         $URI_arr = explode('/', substr($URI, 1));
         self::$plat = $URI_arr[0];
-        
+
         ///确定routes文件
         $routes_path = APP_PATH . strtolower($URI_arr[0]) . DIRECTORY_SEPARATOR . 'routes.php';
         $has_routes = file_exists($routes_path);

@@ -18,17 +18,12 @@
 					<li><a href="changepwd.html" target="dialog" rel="changepwd" width="600">设置</a></li>
 					<li><a href="http://www.cnblogs.com/dwzjs" target="_blank">博客</a></li>
 					<li><a href="http://weibo.com/dwzui" target="_blank">微博</a></li> -->
-					<li><a href="http://www.cnblogs.com/dwzjs" target="_blank">博客</a></li>
+					<li><a href="{L(C('web.blog.index'))}" target="_blank">博客首页</a></li>
 					<li><a href="{$url.login_out.url}">退出</a></li>
 				</ul>
-				<!-- <ul class="themeList" id="themeList">
-					<li theme="default"><div class="selected">蓝色</div></li>
-					<li theme="green"><div>绿色</div></li>
-					<li theme="red"><div>红色</div></li>
-					<li theme="purple"><div>紫色</div></li>
-					<li theme="silver"><div>银色</div></li>
-					<li theme="azure"><div>天蓝</div></li>
-				</ul> -->
+				<ul class="themeList" id="themeList">
+					<li style="color:blanchedalmond;">欢迎你，{$manager.nickname}！</li>
+				</ul>
 			</div>
 
 			<!-- navMenu -->
@@ -60,7 +55,7 @@
 								{foreach $menu3 as $k3=>$v3}
 								{if in_array($v3.id, $mp_ids)}
 								{if $v2.id==$v3.parent_id}
-									<li><a href="{if $v3.level3_type==1}{$v3.level3_href}{else}{L($v3.route)}{/if}" target="navTab" rel="{$v3['navtab']}">{$v3.display_name}</a></li>
+									<li><a href="{if $v3.level3_type==1}{$v3.level3_href}{else}{L($v3.route)}{/if}" target="navtab" rel="{$v3['navtab']}">{$v3.display_name}</a></li>
 								{/if}
 								{/if}
 								{/foreach}
@@ -98,7 +93,7 @@
 
 	</div>
 
-	<div id="footer">Copyright &copy; 2010 <a href="demo_page2.html" target="dialog">DWZ团队</a> 京ICP备15053290号-2</div>
+	<div id="footer">Copyright &copy; 2020 <a href="{L(C('web.blog.index'))}" target="dialog">Tec-Long</a> 京ICP备15053290号-2</div>
 
 </body>
 </html>

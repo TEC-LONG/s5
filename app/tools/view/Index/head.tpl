@@ -63,11 +63,13 @@
 <script src="{$smarty.const.PUBLIC_TOOLS_JUI}/js/dwz.regional.zh.js" type="text/javascript"></script>
 <script src="{$smarty.const.PUBLIC_TOOLS}/init.conf.js" type="text/javascript"></script>
 
-{literal}
+
 <script type="text/javascript">
+var twice_login_url = "{L('/tools/login/check')}";
+{literal}
 $(function(){
 	DWZ.init(init.url.main+"/public/tools/jui/new/dwz.frag.xml", {
-		loginUrl:"login_dialog.html", loginTitle:"登录",	// 弹出登录对话框
+		loginUrl:twice_login_url, loginTitle:"登录",	// 弹出登录对话框
 //		loginUrl:"login.html",	// 跳到登录页面
 		statusCode:{ok:200, error:300, timeout:301}, //【可选】
 		pageInfo:{pageNum:"pageNum", numPerPage:"numPerPage", orderField:"orderField", orderDirection:"orderDirection"}, //【可选】
@@ -80,6 +82,7 @@ $(function(){
 		}
 	});
 });
-</script>
 {/literal}
+</script>
+
 </head>

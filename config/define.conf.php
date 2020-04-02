@@ -1,11 +1,13 @@
 <?php
 
+define('URL', C('URL'));
+
 define('_PUB_', C('URL').'/public');
 
 define('PUBLIC_TOOLS',          _PUB_ . '/tools');// http://xxx.xxx.xxx/public/tools/
 define('PUBLIC_TOOLS_EDITOR',   PUBLIC_TOOLS . '/froala_editor');// http://xxx.xxx.xxx/public/tools/
-define('PUBLIC_TOOLS_JUI',      PUBLIC_TOOLS . 'jui/new');// http://xxx.xxx.xxx/public/tools/jui/new/
-define('PUBLIC_TOOLS_PRETTIFY', PUBLIC_TOOLS . 'prettify');// http://xxx.xxx.xxx/public/tools/prettify/
+define('PUBLIC_TOOLS_JUI',      PUBLIC_TOOLS . '/jui/new');// http://xxx.xxx.xxx/public/tools/jui/new/
+define('PUBLIC_TOOLS_PRETTIFY', PUBLIC_TOOLS . '/prettify');// http://xxx.xxx.xxx/public/tools/prettify/
 
 define('PUB_FRONT',         _PUB_ . '/front');
 define('PUB_FRONT_CSS',     PUB_FRONT . '/css');

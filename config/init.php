@@ -8,8 +8,6 @@ include CONFIG_PATH . 'conf.php';
 include CORE_PATH . 'Func.php';
 
 //引入配置常量文件
-include CONFIG_PATH . 'D.php';
-
 include CONFIG_PATH . 'define.conf.php';
 
 include CORE_PATH . 'Route.class.php';
@@ -17,7 +15,6 @@ include CORE_PATH . 'Route.class.php';
 Route::prepare();
 
 if( Route::$plat=='tools' ){
-    // include TOOLS_CONF_PATH . 'menu.conf.php';
     include TOOLS_CONF_PATH . 'AutoTb.conf.php';
 }elseif( Route::$plat=='admin' ){
     //引入模板配置文件
@@ -33,9 +30,6 @@ include VENDOR_PATH . 'autoload.php';
 
 //引入SMARTY核心类文件
 include SMARTY_DIR . 'Smarty.class.php';//       mvc/plugins/smarty/Smarty.class.php
-
-//引入基础模型类文件
-// include CORE_PATH . 'Model.class.php';
 
 //引入父类控制器文件
 include CORE_PATH . 'Controller.class.php';

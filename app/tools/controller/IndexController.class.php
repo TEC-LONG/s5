@@ -70,6 +70,7 @@ class IndexController extends Controller {
             ]
         ];
 
+        $this->_datas['manager'] = $this->manager;
         $this->assign($this->_datas);
 
 	    $this->display('Index/index.tpl');

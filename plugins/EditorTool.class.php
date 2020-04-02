@@ -33,7 +33,7 @@ class EditorTool {
     public function getfurl($type='edmd'){
         
         if( $type=='edmd' ){
-            return URL_EDMD_FILE . $this->_file_name;
+            return URL_EDMD_FILE . '/' . $this->_file_name;
         }
     }
 
