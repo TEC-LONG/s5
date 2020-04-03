@@ -29,6 +29,7 @@ class Controller extends \Smarty{
         //检查之前是否已经登陆过
         //如果没有$_SESSION['user']数据，则说明之前没有登陆成功或者根本没有登陆过
         $LoginControler = PLAT=='tools'&& MOD=='Login';//表示登录模块，即LoginController中的所有方法
+        $LoginControler = $LoginControler || PLAT=='blog';
         if( !isset($_SESSION['admin'])&&!$LoginControler ){//没有登录信息，又不是登录模块中的某个页面，则需要重新登录
             
             //if( isset($_COOKIE['is_login']) ){//没有SESSION登陆信息，但是存在7天免登录信息，则重新找回之前点击7天免登录的用户信息

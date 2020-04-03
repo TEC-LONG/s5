@@ -1,6 +1,6 @@
 
 <div class="pageHeader">
-	<form onsubmit="return navTabSearch(this);" action="{$url.index.url}" method="post" onreset="$(this).find('select.combox').comboxReset()">
+	<form onsubmit="return navTabSearch(this);" action="{$url.index.url}" method="get" onreset="$(this).find('select.combox').comboxReset()">
 	<div class="searchBar">
 		<table class="searchContent">
 			<tr>
@@ -41,7 +41,7 @@
 			<tr>
 				<th width="30">序号</th>
 				{foreach $thead as $col}
-				<th {if !empty($col.width)}width="{$col.width}"{/if}>{$col.ch}</th>
+				<th {if isset($col.width)}width="{$col.width}"{/if}>{$col.ch}</th>
 				{/foreach}
 				<th width="120">操作</th>
 			</tr>

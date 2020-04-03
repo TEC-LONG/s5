@@ -1,0 +1,31 @@
+<?php
+
+namespace admin\controller;
+use \core\Controller;//引入空间类文件
+
+class UserController extends Controller{
+
+    private $_fields;
+
+    public function __construct(){ 
+        parent::__construct();
+
+        $this->_fields['level'] = array('普通用户', '管理员');
+        $this->_fields['status'] = array('正常', '禁用');
+        $this->_fields['ori'] = array('注册', '后台添加');
+        $this->_fields['is_online'] = array('未知', '在线', '离线');
+    }
+
+    #列表
+    public function showList(){ 
+
+        $this->display('nuser/list.tpl');
+    }
+
+    #添加
+    public function showAd(){ 
+
+        $this->display('nuser/ad.tpl');
+    }
+}
+

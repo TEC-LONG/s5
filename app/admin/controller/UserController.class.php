@@ -1,178 +1,73 @@
 <?php
-
 namespace admin\controller;
-use \core\Controller;//引入空间类文件
+use \core\controller;
+use \model\UserModel;
 
-class UserController extends Controller{
+class UserController extends Controller {
 
-    private $_fields;
+    ##标准预定义属性
+    protected $_datas = [];
+    protected $_navTab;
 
-    public function __construct(){ 
+    public function __construct(){
+
         parent::__construct();
 
-        $this->_fields['level'] = array('普通用户', '管理员');
-        $this->_fields['status'] = array('正常', '禁用');
-        $this->_fields['ori'] = array('注册', '后台添加');
-        $this->_fields['is_online'] = array('未知', '在线', '离线');
+        $this->_navTab = 'admin_user';
+
+        $this->_datas['url'] = [
+            'index' => ['url'=>L('/admin/user/index'), 'rel'=>$this->_navTab.'_index'],
+            'ad'    => ['url'=>L('/admin/user/add'), 'rel'=>$this->_navTab.'_add'],
+            'upd'    => ['url'=>L('/admin/user/upd'), 'rel'=>$this->_navTab.'_upd'],
+            'post'   => ['url'=>L('/admin/user/post')],
+        ];
+
+        $this->_datas['navTab'] = $this->_navTab;
+
+        $this->_datas['status'] = UserModel::C_STATUS;
+        $this->_datas['ori'] = UserModel::C_ORI;
+        $this->_datas['level'] = UserModel::C_LEVEL;
     }
 
-    #列表
-    public function userIndex(){ 
-        //查询数据
-        $sql = "select id, acc, nickname, cell, email, level, status, ori, post_date from bg_user where 1 limit 0, 20";
-        $rows = M()->getRows($sql);
+    public function index(){ 
 
-        $this->assign('rows', $rows);
-        $this->assign('fields', $this->_fields);
+        //接收数据
+        $request = REQUEST()->all();
 
-        $this->display('user/userIndex.tpl');
+        ///需要搜索的字段
+        $search_form = [
+            ['s_acc', 'like'],
+            ['s_nickname', 'like']
+        ];
+        $condition = F()->S2C($request, $search_form);
+        $conditon[] = ['is_del', 0];
+        $condition[] = ['level', 0];
+
+        ///构建查询对象
+        $obj = M()->table('user')->select('*')->where($condition);
+
+        #分页参数
+        $this->_datas['page'] = $page = $this->_paginate($request, $obj);
+
+        #查询数据
+        $this->_datas['rows'] = $obj->limit($page['limitM'] . ',' . $page['numPerPage'])->get();
+
+        ///表头信息
+        $this->_datas['thead'] = [
+            ['ch'=>'账号', 'width'=>120], 
+            ['ch'=>'用户昵称', 'width'=>120],
+            ['ch'=>'手机号', 'width'=>100], 
+            ['ch'=>'邮箱', 'width'=>160], 
+            ['ch'=>'用户级别', 'width'=>60],
+            ['ch'=>'状态', 'width'=>100],
+            ['ch'=>'新增来源', 'width'=>120],
+            ['ch'=>'ID', 'width'=>30], 
+        ];
+
+        //分配模板变量&渲染模板
+        $this->assign($this->_datas);
+        $this->display('user/index.tpl');
     }
 
-    #添加
-    public function userAdd(){ 
-        $this->display('user/userAdd.tpl');
-    }
-
-    public function userAddh(){ 
-        
-        //检查是否为空
-        TE($_POST, 'p=admin&m=user&a=userAdd', array(100, 'level', 'status'));
-
-        //过滤参数
-        T($_POST);
-
-        //检查不能重复的字段数据
-        $fieldsVals = array('acc'=>$_POST['acc']);
-        $accNum = M()->GN('bg_user', $fieldsVals);
-        if( $accNum )  $this->jump('账号已存在，请重新填写账号！', 'p=admin&m=user&a=userAdd');
-
-
-        //上传头像图片
-        if( $fname=M('FuploadTool', array($_FILES['img']))->up() ){
-            $_POST['img'] = $fname;
-        }
-        
-        //补全表数据
-        $_POST['post_date'] = time();
-        $_POST['ori'] = 1;
-        $_POST['salt'] = randStr();//随机6个字符
-
-        $_POST['pwd'] = md5( md5( $_POST['pwd'] ).$_POST['salt'] );
-
-        //执行新增操作
-        if( M()->setData('bg_user', $_POST) ){
-            $this->jump('新增用户成功！', 'p=admin&m=user&a=userIndex', 1);
-        }
-    }
-
-    #更新
-    public function userUpd(){ 
-
-        //检查是否为空
-        TE($_GET, 'p=admin&m=user&a=userIndex', array('id'));
-
-        //过滤参数
-        T($_GET['id']);
-
-        //查询回显数据
-        $sql = 'select * from bg_user where id=' . $_GET['id'];
-        $row = M()->getRow($sql);
-
-        $this->assign('row', $row);
-
-        $this->display('user/userUpd.tpl');
-    }
-
-    public function userUpdh(){ 
-
-        //检查是否为空（除了单选和多选，$_POST参数为空的表示不要修改）
-        TE($_GET, 'p=admin&m=user&a=userIndex', array('id'));
-
-        //过滤参数
-        T($_GET['id']);
-        T($_POST);
-
-        //构建需要更新的数据
-        $targets = array('level', 'status');//所有的单选和多选name值
-        $datas = array();
-        foreach( $_POST as $k=>$v ){ 
-            if( $v!==''&&!in_array($k, $targets)&&substr($k, -2)!='_o' )://检查普通表单域数据是否有更新
-                $datas[$k] = $v;
-            elseif( in_array($k, $targets) )://检查单选和多选数据是否有更新
-                if( $_POST[$k]!=$_POST[$k.'_o'] ){
-                    $datas[$k] = $v;
-                }
-            endif;
-        }
-
-        //处理密码
-        if( isset($datas['pwd']) ){
-            $sql = 'select salt from bg_user where id=' . $_GET['id'];
-            $row = M()->getRow($sql); 
-
-            $datas['pwd'] = md5( md5($datas['pwd']).$row['salt'] );
-        }
-
-        //检查头像是否有更新
-        if( !empty( $_FILES['img']['name'] ) ){
-            
-            //上传新的头像
-            if( $fname=M('FuploadTool', array($_FILES['img']))->up() ):
-                $datas['img'] = $fname;
-                //删除旧的头像
-                @unlink(PUBLIC_PATH . 'admin/upload/' . $_POST['img_o']);
-            endif;
-        }
-
-        //执行更新操作
-        if( !empty($datas) ){
-            if( M()->setData('bg_user', $datas, 2, array('id'=>$_GET['id'])) ):
-                $this->jump('编辑成功！', 'p=admin&m=user&a=userUpd&id='.$_GET['id'], 1);
-            endif;
-        }else{
-            $this->jump('没有任何数据被修改，请先修改数据！', 'p=admin&m=user&a=userUpd&id='.$_GET['id'], 1);
-        }
-    }
-
-    #删除
-    public function userDel(){ 
-        //检查是否为空
-        TE($_GET, 'p=admin&m=user&a=userIndex', array('id'));
-
-        //过滤参数
-        T($_GET['id']);
-
-        //删除条件
-        $con = array('id'=>$_GET['id']);
-
-        //删除操作
-        if( M()->setData('bg_user', $con, 3) ){
-            $this->jump('删除用户成功！', 'p=admin&m=user&a=userIndex', 1);
-        }
-    }
-
-    #改变用户状态
-    public function userStatus(){ 
-        //检查是否为空
-        TE($_GET, 'p=admin&m=user&a=userIndex', array('id'));
-
-        //过滤参数
-        T($_GET);
-
-        //构建数据
-        $datas = array('status'=>$_GET['status']);
-
-        //构建更新条件
-        $condition = array('id'=>$_GET['id']);
-
-        //修改数据
-        if( M()->setData('bg_user', $datas, 2, $condition) ){
-            if( $_GET['status']==0 ):
-                $this->jump('解除锁定成功！', 'p=admin&m=user&a=userIndex', 1);
-            elseif( $_GET['status']==1 ):
-                $this->jump('锁定成功！', 'p=admin&m=user&a=userIndex', 1);
-            endif;
-        }
-    }
-}
-
+    
+}      
