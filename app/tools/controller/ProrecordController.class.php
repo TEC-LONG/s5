@@ -102,7 +102,7 @@ class ProrecordController extends Controller {
         $this->display('Prorecord/index.tpl');
     }
 
-    public function info(){ 
+    public function oldinfo(){ 
 
         ///接收数据
         $request = REQUEST()->all();
@@ -134,7 +134,19 @@ class ProrecordController extends Controller {
         }
 
         $this->assign($this->_datas);
-        $this->display('Prorecord/info.tpl');
+        $this->display('Prorecord/newinfo.tpl');
+    }
+
+    public function info(){ 
+
+        ///接收数据
+        $request = REQUEST()->all();
+        
+        ///查询数据
+        $this->_datas['row'] = $row = M()->table('prorecord')->select('*')->where(['id', $request['id']])->find();
+
+        $this->assign($this->_datas);
+        $this->display('Prorecord/newinfo.tpl');
     }
 
     public function ad(){ 

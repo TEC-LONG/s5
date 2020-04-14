@@ -63,6 +63,17 @@ class ExpController extends Controller {
         $request = REQUEST()->all();
         
         ///查询数据
+        $this->_datas['row'] = M()->table('expnew')->select('*')->where(['id', $request['id']])->find();
+
+        $this->assign($this->_datas);
+        $this->display('Exp/newinfo.tpl');
+    }
+
+    public function oldinfo(){ 
+        ///接收数据
+        $request = REQUEST()->all();
+        
+        ///查询数据
         $this->_datas['row'] = $row = M()->table('expnew')->select('*')->where(['id', $request['id']])->find();
 
         ///获取md文件url
@@ -120,6 +131,7 @@ class ExpController extends Controller {
         $datas['tags'] = $request['tags'];
         $datas['post_date'] = time();
         $datas['content'] = str_replace('"', '&quot;',str_replace('\\', '\\\\', $request['content']));
+        $datas['content_html'] = $request['editormd-html-code'];
         $datas['expcat__id'] = $expcat3_arr[0];
         $datas['expcat__name'] = $expcat3_arr[1];
         $datas['crumbs_expcat_ids'] = $expcat1_arr[0] . '|' . $expcat2_arr[0] . '|' . $expcat3_arr[0];
@@ -164,6 +176,7 @@ class ExpController extends Controller {
 
         $request['expcat__id'] = $expcat3_arr[0];
         $request['expcat__name'] = $expcat3_arr[1];
+        $request['content_html'] = $request['editormd-html-code'];
         $request['content'] = str_replace('"', '&quot;',str_replace('\\', '\\\\', $request['content']));
         $request['crumbs_expcat_ids'] = $expcat1_arr[0] . '|' . $expcat2_arr[0] . '|' . $expcat3_arr[0];
         $request['crumbs_expcat_names'] = $expcat1_arr[1] . '|' . $expcat2_arr[1] . '|' . $expcat3_arr[1];
@@ -171,7 +184,7 @@ class ExpController extends Controller {
         ///取出修改了的数据
         #查询已有数据
         $row = M()->table('expnew')->select('*')->where(['id', $request['id']])->find();
-        $update_data = F()->compare($request, $row, ['title', 'tags', 'content', 'crumbs_expcat_names', 'crumbs_expcat_ids', 'expcat__id', 'expcat__name']);
+        $update_data = F()->compare($request, $row, ['title', 'tags', 'content', 'crumbs_expcat_names', 'crumbs_expcat_ids', 'expcat__id', 'expcat__name', 'content_html']);
 
         if( empty($update_data) ){
             $this->jump('您还没有修改任何数据！请先修改数据。', 'p=tools&m=exp&a=upd&id='.$request['id']);

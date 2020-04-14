@@ -1,0 +1,1613 @@
+<div class="col-sm line-numbers content">
+    <h1 id="h1-u4E1Au52A1u6D41u7A0Bu76F8u5173"><a name="业务流程相关" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>业务流程相关</h1>
+    <h2 id="h2-u6CE8u518Cu666Eu901Au4F1Au5458"><a name="注册普通会员" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>注册普通会员</h2>
+    <pre><code class="lang-shell">两个普通会员：
+1. 18502088664  jiufu123
+2. 18502088665  jiufu123
+
+以dev环境为例：
+注册页面填写注册信息：https://dev.xianmai88.com/register
+邀请码获取途径：
+1. 前台会员登录--》会员中心首页--》我的邀请--》我要推荐--》推荐码
+2. 管理员后台--》会员管理--》先迈公司经理--》随便找一个组的邀请码     （这里需要注意的是如果是通过后台老会员推荐的话，那么这个新注册的会员将会自动免费开通权益）
+验证码后台获取途径：后台--》信息管理--》验证码列表--》搜索对应手机号
+dev后台优惠券发放：https://dev.xianmai88.com/manage/send-coupon
+优惠券id：xm_coupon表查找
+</code></pre>
+    <h1 id="h1-u5173u952Eu6587u4EF6"><a name="关键文件" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>关键文件</h1>
+    <pre><code class="lang-shell">1. webappModulesApiHttp
+outes.php
+2. webappConsoleKernel.php
+3. webappModulesManageHttp
+outes.php
+4. webappModulesUserHttp
+outes.php
+5. webconfigfinance.php
+</code></pre>
+    <h1 id="h1-u7B2Cu4E00u6B21u90E8u7F72"><a name="第一次部署" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>第一次部署</h1>
+    <ol>
+        <li>拉取代码；</li>
+        <li>注意.gitignore中忽略的目录，没有的创建出来，特别注意storage/framework/sessions这个目录，将会影响到session的写入；</li>
+    </ol>
+    <h1 id="h1--"><a name="寻找(加载)模板" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>寻找(加载)模板</h1>
+    <p>框架中的模板使用了laravel-theme，所以寻的模板的方式不同于laravel中的view方法，举例说明：</p>
+    <pre><code class="lang-php">#XX:xxxwebappModulesManageHttpControllersAuthAuthController.php
+public function getLogin()
+{
+if (ManagerModel::getManager()){
+return redirect($this-&gt;redirectPath);
+}
+
+$this-&gt;initTheme(&#39;managelogin&#39;);
+$this-&gt;theme-&gt;setTitle(&#39;后台登录&#39;);
+###
+# 通过scope方法寻的的是：xxx/web/public/themes/default/views/manage/login.blade.php
+###
+return $this-&gt;theme-&gt;scope(&#39;manage.login&#39;)-&gt;render();
+}
+</code></pre>
+    <p>laravel-theme的github地址：<a
+            href="https://github.com/teepluss/laravel-theme">https://github.com/teepluss/laravel-theme</a></p>
+    <h1 id="h1-u540Eu53F0u5F39u7A97"><a name="后台弹窗" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>后台弹窗</h1>
+    <h2 id="h2-u5217u8868u6570u636Eu5F39u7A97u548Cu5220u9664u63D0u793Au5F39u7A97u53C2u8003"><a name="列表数据弹窗和删除提示弹窗参考"
+            class="reference-link"></a><span class="header-link octicon octicon-link"></span>列表数据弹窗和删除提示弹窗参考</h2>
+    <p>后台—&gt;运营工具—&gt;活动专题—&gt;模块组件—&gt;添加—&gt;选择任务单</p>
+    <pre><code class="lang-php">路由：/manage/topicModule/ad?topic_id=20
+模板页：/public/themes/default/views/manage/topic_module/ad.blade.php
+Route::group([&#39;prefix&#39;=&gt;&#39;topicModule&#39;], function (){
+......
+Route::get(&#39;/ad&#39;, &#39;TopicModuleController@ad&#39;)-&gt;name(&#39;activityTopicEdit&#39;); //添加页面
+......
+});
+
+http://local.xianmai.com/manage/activityTopic/index
+</code></pre>
+    <h2 id="h2-u9A8Cu8BC1u63D0u793Au5F39u7A97u53C2u8003"><a name="验证提示弹窗参考" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>验证提示弹窗参考</h2>
+    <p>后台—&gt;系统配置—&gt;全局配置—&gt;系统数据配置—&gt;APP首页数据</p>
+    <pre><code class="lang-php">路由：/manage/config/newplatformdata
+模板页：/public/themes/default/views/manage/config/platformdata.blade.php
+Route::get(&#39;/config/newplatformdata&#39;, &#39;ConfigController@newGetPlatformdata&#39;)-&gt;name(&#39;platformdata&#39;); //提交平台数据
+</code></pre>
+    <h1 id="h1-u6570u636Eu8868u64CDu4F5C"><a name="数据表操作" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>数据表操作</h1>
+    <h2 id="h2-u6A21u578Bu6587u4EF6"><a name="模型文件" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>模型文件</h2>
+    <p>以TopicModel为例（xxxwebappModulesManageModelTopicModel.php）：</p>
+    <pre><code class="lang-php">&lt;?php
+namespace AppModulesManageModel;
+
+use IlluminateDatabaseEloquentModel;
+
+class TopicModel extends Model
+{
+protected $table = &#39;topic&#39;;//表名
+
+//字段列表
+protected $fillable = [
+&#39;id&#39;, &#39;name&#39;, &#39;type&#39;, &#39;share_title&#39;, &#39;share_sub_title&#39;, &#39;share_img&#39;, &#39;is_publish&#39;
+];
+
+//待查明？
+public  $timestamps = true;
+}
+</code></pre>
+    <p>以FundingThrShopStatisticsModel为例（xxxwebappModulesManageModelFundingThrShopStatisticsModel.php）</p>
+    <pre><code class="lang-php">&lt;?php
+namespace AppModulesManageModel;
+use IlluminateDatabaseEloquentModel;
+
+class FundingThrShopStatisticsModel extends Model
+{
+protected $table = &#39;funding_thr_shop_statistics&#39;;
+
+protected $fillable = [
+&#39;id&#39;,&#39;action&#39;,&#39;income&#39;,&#39;total_income&#39;,&#39;order_num&#39;,&#39;user_reward&#39;,&#39;group_reward&#39;,&#39;trustee_reward&#39;,&#39;referee_reward&#39;,&#39;agent_reward&#39;,&#39;other&#39;,&#39;day&#39;,&#39;created_at&#39;,&#39;updated_at&#39;,
+];
+
+public  $timestamps = true;
+
+//某字段对应的值可以定义于此
+const ACTION_DESC_MAP = [
+1 =&gt; &#39;淘宝客&#39;,
+2 =&gt; &#39;福利任务&#39;
+];
+}
+</code></pre>
+    <h2 id="h2--db-"><a name="使用内置DB或模型文件操作数据表" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>使用内置DB或模型文件操作数据表</h2>
+    <p>具体使用哪种方式应根据实际情况来选择。</p>
+    <pre><code class="lang-php">&lt;?php
+///统计数据条数
+# DB方式
+$count = DB::table(&#39;user_permission_menu&#39;)-&gt;where([&#39;menu_id&#39; =&gt; $menu_id, &#39;permission_id&#39; =&gt; $permission_id])-&gt;count()；
+# 模型方式
+$count = PermissionMenuModel::select(DB::raw(&#39;count(*) as num&#39;))-&gt;&gt;where([&#39;menu_id&#39; =&gt; $menu_id, &#39;permission_id&#39; =&gt; $permission_id]);
+
+///新增数据
+# DB方式
+DB::table(&#39;user_permission_menu&#39;)-&gt;insert([&#39;permission_id&#39; =&gt; $permission_id, &#39;menu_id&#39; =&gt; $menu_id]);
+# 模型方式
+PermissionMenuModel::insert([&#39;permission_id&#39; =&gt; $permission_id, &#39;menu_id&#39; =&gt; $menu_id]);
+
+///删除数据
+# DB方式
+DB::table(&#39;user_permission_menu&#39;)-&gt;where([&#39;permission_id&#39; =&gt; $permission_id, &#39;menu_id&#39; =&gt; $old_menu_id])-&gt;delete();
+# 模型方式
+PermissionMenuModel::where([&#39;permission_id&#39; =&gt; $permission_id, &#39;menu_id&#39; =&gt; $old_menu_id])-&gt;delete();
+
+///修改数据   待补充？
+
+///查询数据  待补充？
+</code></pre>
+    <h2 id="h2-where"><a name="where" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>where</h2>
+    <pre><code class="lang-php">&lt;?php
+///使用where一次指定单个条件
+$re[&#39;sts_user_num&#39;] = UserTrainPopupModel::select(DB::raw(&#39;count(*) as num&#39;))
+-&gt;where(&#39;popup_type&#39;, 2)
+-&gt;where(&#39;pid&#39;, $popupid)
+-&gt;where(&#39;is_understand&#39;, &#39;!=&#39;, 0)
+-&gt;first();
+
+///使用where一次指定多个条件,并组合使用where一次指定单条件
+$re[&#39;sts_user_num&#39;] = UserTrainPopupModel::select(DB::raw(&#39;count(*) as num&#39;))
+-&gt;where([
+&#39;popup_type&#39;=&gt;2,
+&#39;pid&#39;=&gt;$popupid
+])
+-&gt;where(&#39;is_understand&#39;, &#39;!=&#39;, 0)
+-&gt;first();
+</code></pre>
+    <h2 id="h2-wherein"><a name="whereIn" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>whereIn</h2>
+    <pre><code class="lang-php">&lt;?php
+///例1：
+$stat_condition = [1, 2, 3, 4];//1:已发布  2:已结束  3:已下架  4:待审核
+$last_time = $tmp_config_last[&#39;deadline&#39;];//上次统计的最后时间
+$now_time = date(&#39;Y-m-d H:i:s&#39;);
+
+$tmp_real_sum_fee_arr = TasksModel::select(DB::raw(&#39;sum(times*price) as num&#39;))
+-&gt;where(&#39;created_at&#39;, &#39;&gt;&#39;, $last_time)
+-&gt;where(&#39;created_at&#39;, &#39;&lt;=&#39;, $now_time)
+-&gt;whereIn(&#39;state&#39;, $stat_condition)
+-&gt;first()-&gt;toArray();
+
+///例2：
+//分类和扩展分类
+$cid=$search[&#39;cid&#39;];
+$ext_goods_id=GoodsExtCategoryModel::select(&#39;goods_id&#39;)-&gt;where(&#39;cat_id&#39;,$cid)-&gt;get()-&gt;toArray();
+$goodsList=$goodsList-&gt;where(function ($query) use ($cid,$ext_goods_id){
+$query-&gt;whereIn(&#39;goods.id&#39;,$ext_goods_id)-&gt;orWhere(&#39;goods.cid&#39;,$cid);
+});
+</code></pre>
+    <h2 id="h2-orwhere"><a name="orWhere" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>orWhere</h2>
+    <pre><code class="lang-php">&lt;?php
+///例1：
+$num = AdModel::where(&#39;target_id&#39;,intval($data[&#39;target_id&#39;]))
+-&gt;where(function($num){
+$num-&gt;where(&#39;end_time&#39;,&#39;0000-00-00 00:00:00&#39;)
+-&gt;orWhere(&#39;end_time&#39;,&#39;&gt;&#39;,date(&#39;Y-m-d H:i:s&#39;,time()));
+})
+-&gt;where(&#39;is_open&#39;,1)
+-&gt;count();
+
+///例2：
+$order_no = $request-&gt;get(&#39;order_no&#39;);
+$order_data = OrdersModel::where(&#39;parent_sn&#39;, $order_no)-&gt;orWhere(&#39;order_sn&#39;, $order_no)-&gt;get()-&gt;toArray();
+</code></pre>
+    <h2 id="h2-whereraw"><a name="whereRaw" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>whereRaw</h2>
+    <pre><code class="lang-php">&lt;?php
+///案例1：
+private function task_reward($type=1){
+if( $type==1 ){//任务奖励
+$tmp_user_tasks = UserTasksModel::select(&#39;user_tasks.code&#39;, &#39;user_tasks.uid as sec_id&#39;, &#39;u.mobile&#39;);
+}elseif ( $type==2 ) {//分发任务
+$tmp_user_tasks = UserTasksModel::select(&#39;user_tasks.code&#39;, &#39;user_tasks.distributer_id as sec_id&#39;, &#39;u.mobile&#39;);
+}
+
+$tmp_user_tasks = $tmp_user_tasks-&gt;leftJoin(&#39;users as u&#39;, &#39;u.id&#39;, &#39;=&#39;, &#39;user_tasks.uid&#39;)-&gt;where(&#39;user_tasks.state&#39;, 5);
+if($type==2) $tmp_user_tasks=$tmp_user_tasks-&gt;where(&#39;user_tasks.is_distribution&#39;, 1);
+$tmp_user_tasks=$tmp_user_tasks-&gt;orderby(&#39;user_tasks.completed_at&#39;, &#39;desc&#39;)-&gt;limit(10)-&gt;get()-&gt;toArray();
+
+$tmp = [];
+foreach( $tmp_user_tasks as $v){
+
+$key = $v[&#39;code&#39;] . &#39;_&#39; . $v[&#39;sec_id&#39;];
+$tmp[$key][&#39;mobile&#39;] = $v[&#39;mobile&#39;];
+}
+
+$sub_sql = &#39; (uid,order_id) in (select &#39;;
+
+if( $type==1 ){
+$sub_sql .= &#39;t.uid,&#39;;
+}elseif( $type==2 ){
+$sub_sql .= &#39;t.distributer_id as uid,&#39;;
+}
+
+$sub_sql .= &#39; t.code as order_id from (select * from xm_user_tasks where state=5&#39;;
+
+if($type==2) $sub_sql.=&#39; and is_distribution=1&#39;;
+$sub_sql .= &#39; order by completed_at desc limit 10) as t) &#39;;
+
+/*
+select `uid`, `order_id`, `money` from `xm_funding_details` where  (uid,order_id) in (select t.uid, t.code as order_id from (select * from xm_user_tasks where state=5 order by completed_at desc limit 10) as t)  and `account_type` = &#39;0&#39; and `action` = &#39;3&#39;
+*/
+$tmp_funding_details = FundingDetailsModel::select(&#39;uid&#39;, &#39;order_id&#39;, &#39;money&#39;)
+-&gt;whereRaw($sub_sql)
+-&gt;where(&#39;account_type&#39;, 0)
+-&gt;where(&#39;action&#39;, 3)
+-&gt;get()-&gt;toArray();
+
+foreach($tmp_funding_details as $v){
+
+$key = $v[&#39;order_id&#39;] . &#39;_&#39; . $v[&#39;uid&#39;];
+if( isset($tmp[$key]) ){
+$tmp[$key][&#39;money&#39;] = $v[&#39;money&#39;];
+}
+}
+return $tmp;
+}
+
+///案例2： chunk方法待查明??
+UserTasksModel::select($filed)
+-&gt;leftJoin(&#39;task_brokerage_pay as tbp&#39;,&#39;tbp.user_task_id&#39;,&#39;=&#39;,&#39;user_tasks.id&#39;)
+-&gt;where(&#39;user_tasks.state&#39;,&#39;=&#39;,5)
+-&gt;where(&#39;user_tasks.is_distribution&#39;,&#39;=&#39;,1)
+-&gt;where(&#39;user_tasks.pid&#39;,&#39;=&#39;,0)
+-&gt;whereRaw(&#39; NOT EXISTS ( SELECT * FROM xm_user_tasks_packet AS utp WHERE utp.user_task_id = xm_user_tasks.id ) &#39;)
+-&gt;chunk(1000,function($data)use($distributionService,$reward,&amp;$single){
+$single += count($data);
+foreach ($data as $item){
+$distributionService-&gt;firendTaskCheckAgain($item-&gt;id,5,$reward);
+sleep(5);
+}
+});
+</code></pre>
+    <h2 id="h2-u67E5u8BE2"><a name="查询" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>查询</h2>
+    <h3 id="h3-u83B7u53D6u4E00u6761"><a name="获取一条" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>获取一条</h3>
+    <pre><code class="lang-php">&lt;?php
+///first方法获得单条数据对象，toArray方法转化对象为数组
+## 注意：
+### 1. 如果查询不到数据，则first方法将会返回null，而非对象，如果为null则不能接着调用toArray，所以最好先判断，在调用toArray
+
+$config_data = ConfigModel::select(&#39;*&#39;)-&gt;where(&#39;alias&#39;, &#39;app_index_data&#39;)-&gt;first();
+if (!empty($config_data)) {
+$config_data = $config_data-&gt;toArray();
+$rule = json_decode($config_data[&#39;rule&#39;], true);
+}else{
+$rule = (new PlatformDataService)-&gt;newSetIndexData();
+}
+</code></pre>
+    <h3 id="h3--leftjoin-"><a name="获取多条(含leftJoin)" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>获取多条(含leftJoin)</h3>
+    <pre><code class="lang-php">&lt;?php
+/// get方法获得包含多条数据的对象，toArray方法转化对象为数据数组
+## 注意：
+### 1. 如果查询不到数据，则first方法将会返回null，而非对象，如果为null则不能接着调用toArray，所以最好先判断，在调用toArray
+
+$data[&#39;topic_goods&#39;] = TopicGoodsModel::select(&#39;topic_goods.id as topic_goods_id&#39;, &#39;topic_goods.goods_id&#39;, &#39;topic_goods.tag_img&#39;, &#39;topic_goods.sort&#39;, &#39;goods.*&#39;, &#39;goods_category.title as cat_name&#39;, &#39;supplier.name as supplier_name&#39;)
+-&gt;leftJoin(&#39;topic_module&#39;, &#39;topic_goods.topic_module_id&#39;, &#39;=&#39;, &#39;topic_module.id&#39;)
+-&gt;leftJoin(&#39;goods&#39;, &#39;topic_goods.goods_id&#39;, &#39;=&#39;, &#39;goods.id&#39;)
+-&gt;leftjoin(&#39;goods_category&#39;, &#39;goods.cid&#39;, &#39;=&#39;, &#39;goods_category.id&#39;)
+-&gt;leftjoin(&#39;supplier&#39;, &#39;goods.sid&#39;, &#39;=&#39;, &#39;supplier.id&#39;)
+-&gt;where(&#39;topic_module.id&#39;, &#39;=&#39;, $arrData[&#39;id&#39;])-&gt;orderby(&#39;topic_goods.sort&#39;)-&gt;get();
+
+if(!empty($data[&#39;topic_goods&#39;])){
+$data[&#39;topic_goods&#39;] = $data[&#39;topic_goods&#39;]-&gt;toArray();
+}
+</code></pre>
+    <h2
+        id="h2-u6A21u677Fu9875u4E2Du901Au8FC7u67E5u8BE2u6570u636Eu7684u5BF9u8C61u83B7u5F97u603Bu7684u8BB0u5F55u6761u6570">
+        <a name="模板页中通过查询数据的对象获得总的记录条数" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>模板页中通过查询数据的对象获得总的记录条数</h2>
+    <p>控制器页面：<code>xxxwebappModulesManageHttpControllersPayRecordController.php</code></p>
+    <pre><code class="lang-php">&lt;?php
+......
+class PayRecordController extends ManageController
+{
+......
+public function payRecordList(Request $request){
+
+......
+
+if( $has_search ){//初始状态下必须要有条件才查数据
+
+//根据搜索数据构建搜索条件
+$con = $this-&gt;_get_condition($search, $this-&gt;_init[&#39;search&#39;]);
+
+$pay_record_list = PayRecordModel::select(&#39;pay_record.*&#39;, &#39;users.mobile&#39;)-&gt;leftjoin(&#39;users&#39;, &#39;pay_record.uid&#39;, &#39;=&#39;, &#39;users.id&#39;);
+$pay_record_list = $this-&gt;_multi_where($pay_record_list, $con)-&gt;orderBy(&#39;created_at&#39;, &#39;desc&#39;);
+$this-&gt;_datas[&#39;list&#39;] = $pay_record_list-&gt;paginate(15);
+
+}else {
+$this-&gt;_datas[&#39;list&#39;] = [];
+}
+
+//展示模板
+return $this-&gt;theme-&gt;scope(&#39;manage.payRecordList&#39;, $this-&gt;_datas)-&gt;render();
+}
+
+......
+}
+</code></pre>
+    <p>模板页面：<code>xxxwebpublic	hemesdefaultviewsmanagepayRecordList.blade.php</code></p>
+    <pre><code class="lang-html">...
+@if(isset($list) &amp;&amp; !empty($list))
+&lt;div class=&quot;listTj&quot;&gt;总记录：{{$list-&gt;total()}}条 &lt;/div&gt;
+@endif
+...
+</code></pre>
+    <h2 id="h2-orderby"><a name="orderBy" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>orderBy</h2>
+    <pre><code class="lang-php">&lt;?php
+$topicModuleList = TopicModuleModel::whereRaw(&quot;1=1&quot;);
+$topicModuleList = $topicModuleList-&gt;select(&#39;id&#39;, &#39;topic_id&#39;, &#39;sort&#39;, &#39;title&#39;, &#39;img_title&#39;, &#39;is_show&#39;, &#39;created_at&#39;, &#39;type&#39;)-&gt;orderBy(&#39;sort&#39;, &#39;asc&#39;)-&gt;orderBy(&#39;created_at&#39;, &#39;desc&#39;)-&gt;where(&#39;topic_id&#39;, $arrData[&#39;topic_id&#39;]);
+</code></pre>
+    <h2 id="h2-u65B0u589E"><a name="新增" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>新增</h2>
+    <h3 id="h3-u4E00u6B21u65B0u589Eu4E00u6761"><a name="一次新增一条" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>一次新增一条</h3>
+    <pre><code class="lang-php">&lt;?php
+///案例1：
+#xm_topic_module
+$topic_module_data = [
+&#39;topic_id&#39;     =&gt; $arrData[&#39;topic_id&#39;],
+&#39;title&#39;     =&gt; isset($arrData[&#39;title&#39;]) ? $arrData[&#39;title&#39;] : &#39;&#39;,//商城模板的标题是图片
+&#39;img_title&#39; =&gt; isset($uploadRes[&#39;data&#39;][&#39;url&#39;]) ? $uploadRes[&#39;data&#39;][&#39;url&#39;] : &#39;&#39;,
+&#39;tmpl_type&#39; =&gt; $arrData[&#39;topic_type&#39;],
+&#39;created_at&#39; =&gt; date(&#39;Y-m-d H:i:s&#39;)
+];
+
+if( $arrData[&#39;topic_type&#39;]==1 &amp;&amp; $arrData[&#39;templ_type&#39;]==2 ){//任务单--模板二
+
+......
+
+##新增数据xm_topic_module，获取新增id
+$topic_module_id = TopicModuleModel::insertGetId($topic_module_data);
+if( !$topic_module_id ) return redirect()-&gt;to(&#39;/manage/topicModule/ad?topic_id=&#39;.$arrData[&#39;topic_id&#39;])-&gt;with([&#39;error&#39;=&gt;&#39;新增模块失败！&#39;]);
+......
+}
+
+///案例2：
+PermissionMenuModel::insert([&#39;permission_id&#39; =&gt; $permission_id, &#39;menu_id&#39; =&gt; $menu_id]);
+</code></pre>
+    <h3 id="h3-u4E00u6B21u65B0u589Eu591Au6761"><a name="一次新增多条" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>一次新增多条</h3>
+    <pre><code class="lang-php">&lt;?php
+$tag_img = $request-&gt;file(&#39;tag_img&#39;);//标签图
+foreach ($arrData[&#39;sort&#39;] as $key =&gt; $sort) {
+......
+
+##新增数据汇总
+if( $arrData[&#39;topic_type&#39;]==2 ){//商城模板
+
+$topic_goods_data[] = [
+&#39;topic_module_id&#39; =&gt; $topic_module_id,
+&#39;sort&#39; =&gt; $sort,
+&#39;tag_img&#39; =&gt; isset($uploadRes[&#39;data&#39;][&#39;url&#39;]) ? $uploadRes[&#39;data&#39;][&#39;url&#39;] : &#39;&#39;,
+&#39;goods_id&#39; =&gt; $arrData[&#39;goods_id&#39;][$key],
+&#39;created_at&#39; =&gt; date(&#39;Y-m-d H:i:s&#39;)
+];
+
+}else{//任务单模板
+
+$topic_task_data[] = [
+&#39;related_id&#39; =&gt; $topic_module_id,
+&#39;sort&#39; =&gt; $sort,
+&#39;tag_img&#39; =&gt; isset($uploadRes[&#39;data&#39;][&#39;url&#39;]) ? $uploadRes[&#39;data&#39;][&#39;url&#39;] : &#39;&#39;,
+&#39;task_id&#39; =&gt; $arrData[&#39;task_id&#39;][$key],
+&#39;type&#39; =&gt; 2,
+&#39;created_at&#39; =&gt; date(&#39;Y-m-d H:i:s&#39;)
+];
+}
+}
+
+switch($arrData[&#39;topic_type&#39;]){
+case 2://关联商品
+if( !TopicGoodsModel::insert($topic_goods_data) ) return redirect()-&gt;to(&#39;/manage/topicModule/ad?topic_id=&#39;.$arrData[&#39;topic_id&#39;])-&gt;with([&#39;error&#39;=&gt;&#39;新增关联商品失败！&#39;]);
+break;
+default://关联任务单
+if( !TopicTaskModel::insert($topic_task_data) ) return redirect()-&gt;to(&#39;/manage/topicModule/ad?topic_id=&#39;.$arrData[&#39;topic_id&#39;])-&gt;with([&#39;error&#39;=&gt;&#39;新增任务单失败！&#39;]);
+break;
+}
+</code></pre>
+    <h2 id="h2-u4FEEu6539"><a name="修改" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>修改</h2>
+    <pre><code class="lang-php">&lt;?php
+///案例1：
+ConfigModel::where(&#39;alias&#39;, &#39;app_index_data&#39;)-&gt;update([&#39;rule&#39;=&gt;json_encode($data)]);
+
+///案例2：
+foreach ($res as $k =&gt; $value) {
+$key = &#39;activity_&#39;.$keyExt.&#39;_&#39;.$value-&gt;id;
+if (Cache::has($key)) {
+$cacheUv = Cache::get($key);
+if ($cacheUv &gt; $value-&gt;uv) {
+TaskExtraBonusModel::query()-&gt;where(&#39;id&#39;, $value-&gt;id)-&gt;update([&#39;uv&#39; =&gt; $value-&gt;uv]);
+} elseif ($cacheUv &lt; $value-&gt;uv) {
+Cache::forever($key, $value-&gt;uv);
+}
+}
+}
+</code></pre>
+    <h3 id="h3-updateorcreate"><a name="updateOrCreate" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>updateOrCreate</h3>
+    <p>案例1：</p>
+    <pre><code class="lang-php">ThrUsersModel::updateOrCreate([&#39;uid&#39; =&gt; $this-&gt;userInfo-&gt;uid, &#39;platform&#39; =&gt; 1], $data);
+</code></pre>
+    <p>案例2：<br><img src="/upload/editormdimg/2020/04/editormd_5e8c4d7877f3b20200407175256.211.png" alt=""></p>
+    <h2 id="h2-u5220u9664"><a name="删除" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>删除</h2>
+    <p>案例1：</p>
+    <pre><code class="lang-php">CountOpenServiceMonthlyModel::whereIn(&#39;group_id&#39;,$groupIds)-&gt;delete();
+</code></pre>
+    <p>案例2：”使用内置DB或模型文件操作数据表”中”删除”操作案例。</p>
+    <h1 id="h1-u5206u9875"><a name="分页" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>分页</h1>
+    <p>以 ‘后台-&gt;运营工具-&gt;营销工具管理-&gt;数据统计-&gt;调研弹窗统计’ 列表为例:</p>
+    <pre><code class="lang-php">&lt;?php
+///路由：/manage/marketingPopup/marketingPopupStatistics/111?type=2
+///控制器部分：app/Modules/Manage/Http/Controllers/MarketingPopupController.php
+public function marketingPopupStatistics($id, Request $request)
+{
+$data = MarketingPopupServices::getInstance()-&gt;pageData();
+$arrData = $request-&gt;all();
+$data[&#39;type&#39;] = $type = $request-&gt;get(&#39;type&#39;, 1);//1表示显示第一个tab（既&quot;统计&quot;),2表示显示第二个tab（既&quot;调研弹窗统计&quot;）
+
+if( $type==1 ){
+......
+}elseif( $type==2 ){
+
+///调研弹窗统计--汇总统计数据
+$popupid = $id;//培训窗id
+
+$main_statistics = MarketingPopupServices::getInstance()-&gt;stsStatistics($popupid);
+
+///列表数据
+$sts_list = UserTrainPopupModel::select(&#39;user_train_popup.*&#39;, &#39;u.mobile&#39;)-&gt;leftJoin(&#39;users as u&#39;, &#39;u.id&#39;, &#39;=&#39;, &#39;user_train_popup.user_id&#39;)
+-&gt;where(&#39;user_train_popup.relation_popup_id&#39;, $popupid)
+-&gt;where(&#39;user_train_popup.is_understand&#39;, &#39;!=&#39;, 0);
+
+if( isset($arrData[&#39;mobile&#39;])&amp;&amp;!empty($arrData[&#39;mobile&#39;]) ){
+$sts_list = $sts_list-&gt;where(&#39;u.mobile&#39;, $arrData[&#39;mobile&#39;]);
+}
+
+if( isset($arrData[&#39;is_understand&#39;])&amp;&amp;!empty($arrData[&#39;is_understand&#39;]) ){
+$sts_list = $sts_list-&gt;where(&#39;user_train_popup.is_understand&#39;, $arrData[&#39;is_understand&#39;]);
+}
+$data[&#39;sts_list&#39;] = $sts_list-&gt;paginate(15);//////分页对象【关键】
+
+///组装数据
+$data = array_merge($data, $main_statistics);
+$data[&#39;data&#39;][&#39;id&#39;] = $id;
+$data[&#39;search&#39;] = $arrData;//////分页携带的搜索数据【关键】
+
+if (isset($arrData[&#39;is_export&#39;]) &amp;&amp; $arrData[&#39;is_export&#39;] == 1) {
+$export_data = empty($data[&#39;sts_list&#39;]) ? [] : $data[&#39;sts_list&#39;]-&gt;toArray();
+$safe = $request-&gt;get(&#39;stssafe&#39;, 1);//1为导出，2为安全导出
+MarketingPopupServices::getInstance()-&gt;stsExport($export_data[&#39;data&#39;], $safe);
+exit();
+}
+}
+return $this-&gt;theme-&gt;scope(&#39;manage.marketing_popup.marketingPopupStatistics&#39;, $data)-&gt;render();
+}
+
+///模板页面部分：public/themes/default/views/manage/marketing_popup/marketingPopupStatistics.blade.php
+......
+&lt;!-- 搜索部分 --&gt;
+&lt;form  role=&quot;form&quot; action=&quot;/manage/marketingPopup/marketingPopupStatistics/{{$data[&#39;id&#39;]}}&quot; method=&quot;get&quot;&gt;
+&lt;input type=&quot;hidden&quot; name=&quot;type&quot; value=&quot;2&quot; /&gt;
+&lt;div class=&quot;form-group search-list width285&quot;&gt;
+用户手机号：
+&lt;input type=&quot;text&quot; class=&quot;form-control&quot; name=&quot;mobile&quot; value=&quot;@if(isset($search[&#39;mobile&#39;])){{$search[&#39;mobile&#39;]}}@endif&quot;&gt;
+&lt;/div&gt;
+&lt;div class=&quot;form-group search-list width285&quot;&gt;
+状态：
+&lt;select name=&quot;is_understand&quot;&gt;
+&lt;option value=&quot;0&quot;&gt;全部&lt;/option&gt;
+&lt;option value=&quot;1&quot; @if(isset($search[&#39;is_understand&#39;])&amp;&amp;$search[&#39;is_understand&#39;]==1) selected @endif&gt;已掌握&lt;/option&gt;
+&lt;option value=&quot;2&quot; @if(isset($search[&#39;is_understand&#39;])&amp;&amp;$search[&#39;is_understand&#39;]==2) selected @endif&gt;未掌握&lt;/option&gt;
+&lt;/select&gt;
+&lt;/div&gt;
+&lt;div class=&quot;form-group search-list width285&quot;&gt;
+&lt;button type=&quot;submit&quot; class=&quot;btn btn-primary btn-sm&quot; style=&quot;margin-right:100px;&quot;&gt;搜索&lt;/button&gt;
+&lt;button type=&quot;button&quot; class=&quot;btn btn-primary btn-sm reset&quot; id=&quot;sts_export&quot;&gt;导出&lt;/button&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;
+&lt;button type=&quot;button&quot; class=&quot;btn btn-primary btn-sm reset&quot; id=&quot;sts_safe_export&quot;&gt;安全导出&lt;/button&gt;
+&lt;/div&gt;
+&lt;/form&gt;
+......
+&lt;div class=&quot;row&quot;&gt;
+&lt;div class=&quot;col-md-12&quot;&gt;
+&lt;div class=&quot;dataTables_paginate paging_bootstrap text-right row&quot;&gt;
+&lt;!-- 分页列表 --&gt;
+{!! $sts_list-&gt;appends($search)-&gt;render() !!}
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+    <h1 id="h1-u5BFCu51FAu4E0Eu5B89u5168u5BFCu51FA"><a name="导出与安全导出" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>导出与安全导出</h1>
+    <p>以 ‘后台-&gt;运营工具-&gt;营销工具管理-&gt;数据统计-&gt;调研弹窗统计’ 列表中的’导出’与’安全导出’为例:</p>
+    <pre><code class="lang-php">&lt;?php
+///模板页面部分：public/themes/default/views/manage/marketing_popup/marketingPopupStatistics.blade.php
+......
+&lt;!-- 搜索部分 --&gt;
+&lt;form  role=&quot;form&quot; action=&quot;/manage/marketingPopup/marketingPopupStatistics/{{$data[&#39;id&#39;]}}&quot; method=&quot;get&quot;&gt;
+......
+&lt;div class=&quot;form-group search-list width285&quot;&gt;
+&lt;button type=&quot;submit&quot; class=&quot;btn btn-primary btn-sm&quot; style=&quot;margin-right:100px;&quot;&gt;搜索&lt;/button&gt;
+&lt;button type=&quot;button&quot; class=&quot;btn btn-primary btn-sm reset&quot; id=&quot;sts_export&quot;&gt;导出&lt;/button&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;
+&lt;button type=&quot;button&quot; class=&quot;btn btn-primary btn-sm reset&quot; id=&quot;sts_safe_export&quot;&gt;安全导出&lt;/button&gt;
+&lt;/div&gt;
+&lt;/form&gt;
+&lt;script&gt;
+var sts_export = function stsExport(type) {
+
+var mobile = $.trim($(&#39;input[type=&quot;mobile&quot;]&#39;).val());
+var is_understand = $.trim($(&#39;select[name=&quot;is_understand&quot;]&#39;).val());
+var id = &quot;{{$data[&#39;id&#39;]}}&quot;;
+
+if (type==1) {//导出
+window.open(&quot;/manage/marketingPopup/marketingPopupStatistics/&quot;+id+&quot;?type=2&amp;is_export=1&amp;mobile=&quot;+mobile+&quot;&amp;is_understand=&quot;+is_understand);
+}else if(type==2){//安全导出
+window.open(&quot;/manage/marketingPopup/marketingPopupStatistics/&quot;+id+&quot;?type=2&amp;is_export=1&amp;stssafe=2&amp;mobile=&quot;+mobile+&quot;&amp;is_understand=&quot;+is_understand);
+}
+}
+
+$(&#39;#sts_export&#39;).bind(&#39;click&#39;, function(){
+sts_export(1);
+})
+
+$(&#39;#sts_safe_export&#39;).bind(&#39;click&#39;, function(){
+sts_export(2);
+});
+
+$(&#39;#sts_submit&#39;).bind(&#39;click&#39;, function(){
+$(&#39;#sts_search_form&#39;).submit();
+});
+&lt;/script&gt;
+
+///路由：/manage/marketingPopup/marketingPopupStatistics/111?type=2
+///控制器部分：app/Modules/Manage/Http/Controllers/MarketingPopupController.php
+public function marketingPopupStatistics($id, Request $request)
+{
+......
+
+if( $type==1 ){
+......
+}elseif( $type==2 ){
+
+......
+
+if (isset($arrData[&#39;is_export&#39;]) &amp;&amp; $arrData[&#39;is_export&#39;] == 1) {
+$export_data = empty($data[&#39;sts_list&#39;]) ? [] : $data[&#39;sts_list&#39;]-&gt;toArray();
+$safe = $request-&gt;get(&#39;stssafe&#39;, 1);//1为导出，2为安全导出
+MarketingPopupServices::getInstance()-&gt;stsExport($export_data[&#39;data&#39;], $safe);
+exit();
+}
+}
+return $this-&gt;theme-&gt;scope(&#39;manage.marketing_popup.marketingPopupStatistics&#39;, $data)-&gt;render();
+}
+
+///服务工具类导出方法部分：app/Modules/Manage/Service/MarketingPopupServices.php
+/**调研弹窗统计 导出 与 安全导出
+* @param $list 数据列表
+* @param $safe 导出方式    $safe=1为导出， $safe=2为安全导出
+*/
+public function stsExport($list, $safe){
+
+$exportData = [
+[
+&#39;会员id&#39;,
+&#39;会员手机号码&#39;,
+&#39;状态&#39;,
+&#39;调研时间&#39;,
+]
+];
+
+foreach ($list as $item){
+
+$item[&#39;is_understand&#39;] = $item[&#39;is_understand&#39;]==1 ? &#39;已掌握&#39; : &#39;未掌握&#39;;
+
+if( $safe==2 ){
+$item[&#39;mobile&#39;] = substr_replace(($item[&#39;mobile&#39;]), &#39;****&#39;, 3, 4);//手机号脱敏
+}
+
+$exportData[] = [
+$item[&#39;user_id&#39;].&quot;	&quot;,
+$item[&#39;mobile&#39;].&quot;	&quot;,
+$item[&#39;is_understand&#39;].&quot;	&quot;,
+$item[&#39;updated_at&#39;].&quot;	&quot;,
+];
+}
+
+$file_name = &#39;调研弹窗统计&#39;;
+Excel::create($file_name, function ($excel) use ($file_name, $exportData) {
+$excel-&gt;sheet($file_name, function ($sheet) use ($exportData) {
+$sheet-&gt;setAutoSize(true);
+$length = count($exportData[0]);
+$arrLength = count($exportData);
+$range = range(&#39;A&#39;,&#39;Z&#39;);
+$end = $range[$length-1];
+for ($i=0;$i&lt;$length;$i++){
+    $newRange[$range[$i]] = 20;
+}
+(isset($newRange) &amp;&amp; $newRange)?$sheet-&gt;setWidth($newRange) : &#39;&#39;;
+$sheet-&gt;rows($exportData);
+$sheet-&gt;row(1, function($row) {
+    // call cell manipulation methods
+    $row-&gt;setBackground(&#39;#F2F2F2&#39;);
+});
+
+$sheet-&gt;cells(&#39;A1&#39;, function($cells) {
+    $cells-&gt;setBorder(PHPExcel_Style_Border::BORDER_THIN,PHPExcel_Style_Border::BORDER_THIN,PHPExcel_Style_Border::BORDER_THIN,PHPExcel_Style_Border::BORDER_THIN);
+});
+$sheet-&gt;cells(&#39;B1&#39;, function($cells) {
+    $cells-&gt;setBorder(PHPExcel_Style_Border::BORDER_THIN,PHPExcel_Style_Border::BORDER_THIN,PHPExcel_Style_Border::BORDER_THIN,PHPExcel_Style_Border::BORDER_THIN);
+});
+$sheet-&gt;cells(&#39;C1&#39;, function($cells) {
+    $cells-&gt;setBorder(PHPExcel_Style_Border::BORDER_THIN,PHPExcel_Style_Border::BORDER_THIN,PHPExcel_Style_Border::BORDER_THIN,PHPExcel_Style_Border::BORDER_THIN);
+});
+$sheet-&gt;cells(&#39;D1&#39;, function($cells) {
+    $cells-&gt;setBorder(PHPExcel_Style_Border::BORDER_THIN,PHPExcel_Style_Border::BORDER_THIN,PHPExcel_Style_Border::BORDER_THIN,PHPExcel_Style_Border::BORDER_THIN);
+});
+for ($i = 0; $i &lt; count($exportData) + 1; $i++) {
+    $sheet-&gt;cells(&#39;A&#39; . $i . &#39;:&#39;.$end . $i . &#39;&#39;, function ($cells) {
+        $cells-&gt;setAlignment(&#39;center&#39;);
+    });
+    $sheet-&gt;cells(&#39;A&#39; . $i . &#39;:&#39;.$end . $i . &#39;&#39;, function ($cells) {
+        $cells-&gt;setValignment(&#39;center&#39;);
+    });
+}
+});
+})-&gt;export(&#39;xls&#39;);
+}
+</code></pre>
+    <h1 id="h1-u8868u5355u4F20u503C"><a name="表单传值" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>表单传值</h1>
+    <h2 id="h2-csrf-"><a name="csrf令牌" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>csrf令牌</h2>
+    <p>lavarel在实现表单传值的过程中，默认有csrf令牌验证，需要在构建的表单中同时传递令牌，否则将无法成功访问目标页面。</p>
+    <pre><code class="lang-html">&lt;form method=&quot;post&quot; action=&quot;{{URL(&#39;manage/topicModule/adh&#39;)}}&quot;  enctype=&quot;multipart/form-data&quot; id=&quot;postData&quot;&gt;
+{!! csrf_field() !!}
+&lt;input type=&quot;hidden&quot; name=&quot;topic_type&quot; value=&quot;{{ $topic[&#39;topic_type&#39;] }}&quot;&gt;
+......
+</code></pre>
+    <h2 id="h2-u63A7u5236u5668u4E2Du63A5u6536u6570u636E"><a name="控制器中接收数据" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>控制器中接收数据</h2>
+    <pre><code class="lang-php">&lt;?php
+namespace AppHttpControllersTest;
+use IlluminateHttpRequest;//必须有
+use AppHttpControllersController;
+
+class TestController extends Controller
+{
+public function adh(Request $request){//参数列表定义接收参数局部变量
+$arrData = $request-&gt;all();//获取所有参数
+$platform = $request-&gt;get(&#39;type&#39;, 3);//获取get数据type值，没有则给默认值3
+......
+}
+......
+</code></pre>
+    <h1 id="h1-u76EEu5F55u6216u6587u4EF6u8BF4u660E"><a name="目录或文件说明" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>目录或文件说明</h1>
+    <p>web/updates目录下：<br><img src="/upload/editormdimg/201912/editormd_5df06ad5259cf20191211120437.96.jpg" alt=""></p>
+    <h1 id="h1-u6743u9650u64CDu4F5C"><a name="权限操作" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>权限操作</h1>
+    <h2 id="h2-u83DCu5355u5BFCu822Au6743u9650"><a name="菜单导航权限" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>菜单导航权限</h2>
+    <p><img src="/upload/editormdimg/2020/04/editormd_5e9425849244b20200413164036.212.png" alt=""></p>
+    <pre><code class="lang-sql"># 以 &#39;后台--&gt;运营工具--&gt;活动专题&#39;菜单下展示的&#39;列表页&#39;和从列表页进入的&#39;添加活动&#39;页 为例：
+
+## 列表页
+### 首先，&#39;活动专题&#39;为二级菜单，实际上无论是几级菜单，只要是菜单栏的，都必须在&#39;xm_menu&#39;表中有对应的一条菜单数据；
+### 如下SQL就是添加&#39;活动专题&#39;菜单数据，&#39;name&#39;值对应的是菜单中显示的名字；&#39;route&#39;为点击这个菜单会跳转到的目标路由；&#39;pid&#39;为上级菜单id；&#39;level&#39;为当前这个菜单的层级；
+INSERT INTO `xm_menu`( `name`, `route`, `pid`, `level`, `note`, `sort`, `created_at`) select &#39;活动专题&#39;,&#39;/manage/activityTopic&#39;, `id`,2,&#39;活动专题&#39;,11,DATE_FORMAT(NOW(),&#39;%Y-%m-%d %H:%i:%s&#39;) from `xm_menu` where `name` =&#39;运营工具&#39; and `pid`=0  limit 1;
+### 然后需要给菜单对应的页面增加一个权限；
+### &#39;name&#39;为当前页面对应的路由别名；&#39;display_name&#39;为权限在后台设置界面中的显示名称，设置界面在：后台-&gt;权限管理-&gt;管理员角色管理-&gt;编辑 中；&#39;description&#39;为描述名称，如果这个权限正好是菜单直属的跳转页面权限，则最终显示的页面tab会以xm_menu中的name为准，除此之外以当前这个字段为准，实际开发中，具体页面的tab其实是html中手动指定的，请与当前这个字段值保持一致；&#39;module_type&#39;为当前这个权限对应的菜单id（从这也能推导得知一个菜单下对应有多种“权限”，这个“权限”本质上也是页面）
+INSERT INTO `xm_permissions`( `name`, `display_name`, `description`, `module_type`, `created_at`) select &#39;activityTopicList&#39;,&#39;列表&#39;, &#39;活动列表&#39;,`id`,DATE_FORMAT(NOW(),&#39;%Y-%m-%d %H:%i:%s&#39;) from `xm_menu` where `name` =&#39;活动专题&#39;  limit 1;
+### 最后需要为对应的菜单关联对应的权限，&#39;menu_id&#39;为菜单id，&#39;permission_id&#39;为具体的权限（页面）id；
+INSERT INTO `xm_menu_permission` ( `menu_id`, `permission_id`) select  `module_type`,`id` from `xm_permissions` where `name` =&#39;activityTopicList&#39; limit 1;
+
+## 添加活动 页
+INSERT INTO `xm_permissions`( `name`, `display_name`, `description`, `module_type`, `created_at`) select &#39;activityTopicAdd&#39;,&#39;添加&#39;, &#39;添加活动&#39;,`id`,DATE_FORMAT(NOW(),&#39;%Y-%m-%d %H:%i:%s&#39;) from `xm_menu` where `name` =&#39;活动专题&#39;  limit 1;
+
+INSERT INTO `xm_menu_permission` ( `menu_id`, `permission_id`) select  `module_type`,`id` from `xm_permissions` where `name` =&#39;activityTopicAdd&#39; limit 1;
+</code></pre>
+    <h2 id="h2-u5C40u90E8u6309u94AEu6743u9650"><a name="局部按钮权限" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>局部按钮权限</h2>
+    <pre><code class="lang-php">/*
+* 在控制器中进行限制
+* xxxwebappModulesManageHttpControllersActivityTopicController.php
+*/
+class ActivityTopicController extends ManageController
+{
+private $routes = [];
+......
+
+public function __construct(ActivityTopicService $activityTopicService)
+{
+......
+
+// 判断拥有的权限
+$this-&gt;routes = [
+&#39;btns&#39; =&gt; [
+    &#39;Add&#39; =&gt; 1,// 添加
+    &#39;Edit&#39; =&gt; 1,// 编辑
+    &#39;Detail&#39; =&gt; 1,// 查看
+    &#39;Status&#39; =&gt; 1,// 发布
+],
+&#39;current_url&#39; =&gt; &#39;&#39;, // 当前页面对应的路由
+&#39;url_add&#39; =&gt; &#39;/manage/activityTopic/create&#39;, // 添加活动url
+];
+
+$routeName = 
+equest()-&gt;route()-&gt;getName();
+$this-&gt;routes[&#39;current_url&#39;] = route($routeName);
+//$this-&gt;manager包含当前登录用户的信息
+if($this-&gt;manager-&gt;id != 1){
+//“activityTopicAdd”这个值是路由别名，意思是当前用户如果不具有访问“activityTopicAdd”的权限，则也将没有点击本页面添加按钮的权限
+if (($this-&gt;manager-&gt;can(&#39;activityTopicAdd&#39;) == false)) {
+    $this-&gt;routes[&#39;btns&#39;][&#39;Add&#39;] = 0;
+}
+if (($this-&gt;manager-&gt;can(&#39;activityTopicEdit&#39;) == false)) {
+    $this-&gt;routes[&#39;btns&#39;][&#39;Edit&#39;] = 0;
+}
+if (($this-&gt;manager-&gt;can(&#39;activityTopicDetail&#39;) == false)) {
+    $this-&gt;routes[&#39;btns&#39;][&#39;Detail&#39;] = 0;
+}
+if (($this-&gt;manager-&gt;can(&#39;activityTopicStatus&#39;) == false)) {
+    $this-&gt;routes[&#39;btns&#39;][&#39;Status&#39;] = 0;
+}
+}
+}
+......
+/**
+* 活动专题列表
+* @return
+* @throws Exception
+*/
+public function index()
+{
+......
+$data[&#39;routes&#39;] = $this-&gt;routes;
+return $this-&gt;theme-&gt;scope(&#39;manage.activity_topic.index&#39;, $data)-&gt;render();
+}
+}
+</code></pre>
+    <pre><code class="lang-php">/*
+* 在模板页面中进行判断
+*D:firmprowebpublic	hemesdefaultviewsmanageactivity_topicindex.blade.php
+*/
+@if(isset($routes[&#39;btns&#39;][&#39;Add&#39;]) &amp;&amp; $routes[&#39;btns&#39;][&#39;Add&#39;])
+&lt;div class=&quot;form-group&quot;&gt;
+&lt;button type=&quot;button&quot; class=&quot;btn btn-sm btn-primary&quot; id=&quot;btnAdd&quot;&gt;添加活动&lt;/button&gt;
+&lt;/div&gt;
+@endif
+</code></pre>
+    <h1 id="h1-u63A7u5236u5668u4E2Du7684u64CDu4F5C"><a name="控制器中的操作" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>控制器中的操作</h1>
+    <h2 id="h2-u83B7u53D6u8DEFu7531u522Bu540D"><a name="获取路由别名" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>获取路由别名</h2>
+    <p>xxwebappModulesManageHttp
+        outes.php:<br><img src="/upload/editormdimg/201912/editormd_5dfc3935312a820191220110005.97.jpg" alt=""></p>
+    <pre><code class="lang-php">//获取当前路由别名，路由别名是在xx/Http/routes.php中定义的
+$routeName = 
+equest()-&gt;route()-&gt;getName();
+</code></pre>
+    <h2 id="h2--url"><a name="获取当前页面的url" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>获取当前页面的url</h2>
+    <pre><code class="lang-php">//获取当前路由别名
+$routeName = 
+equest()-&gt;route()-&gt;getName();
+//获得当前被访问页面url   注意：获得的url非常不准确
+$this-&gt;routes[&#39;current_url&#39;] = route($routeName);
+</code></pre>
+    <h2 id="h2-u6587u4EF6u4E0Au4F20"><a name="文件上传" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>文件上传</h2>
+    <h3 id="h3-a-"><a name="a. 表单" class="reference-link"></a><span class="header-link octicon octicon-link"></span>a.
+        表单</h3>
+    <p> xxxwebpublic hemesdefaultviewsmanage opic_modulead.blade.php<br><img
+            src="/upload/editormdimg/201912/editormd_5e017b3f61e6320191224104311.99.jpg" alt=""></p>
+    <pre><code class="lang-javascript">&lt;script&gt;
+......
+//js函数getimg()在js层面限制上传文件（大小）
+function getimg(img){
+
+let formdata = new FormData();
+// 获取input选择的文件信息
+let file = img.files[0];
+if(file.size &gt; 3*1024*1024){
+console.log(&quot;上传图片不能大于3M&quot;);
+return;
+}
+formdata.append(&#39;file&#39;,file);
+//读取图片数据
+var reader = new FileReader();
+reader.readAsDataURL(file);
+reader.onload = function (e) {
+let data = e.target.result;
+//加载图片获取图片真实宽度和高度
+let image = new Image();
+image.src = data;
+// 图片先加载完，才可以得到图片宽度和高度
+image.onload = function(){
+    $(img).parents(&#39;div.form-group&#39;).find(&#39;.imgs img&#39;).attr(&#39;src&#39;,image.src);
+    let width = image.width;
+    let height = image.height;
+    $(&#39;#img-width-height&#39;).attr(&#39;data-width&#39;,width);
+    $(&#39;#img-width-height&#39;).attr(&#39;data-height&#39;,height);
+    if(width !=&#39;600&#39; &amp;&amp; height !=&#39;1066&#39; ){
+        console.log(width+&#39;===&#39;+height)
+        $(&#39;.col-sm-4 p.red&#39;).html(&#39;当前尺寸 宽为：&#39;+width+&#39; 高为：&#39;+height+&#39; 图片规格不符，建议更换&#39;);
+        return false;
+    }
+    console.log(width+&#39;===&#39;+height)
+    $(&#39;.col-sm-4 p.red&#39;).html(&#39;&#39;);
+}
+}
+}
+&lt;/script&gt;
+</code></pre>
+    <h3 id="h3-b-"><a name="b. 处理程序" class="reference-link"></a><span class="header-link octicon octicon-link"></span>b.
+        处理程序</h3>
+    <p> xxxwebappModulesManageHttpControllersTopicModuleController.php — adh</p>
+    <pre><code class="lang-php">public function adh(Request $request){
+......
+
+if( $arrData[&#39;topic_type&#39;]==2 ){//商城
+
+$needCheckData = [&#39;type&#39; =&gt; &#39;required|integer&#39;];    //商品类型   1:自营  2:淘宝商品（选品库），3:淘宝商品（推广商品库）
+if (Validator::make($arrData, $needCheckData)-&gt;fails()) return redirect()-&gt;to(&#39;/manage/topicModule/ad?topic_id=&#39;.$arrData[&#39;topic_id&#39;])-&gt;with([&#39;error&#39;=&gt;&#39;必须选择一个商品类型！&#39;]);
+
+if( $arrData[&#39;templ_type&#39;]==2 ){//模板二
+
+$img_title = $request-&gt;file(&#39;img_title&#39;);//标题图  获取上传图片的数据
+if ($img_title) {//有则上传
+    $uploadRes = FileClass::uploadFile($img_title, &#39;activityTopic&#39;);//上传并获得上传后的返回结果（json类型）
+    $uploadRes = json_decode($uploadRes, true);
+}else {
+    return redirect()-&gt;to(&#39;/manage/topicModule/ad?topic_id=&#39;.$arrData[&#39;topic_id&#39;])-&gt;with([&#39;error&#39;=&gt;&#39;请上传标题图！&#39;]);
+}
+if (!$uploadRes[&#39;data&#39;][&#39;url&#39;]) {//$uploadRes[&#39;data&#39;][&#39;url&#39;]为路径
+    return redirect()-&gt;to(&#39;/manage/topicModule/ad?topic_id=&#39;.$arrData[&#39;topic_id&#39;])-&gt;with([&#39;error&#39;=&gt;&#39;标题图上传失败！&#39;]);
+}
+}
+}
+}
+</code></pre>
+    <p>$uploadRes打印信息：<br><img src="/upload/editormdimg/201912/editormd_5e0180b2ae38520191224110626.102.jpg" alt=""></p>
+    <h3 id="h3-c-"><a name="c. 上传文件注意事项" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>c. 上传文件注意事项</h3>
+    <p>如果要加载图片则需要使用url函数处理图片路径：<br><img src="/upload/editormdimg/201912/editormd_5e017fb0cd26020191224110208.100.jpg"
+            alt=""></p>
+    <p>上传文件路径的问题，上传时需要指定目录，可以在xxxweblibrariesclassFileClass.php — uploadFile方法中添加目录：<br><img
+            src="/upload/editormdimg/201912/editormd_5e01801a95e3a20191224110354.101.jpg" alt=""></p>
+    <h2 id="h2-u8868u5355u9A8Cu8BC1"><a name="表单验证" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>表单验证</h2>
+    <h3 id="h3--lavavel-validation"><a name="使用lavavel的Validation" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>使用lavavel的Validation</h3>
+    <p>参考链接：<a href="https://laravel.com/docs/5.8/validation">https://laravel.com/docs/5.8/validation</a></p>
+    <h4 id="h4-u76F4u63A5u4F7Fu7528"><a name="直接使用" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>直接使用</h4>
+    <pre><code class="lang-php">public function info(Request $request){
+
+$arrData = $request-&gt;all();
+$data = [];
+
+//检查参数
+$validator = Validator::make($arrData, [
+&#39;topic_id&#39;  =&gt; &#39;required|integer&#39;,
+&#39;id&#39;  =&gt; &#39;required|integer&#39;
+]);
+if ($validator-&gt;fails()) return redirect()-&gt;to(&#39;/manage/topicModule/list?topic_id=&#39;.$arrData[&#39;topic_id&#39;])-&gt;with([&#39;error&#39;=&gt;&#39;缺少必须参数！&#39;]);
+......
+</code></pre>
+    <p><strong>封装使用案例：</strong></p>
+    <pre><code class="lang-php">## xxxwebappModulesManageHttpControllersTopicModuleController.php
+## 封装
+/**
+* [checkRequests 检查表单传的值]
+* @param  Request $request [description]
+* @param  array $fields [需要检查的字段]   例：
+                                      $fields = [&#39;id&#39; =&gt; &#39;required|integer&#39;];
+* @param  array $msg [不同字段对应给出的提示信息]   例：
+                                      $msg = [
+                                          &#39;id.required&#39; =&gt; &#39;缺少必要参数！&#39;,
+                                          &#39;id.integer&#39; =&gt; &#39;非法的操作！&#39;
+                                      ];
+* @param  array $urls [不同字段对应跳转的地址][选填]   例：
+                                      $urls = [&#39;id&#39; =&gt; &#39;/manage/topicModule/list?topic_id=xxx&#39;];
+* @param  string $defaultURL [默认跳转地址，当没有指定字段跳转地址时使用]
+* @return [bool]           [没有问题返回false，有问题返回跳转页面]
+*/
+private function checkRequests($arrData, $fields, $msg, $urls=[], $defaultURL=&#39;&#39;){
+
+//初始化参数
+// $arrData = $requests-&gt;all();
+$reData = [];
+$reData[&#39;url&#39;] = empty($defaultURL) ? &#39;/manage/activityTopic/index&#39; : $defaultURL;
+
+//检查参数
+$validator = Validator::make($arrData, $fields, $msg);
+if ($validator-&gt;fails()){
+
+$err = $validator-&gt;errors();
+foreach( $fields as $k=&gt;$v){
+
+  if($err-&gt;has($k)){//存在错误，则跳转
+
+      if(isset($urls[$k])) $reData[&#39;url&#39;] = $urls[$k];
+      return redirect()-&gt;to($reData[&#39;url&#39;])-&gt;with( [&#39;error&#39;=&gt;$err-&gt;first($k)] );
+  }
+}
+}
+
+return false;//没有问题，返回false
+}
+
+
+## xxxwebappModulesManageHttpControllersTopicModuleController.php -- adh
+## 调用
+/**
+* [adh 添加处理add handler]
+* @param  Request $request [description]
+* @return [type]           [添加页面]
+*/
+public function adh(Request $request){
+//接收数据
+$arrData = $request-&gt;all();
+
+//检查数据
+#必须先检查topic_id，没有这个参数，程序无法继续执行
+$msg = [//字段对应的提示信息
+&#39;topic_id.required&#39; =&gt; &#39;缺少必要参数！&#39;,
+&#39;topic_id.integer&#39; =&gt; &#39;非法的操作！&#39;
+];
+if($re = $this-&gt;checkRequests($arrData, [&#39;topic_id&#39;=&gt;&#39;required|integer&#39;], $msg)) return $re;
+
+#然后再检查必须的topic_type和templ_type
+$fields = [//需检查的字段
+&#39;topic_type&#39;  =&gt; &#39;required|integer&#39;,
+&#39;templ_type&#39;  =&gt; &#39;required|integer&#39;
+];
+
+$msg = [//字段对应的提示信息
+&#39;topic_type.required&#39; =&gt; &#39;缺少必要参数！&#39;,
+&#39;topic_type.integer&#39; =&gt; &#39;非法的操作！&#39;,
+&#39;templ_type.required&#39; =&gt; &#39;缺少必要参数！&#39;,
+&#39;templ_type.integer&#39; =&gt; &#39;非法的操作！&#39;
+];
+
+if($re = $this-&gt;checkRequests($arrData, $fields, $msg, [], &#39;/manage/topicModule/ad?topic_id=&#39;.$arrData[&#39;topic_id&#39;])) return $re;
+
+#必须要的数据
+$msg = [];
+$fields = [];
+if( !($arrData[&#39;topic_type&#39;]==2 &amp;&amp; $arrData[&#39;templ_type&#39;]==2) ){//排除 商城--模板二 检查文字标题是否填写
+$fields[&#39;title&#39;] = &#39;required|max:50&#39;;
+$msg[&#39;title.required&#39;] = &#39;请填写标题！&#39;;
+$msg[&#39;title.max&#39;] = &#39;标题字符数必须小于50！&#39;;
+}
+
+if( $arrData[&#39;topic_type&#39;]==1 &amp;&amp; $arrData[&#39;templ_type&#39;]==2 ){//任务单--模板二
+
+$fields[&#39;person_nums&#39;] = &#39;required|integer|min:0&#39;;
+$msg[&#39;person_nums.required&#39;] = &#39;请填写领取人数!&#39;;
+$msg[&#39;person_nums.integer&#39;] = &#39;领取人数必须为数字!&#39;;
+$msg[&#39;person_nums.min&#39;] = &#39;领取人数值必须大于0!&#39;;
+
+if( !empty($arrData[&#39;more_task&#39;]) ){    //“更多任务等你领”必须以特定字符开头
+
+  preg_match_all (&quot;/^(http://)|(https://)|(xm://)/&quot;, $arrData[&#39;more_task&#39;], $pat_arr);
+  if( empty($pat_arr[0]) )
+      return redirect()-&gt;to(&#39;/manage/topicModule/ad?topic_id=&#39;.$arrData[&#39;topic_id&#39;])-&gt;with([&#39;error&#39;=&gt;&#39;“更多任务等你领”必须以http://或https://或xm://开头！&#39;]);
+}
+}
+
+##开始检查
+if($re = $this-&gt;checkRequests($arrData, $fields, $msg, [], &#39;/manage/topicModule/ad?topic_id=&#39;.$arrData[&#39;topic_id&#39;])) return $re;
+......
+}
+</code></pre>
+    <h2 id="h2-u91CDu5B9Au5411"><a name="重定向" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>重定向</h2>
+    <pre><code class="lang-php">public function info(Request $request){
+......
+
+if ($validator-&gt;fails()) return redirect()-&gt;to(&#39;/manage/topicModule/list?topic_id=&#39;.$arrData[&#39;topic_id&#39;])-&gt;with([&#39;error&#39;=&gt;&#39;缺少必须参数！&#39;]);
+//或不想给提示并立即跳则：redirect()-&gt;to(&#39;/manage/topicModule/list?topic_id=&#39;.$arrData[&#39;topic_id&#39;])
+</code></pre>
+    <h1 id="h1--json-"><a name="返回JSON数据" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>返回JSON数据</h1>
+    <p>以”APP首页”为例：</p>
+    <pre><code class="lang-php">路由：Route::post(&#39;/v43/appHome&#39;, &#39;AppHomeController@appNewestIndex&#39;); //app 4.3版首页
+public function appNewestIndex(Request $request){
+......
+
+return $this-&gt;formateResponse(1000, &#39;获取成功&#39;, $app_api_data);
+}
+
+请求接口后返回数据示例：
+{
+&quot;code&quot;: &quot;1000&quot;,
+&quot;message&quot;: &quot;获取成功&quot;,
+&quot;data&quot;: {
+&quot;ad&quot;: [
+],
+&quot;new_app_url&quot;: &quot;http://local.xianmai.com/m/makeMoneyStrategy&quot;,
+&quot;home_recommend&quot;: [
+],
+&quot;task_classify_list&quot;: [
+],
+&quot;unreadMsgCount&quot;: 0,
+&quot;is_open_service&quot;: 0,
+&quot;make_money_today&quot;: &quot;0.00&quot;,
+&quot;can_take_tastedTask&quot;: 0,
+&quot;new_person_guidance&quot;: 0,
+&quot;be_overdue&quot;: 0,
+&quot;subscribe_or_not&quot;: 0,
+&quot;membership_benefits&quot;: &quot;http://local.xianmai.com/m/welfareCentre&quot;,
+&quot;user_doing_tasks_count&quot;: 0,
+&quot;suspension&quot;: {
+&quot;is_show&quot;: 0
+},
+&quot;statistic_data&quot;: {
+},
+&quot;rewards_list&quot;: [
+]
+}
+}
+</code></pre>
+    <h1 id="h1-u5B9Au65F6u4EFBu52A1"><a name="定时任务" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>定时任务</h1>
+    <p>总文件：/app/Console/Kernel.php<br>参考：财务报表的各项数据统计</p>
+    <pre><code class="lang-php">$schedule-&gt;command(&#39;financialStatementsCommand&#39;)-&gt;dailyAt(&#39;05:35&#39;)-&gt;appendOutputTo($log_path);
+
+执行指令：取决于对应的定时任务类文件中定义出来的规则，如当前这个定时任务对应的类文件：
+</code></pre>
+    <p><img src="/upload/editormdimg/2020/04/editormd_5e942ffb1a86420200413172515.213.png" alt=""></p>
+    <p><img src="/upload/editormdimg/2020/04/editormd_5e943140c966220200413173040.214.png" alt=""></p>
+    <pre><code class="lang-php">指令：
+1. 按照默认的时间（昨天的日期）执行所有当前控制器中的定时任务程序
+php artisan financialStatementsCommand all 0
+2. 按照指定的时间执行所有当前控制器中的定时任务程序
+php artisan financialStatementsCommand all 2020-01-10
+3. 按照指定的时间执行指定的当前控制器中的定时任务程序
+php artisan financialStatementsCommand 1 2020-01-10
+</code></pre>
+    <h1 id="h1-u6587u6863"><a name="文档" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>文档</h1>
+    <h2 id="h2-u5EFAu8868u6587u6863u53C2u8003"><a name="建表文档参考" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>建表文档参考</h2>
+    <ul>
+        <li>【新增】渠道数据记录表（xm_channel_record）—wx </li>
+    </ul>
+    <table>
+        <thead>
+            <tr>
+                <th style="text-align:left">字段</th>
+                <th>类型</th>
+                <th style="text-align:left">空</th>
+                <th>默认</th>
+                <th>注释</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:left">id</td>
+                <td>int(11)</td>
+                <td style="text-align:left">否</td>
+                <td>自动增长</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td style="text-align:left">uid</td>
+                <td>int(11)</td>
+                <td style="text-align:left">否</td>
+                <td>0</td>
+                <td>用户id</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">task_id</td>
+                <td>int(11)</td>
+                <td style="text-align:left">否</td>
+                <td>0</td>
+                <td>关联任务id</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">user_task_id</td>
+                <td>int(11)</td>
+                <td style="text-align:left">否</td>
+                <td>0</td>
+                <td>关联用户任务id</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">status</td>
+                <td>tinyint(1)</td>
+                <td style="text-align:left">否</td>
+                <td>0</td>
+                <td>上报状态，0=失败；1=成功</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">channel</td>
+                <td>tinyint(2)</td>
+                <td style="text-align:left">否</td>
+                <td>0</td>
+                <td>渠道,0=无;1=天朗</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">idfa</td>
+                <td>varchar(50)</td>
+                <td style="text-align:left">否</td>
+                <td></td>
+                <td>idfa用户设备标识</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">ip</td>
+                <td>varchar(15)</td>
+                <td style="text-align:left">否</td>
+                <td></td>
+                <td>ip地址</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">salt</td>
+                <td>varchar(6)</td>
+                <td style="text-align:left">否</td>
+                <td></td>
+                <td>校验字符</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">is_active</td>
+                <td>tinyint(1)</td>
+                <td style="text-align:left">否</td>
+                <td>0</td>
+                <td>是否激活</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">active_time</td>
+                <td>timestamp</td>
+                <td style="text-align:left">是</td>
+                <td>null</td>
+                <td>激活时间</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">created_at</td>
+                <td>timestamp</td>
+                <td style="text-align:left">是</td>
+                <td>null</td>
+                <td>创建时间</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">updated_at</td>
+                <td>timestamp</td>
+                <td style="text-align:left">是</td>
+                <td>null</td>
+                <td>更新时间</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">PRIMARY KEY(<code>id</code>)</td>
+                <td>主键</td>
+                <td style="text-align:left">-</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">idx_uid(<code>uid</code>)</td>
+                <td>btree索引</td>
+                <td style="text-align:left">-</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">idx_task_id(<code>task_id</code>)</td>
+                <td>btree索引</td>
+                <td style="text-align:left">-</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">idx_status(<code>status</code>)</td>
+                <td>btree索引</td>
+                <td style="text-align:left">-</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">idx_channel(<code>channel</code>)</td>
+                <td>btree索引</td>
+                <td style="text-align:left">-</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">idx_active_time(<code>active_time</code>)</td>
+                <td>btree索引</td>
+                <td style="text-align:left">-</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">idx_created_at(<code>created_at</code>)</td>
+                <td>btree索引</td>
+                <td style="text-align:left">-</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+        </tbody>
+    </table>
+    <h2 id="h2-u63A5u53E3u6587u6863u53C2u8003"><a name="接口文档参考" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>接口文档参考</h2>
+    <h3 id="h3-get-"><a name="GET请求" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>GET请求</h3>
+    <p><code># 【新增】上报后回调接口</code></p>
+    <ul>
+        <li>天朗cpa上报后的回调接口</li>
+    </ul>
+    <p><strong>请求URL：</strong> </p>
+    <ul>
+        <li><code>/api/cpa/ret/sign/VGhpcyBpcyBhbiBlbmNvZGVkIHN0cmluZw==</code></li>
+    </ul>
+    <p><strong>请求方式：</strong></p>
+    <ul>
+        <li>GET</li>
+    </ul>
+    <p><strong>参数：</strong> </p>
+    <table>
+        <thead>
+            <tr>
+                <th style="text-align:left">参数名</th>
+                <th style="text-align:left">类型</th>
+                <th style="text-align:left">必选</th>
+                <th>说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:left">sign</td>
+                <td style="text-align:left">是</td>
+                <td style="text-align:left">string</td>
+                <td>通过base64加密的json字符串</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">sign.id</td>
+                <td style="text-align:left">是</td>
+                <td style="text-align:left">int</td>
+                <td>渠道数据记录表id</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">sign.uid</td>
+                <td style="text-align:left">否</td>
+                <td style="text-align:left">int</td>
+                <td>用户id</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">sign.cid</td>
+                <td style="text-align:left">是</td>
+                <td style="text-align:left">int</td>
+                <td>渠道id（配置中定义）</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">sign.ip</td>
+                <td style="text-align:left">否</td>
+                <td style="text-align:left">string</td>
+                <td>ip地址</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">sign.salt</td>
+                <td style="text-align:left">是</td>
+                <td style="text-align:left">string</td>
+                <td>校验码md5加密后的字符串</td>
+            </tr>
+        </tbody>
+    </table>
+    <p><strong> 参数示例 </strong></p>
+    <pre><code>   $data_str = &#39;{
+&quot;id&quot;:16,
+&quot;uid&quot;:616,
+&quot;cid&quot;:1,
+&quot;ip&quot;:&quot;128.1.1.2&quot;,
+&quot;salt&quot;:&quot;&#39;.md5(&quot;asd23c&quot;).&#39;&quot;
+}&#39;;
+$sign = base64_encode($data_str);
+$url = &quot;http://xx.xxx.com/api/cpa/ret/sign/&quot;.$sign;
+</code></pre>
+    <p> <strong>返回示例</strong></p>
+    <pre><code>   {
+&quot;code&quot;: &quot;1000&quot;,
+&quot;message&quot;: &quot;success&quot;
+}
+</code></pre>
+    <p><strong>返回参数说明</strong> </p>
+    <table>
+        <thead>
+            <tr>
+                <th style="text-align:left">参数名</th>
+                <th style="text-align:left">类型</th>
+                <th>说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:left">code</td>
+                <td style="text-align:left">int</td>
+                <td>状态码(1000成功，其他失败)</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">message</td>
+                <td style="text-align:left">string</td>
+                <td>状态信息</td>
+            </tr>
+        </tbody>
+    </table>
+    <h3 id="h3-post-"><a name="POST请求" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>POST请求</h3>
+    <h4 id="h4--1-"><a name="参考1【新增】" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>参考1【新增】</h4>
+    <p><code># 【新增】已开通&amp;未开通权益接口</code></p>
+    <ul>
+        <li>个人中心 - 我的粉丝 - 已开通权益/未开通权益</li>
+    </ul>
+    <p><strong>请求URL：</strong> </p>
+    <ul>
+        <li><code>/api/user/myServer</code></li>
+    </ul>
+    <p><strong>请求方式：</strong></p>
+    <ul>
+        <li>POST </li>
+    </ul>
+    <p><strong>参数：</strong> </p>
+    <table>
+        <thead>
+            <tr>
+                <th style="text-align:left">参数名</th>
+                <th style="text-align:left">类型</th>
+                <th style="text-align:left">必选</th>
+                <th>说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:left">token</td>
+                <td style="text-align:left">是</td>
+                <td style="text-align:left">string</td>
+                <td>加密字符串</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">type</td>
+                <td style="text-align:left">int</td>
+                <td style="text-align:left">是</td>
+                <td>权益类型（0-未开通，1-已开通）</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">page</td>
+                <td style="text-align:left">int</td>
+                <td style="text-align:left">否</td>
+                <td>当前显示数据的页数</td>
+            </tr>
+        </tbody>
+    </table>
+    <p> <strong>返回示例</strong></p>
+    <pre><code class="lang-json">   {
+&quot;code&quot;: &quot;1000&quot;,
+&quot;message&quot;: &quot;success&quot;,
+&quot;data&quot;: [
+{
+&quot;avatar&quot;: &quot;http://xx.xxx.com/attachment/user/2018/01/31/a7f4a4cf3f1826d626921e213e44a8a7.jpg&quot;,
+&quot;mobile&quot;: &quot;18599988888&quot;,
+&quot;created_at&quot;: &quot;2019-10-1&quot;,
+&quot;payed_at&quot;: &quot;2020-1-6&quot;,
+&quot;amount&quot;: &quot;96.02&quot;
+},
+{
+&quot;avatar&quot;: &quot;http://xx.xxx.com/attachment/user/2018/01/31/a7f4a4cf3f1826d626921e213e44a8a7.jpg&quot;,
+&quot;mobile&quot;: &quot;18599988888&quot;,
+&quot;created_at&quot;: &quot;2019-10-1&quot;,
+&quot;payed_at&quot;: &quot;2020-1-6&quot;,
+&quot;amount&quot;: &quot;96.02&quot;
+}
+]
+}
+</code></pre>
+    <p><strong>返回参数说明</strong> </p>
+    <table>
+        <thead>
+            <tr>
+                <th style="text-align:left">参数名</th>
+                <th style="text-align:left">类型</th>
+                <th>说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:left">code</td>
+                <td style="text-align:left">int</td>
+                <td>状态码(1000成功，其他失败)</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">message</td>
+                <td style="text-align:left">string</td>
+                <td>状态信息</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">data</td>
+                <td style="text-align:left">array</td>
+                <td>数据内容</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">data.avatar</td>
+                <td style="text-align:left">string</td>
+                <td>头像</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">data.mobile</td>
+                <td style="text-align:left">string</td>
+                <td>手机号</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">data.created_at</td>
+                <td style="text-align:left">string</td>
+                <td>注册时间(格式：年-月-日)</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">data.payed_at</td>
+                <td style="text-align:left">string</td>
+                <td>开通权益时间(格式：年-月-日)（当type=0时，没有此字段）</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">data.amount</td>
+                <td style="text-align:left">string</td>
+                <td>奖励金额(type=0时表示“预计奖励”金额；type=1时表示“已赚取”金额)</td>
+            </tr>
+        </tbody>
+    </table>
+    <h4 id="h4--2-"><a name="参考2【修改】" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>参考2【修改】</h4>
+    <p>
+        <font color=green><strong>说明：</strong></font>红色为新增字段，蓝色为修改字段。
+    </p>
+    <p><code># 【修改】我的培训老师</code></p>
+    <ul>
+        <li>个人中心 - 我的培训老师</li>
+    </ul>
+    <p><strong>请求URL：</strong> </p>
+    <ul>
+        <li><code>/api/user/myTeacher</code></li>
+    </ul>
+    <p><strong>请求方式：</strong></p>
+    <ul>
+        <li>POST </li>
+    </ul>
+    <p><strong>参数：</strong> </p>
+    <table>
+        <thead>
+            <tr>
+                <th style="text-align:left">参数名</th>
+                <th style="text-align:left">类型</th>
+                <th style="text-align:left">必选</th>
+                <th>说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:left">token</td>
+                <td style="text-align:left">是</td>
+                <td style="text-align:left">string</td>
+                <td>加密字符串</td>
+            </tr>
+        </tbody>
+    </table>
+    <p> <strong>返回示例</strong></p>
+    <pre><code>   {
+&quot;code&quot;: &quot;1000&quot;,
+&quot;message&quot;: &quot;获取数据成功&quot;,
+&quot;data&quot;: {
+&#39;weixin&#39;: {
+&#39;url&#39;: &#39;http://xxx.xxx.com/xxx/xxx/xx.png&#39;,
+&#39;introduce&#39;: &#39;关注培训老师，带领新手入门，可学习更多赚钱宝典,赶紧关注呀！&#39;,
+&#39;number&#39;: &#39;xianmai998asda&#39;
+},
+&#39;qq&#39;: {
+&#39;number&#39;: &#39;1444324234&#39;,
+&#39;introduce&#39;: &#39;关注培训老师，带领新手入门，可学习更多赚钱宝典,赶紧关注呀！&#39;
+}
+}
+}
+</code></pre>
+    <p><strong>返回参数说明</strong> </p>
+    <table>
+        <thead>
+            <tr>
+                <th style="text-align:left">参数名</th>
+                <th style="text-align:left">类型</th>
+                <th>说明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:left">code</td>
+                <td style="text-align:left">int</td>
+                <td>状态码(1000成功，其他失败)</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">message</td>
+                <td style="text-align:left">string</td>
+                <td>状态信息</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">data</td>
+                <td style="text-align:left">object</td>
+                <td>数据内容</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">data.weixin.url</td>
+                <td style="text-align:left">string</td>
+                <td>二维码</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">data.weixin.introduce</td>
+                <td style="text-align:left">string</td>
+                <td>说明</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">
+                    <font color=red>data.weixin.number</font>
+                </td>
+                <td style="text-align:left">string</td>
+                <td>微信号</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">data.qq.number</td>
+                <td style="text-align:left">string</td>
+                <td>qq号</td>
+            </tr>
+            <tr>
+                <td style="text-align:left">data.qq.introduce</td>
+                <td style="text-align:left">string</td>
+                <td>说明</td>
+            </tr>
+        </tbody>
+    </table>
+    <h2 id="h2-u5EFAu8868u8BEDu53E5u6587u6863"><a name="建表语句文档" class="reference-link"></a><span
+            class="header-link octicon octicon-link"></span>建表语句文档</h2>
+    <pre><code class="lang-sql">/*
+* 渠道数据记录表
+* wx
+* 2020-02-19
+*/
+CREATE TABLE `xm_channel_record` (
+`id` INT( 11 ) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+`uid` INT( 11 )  UNSIGNED DEFAULT &#39;0&#39; COMMENT &#39;用户id&#39;,
+`task_id` INT( 11 )  UNSIGNED DEFAULT &#39;0&#39; COMMENT &#39;关联任务id&#39;,
+`user_task_id` INT( 11 )  UNSIGNED DEFAULT &#39;0&#39; COMMENT &#39;关联用户任务id&#39;,
+`status` TINYINT( 1 )  UNSIGNED DEFAULT &#39;0&#39; COMMENT &#39;上报状态,0=失败；1=成功&#39;,
+`channel` TINYINT( 2 )  UNSIGNED DEFAULT &#39;0&#39; COMMENT &#39;渠道,0=无;1=天朗&#39;,
+`idfa` VARCHAR( 50 )  NOT NULL DEFAULT &#39;&#39; COMMENT &#39;idfa用户设备标识&#39;,
+`ip` VARCHAR( 15 )  NOT NULL DEFAULT &#39;&#39; COMMENT &#39;ip地址&#39;,
+`salt` VARCHAR( 6 )  NOT NULL DEFAULT &#39;&#39; COMMENT &#39;校验字符&#39;,
+`is_active` TINYINT( 1 )  UNSIGNED DEFAULT &#39;0&#39; COMMENT &#39;是否激活&#39;,
+`active_time` timestamp NOT NULL DEFAULT &#39;0000-00-00 00:00:00&#39; COMMENT &#39;激活时间&#39;,
+`created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT &#39;创建时间&#39;,    #timestamp类型默认值&quot;CURRENT_TIMESTAMP&quot;一个表只能有一个字段设置
+`updated_at` timestamp NOT NULL DEFAULT &#39;0000-00-00 00:00:00&#39; COMMENT &#39;更新时间&#39;,
+KEY `idx_uid` (`uid`),
+KEY `idx_task_id` ( `task_id`),
+KEY `idx_status` ( `status`),
+KEY `idx_channel` ( `channel`),
+KEY `idx_active_time` ( `active_time`),
+KEY `idx_created_at` ( `created_at`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT=&#39;渠道数据记录表&#39;;
+</code></pre>
+</div>
