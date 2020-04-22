@@ -197,7 +197,7 @@ class PermissionController extends Controller {
         ///表头信息
         $this->_datas['thead'] = [
             ['ch'=>'页面名称', 'width'=>160],
-            ['ch'=>'上级页面', 'width'=>80],
+            ['ch'=>'所属主菜单', 'width'=>80],
             ['ch'=>'路由', 'width'=>120],
             ['ch'=>'请求方式', 'width'=>60],
             ['ch'=>'navtab', 'width'=>120],
