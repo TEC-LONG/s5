@@ -11,6 +11,7 @@ include CORE_PATH . 'Func.php';
 include CONFIG_PATH . 'define.conf.php';
 
 include CORE_PATH . 'Route.class.php';
+include CORE_PATH . 'Validator.class.php';
 
 Route::prepare();
 

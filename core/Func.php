@@ -52,12 +52,23 @@ function M($className='Common', $params=array(), $type='single'){
     $t_className = $t_className[$arrNums-1];
 
     if( substr($t_className, -10)=='Controller' ){
+
         $className = '\\' . $GLOBALS['plat'] . '\\controller\\' . $t_className;
+
+    }elseif( substr($t_className, -7)=='Service' ){
+
+        $className = '\\' . $GLOBALS['plat'] . '\\service\\' . $t_className;
+
     }elseif( substr($t_className, -5)=='Model' ) {
+
         $className = '\\model\\' . $t_className;
+
     }elseif( substr($t_className, -4)=='Tool' ){
+
         $className = '\\plugins\\' . $t_className;
+
     }elseif( $className=='Common'||$className=='AutoTb' ){//针对Common的情况 和 老的AutoTbModel的情况
+
         $className = '\\model\\' . $t_className . 'Model';
     }
 

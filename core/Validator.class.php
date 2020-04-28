@@ -1,0 +1,502 @@
+<?php
+
+class Validator{
+
+    protected static $_M;
+
+    protected $rrange;//rule range
+    protected $dmsg;//default message
+    protected $denySingle;//不可作为独立规则的主规则
+    protected $codeMsg;
+    protected $codeLevel;
+
+
+    protected $field;//当前字段
+    protected $fieldKey;//当前字段对应的key
+    protected $data;//原始字段对应的数据数组
+    protected $ruleFlag;//当前检测的规则标识，"single"表示当前规则为独立规则或主规则，无副规则；"multi"表示当前规则为主副结构规则
+
+    protected $fields=[];//需要检查的字段集合
+    protected $rule=[];//用户指定的规则集合
+    protected $msg=[];//用户指定的违规消息提示集合
+
+    public $err=[];
+    // protected $sysErr=[];
+    public $sysErr=[];
+
+    public function __construct(){
+    
+        ///规则范围 （增加1个规则，就需要增加这个规则对应的处理方法
+        $this->rrange = [
+            #独立规则
+            'along' => ['required', 'email', 'cell', 'phone'],
+            #主规则
+            'main'  => ['int', 'float', 'regex'],
+            #副规则
+            'vice'  => [
+                'int'   => ['>', '>=', '<', '<=', '=', 'min', 'max'],
+                'float' => ['>', '>=', '<', '<=', '=', 'min', 'max'],
+                'regex' => ['@']
+            ]
+        ];
+
+        ///不可作为独立规则的主规则
+        $this->denySingle = ['regex'];
+
+        ///默认提示信息（必须）
+        $this->dmsg = [
+            'required'  =>  '{field}为必填参数',
+            'email' =>  '',
+            'cell'  =>  '',
+            'phone' =>  '',
+            'int' =>  '{field}必须为整数',
+            'int.min' => '{field} 值不能小于 {min}',
+            'int.max' => '{field} 值不能小于 {max}',
+            'float' =>  '',
+            'regex' =>  ''
+        ];
+
+        ///错误码对应的提示信息（非必须，通常只对1字开头的参数错误进行设置）
+        $this->codeMsg = [
+            '1001' => '规则：{rule}不可独立使用，请为其指定相应的副规则',
+            '1002' => '无效的规则：{rule}',
+            '1003' => '规则：{rule} 是一个“独立型”规则，不可“主副”联合使用',
+            '1004' => '设定为“主副型”规则的规则：{rule} 没有指定副规则',
+            '1005' => '找不到规则：{rule} 的处理方式，如需处理该规则，请先拓展该规则的处理方式'
+        ];
+
+        ///错误码对应的级别（必须）
+        $this->codeLevel = [
+            #规则参数错误，针对不可作为独立规则的主规则，如只传递了主规则regex,但是却没有必须的副规则
+            'param' => ['1001', '1002', '1003', '1004', '1005'],
+            #数据错误，数据不满足规则
+            'data' => ['2001', '2002', '2003']
+        ];
+    }
+
+    /**
+     * 
+     */
+    public static function make($data, $fields_rule_arr, $msg=[]){
+
+        self::$_M = new self;
+
+        ///记录并生成用户指定的规则
+        self::$_M->mkrule($fields_rule_arr);
+        ///记录并生成用户指定的字段提示信息
+        if( !empty($msg) ) self::$_M->mkmsg($msg);
+
+        // echo '<pre>';
+        // var_dump(self::$_M->msg);
+        // echo '<pre>';
+        // exit;
+
+        ///根据规则检查字段数据
+        self::$_M->ckEveryFields($data);
+
+        return self::$_M;
+    }
+
+    /**
+     * 记录并生成用户指定的规则
+     */
+    protected function mkrule($fields_rule_arr){
+
+        foreach( $fields_rule_arr as $field=>$rule){
+        
+            $this->fields[] = $field;
+            $this->rule[] = $rule;
+        }
+
+        return $this;
+    }
+
+    /**
+     * 记录并生成用户指定的字段提示信息
+     */
+    protected function mkmsg($msg){
+
+        foreach( $msg as $field_rule=>$this_msg){
+            
+            ///根据分隔符"."炸开字段与规则
+            $tmp = explode('.', $field_rule);
+            $this_field = array_shift($tmp);
+
+            $count = count($tmp);#当前字段的规则层数，如"int.min"是2
+
+            switch($count){
+                case 1:#仅有主规则或为独立规则
+                    $this->msg[$this_field][$tmp[0]]['default'] = $this_msg;
+                break;
+                case 2:#主副规则组合
+                    $this->msg[$this_field][$tmp[0]][$tmp[1]] = $this_msg;
+                break;
+            }
+        }
+    }
+    
+    protected function multiRule($rule_str){
+    
+    }
+
+    /**
+     * code to code message
+     * $code
+     * $search   被替换的目标
+     * $replace   替换的值
+     */
+    protected function code2cmsg($code, $search='', $replace=''){
+        
+        if( isset($this->codeMsg[$code]) ){
+
+            $this_codeMsg = $this->codeMsg[$code];
+            if($search!=='') $this_codeMsg = str_replace($search, $replace, $this->codeMsg[$code]);
+            return $this_codeMsg;
+        }
+        return '';
+    }
+
+    /**
+     * code to level
+     * 根据code返回其对应的level
+     */
+    protected function code2level($code){
+    
+        foreach( $this->codeLevel as $level=>$arr){
+        
+            if( in_array($code, $arr) ){
+                return $level;
+            }
+        }
+    }
+
+    /**
+     * 检测规则是否存在，比如检测 int 这个规则是否存在
+     */
+    protected function hasExists($rule){
+    
+        ///规则是否存在
+        $range = array_merge($this->rrange['along'], $this->rrange['main']);
+        if(!in_array($rule, $range)) return false;
+        return true;
+    }
+
+    /**
+     * 根据规则检查字段数据
+     */
+    protected function ckEveryFields($data){
+        ///没有字段
+        if( empty($this->fields) ) return false;
+
+        ///外层初始化数据
+        $this->data = $data;//包含所有字段数据的数组
+
+        ///遍历每个字段
+        foreach( $this->fields as $key=>$field){
+
+            #初始化数据
+            $this->field = $field;//当前正在检查的字段
+            $this->fieldKey = $key;//当前正在检查的字段对应的下标
+            
+            $this_field_rule = $this->rule[$key];//当前字段对应的校验规则组，如：required$||int$|min&:10$|max&:20
+            // var_dump($this_field_rule);
+
+            ///检查是否有规则分隔符
+            $tmp_flag_pos = strpos($this_field_rule, '$||');
+            // var_dump($this_field_rule);
+            // var_dump($tmp_flag_pos);
+            // echo '<hr/>';
+            
+            if( $tmp_flag_pos ){#该字段指定了多个规则检查，如：required$||int$|min&:10$|max&:20
+            
+                $this->multiRule($this_field_rule);
+
+            }else{#该字段只指定了1个规则，如：int$|min&:10$|max&:20
+
+                $this->singleRule($this_field_rule);
+            }
+        }
+        return $this;
+    }
+
+    protected function singleRule($rule_str){
+        // var_dump($this->field);
+        // var_dump($rule_str);
+        // echo '<hr/>';
+        // exit;
+        
+        ///数据不存在，且规则又不是required时，则没必要继续检查（仅required规则负责检查存在与空字符串的问题）
+        if( (!isset($this->data[$this->field]))&&($rule_str!='required') ) return true;
+        
+        #检查规则中是否有"副规则"分隔符
+        $tmp_flag_pos = strpos($rule_str, '$|');
+        if( $tmp_flag_pos ){##有副规则，如：int$|min&:10$|max&:20
+
+            ##数据不存在，且规则又不是required时，则没必要继续检查（仅required规则负责检查存在与空字符串的问题）
+            $tmp = explode('$|', $rule_str);
+            if( (!isset($this->data[$this->field]))&&($tmp[0]!='required') ) return true;
+
+            $this->hasSecRule($rule_str);
+        
+        }else{##没有副规则，如：int
+
+            ##数据不存在，且规则又不是required时，则没必要继续检查（仅required规则负责检查存在与空字符串的问题）
+            if( (!isset($this->data[$this->field]))&&($rule_str!='required') ) return true;
+
+            $this->noSecRule($rule_str);
+        }
+    }
+
+    /**
+     * 针对 有副规则 的规则字段进行数据检查
+     */
+    protected function hasSecRule($rule_str){
+        
+        ///根据"$|"切割数据，如：int$|min:10$|max:20 切割后为 Array ( [0] => int [1] => min&:10 [2] => max&:20 )
+        $vice = explode('$|', $rule_str);
+        // var_dump($this->field);
+        // var_dump($rule_str);
+        // echo '<hr/>';
+        // exit;
+        
+        #初始化参数
+        $this_rule = array_shift($vice);//第一个元素即为rule
+
+        ///能进本方法，说明有副规则，则规则一定不会为"required"(只有当required时，数据不存在才需要检查，其他规则，数据如果不存在，也不需要检查)
+        if( !isset($this->data[$this->field]) ) return true;
+
+        ///为独立型规则
+        if(in_array($this_rule, $this->rrange['along'])) return $this->mkSysErr('1003', $this_rule);
+
+        ///规则不存在
+        if(!$this->hasExists($this_rule)) return $this->mkSysErr('1002', $this_rule);
+
+        ///规则数据检测
+        $this->double($this_rule, $vice);
+    }
+
+    /**
+     * 对 主副结合型规则 进行对应数据检测
+     */
+    protected function double($rule, $viceArr=[]){
+
+        ///设定当前规则类型标识，double表示规则为 主副结合型规则
+        $this->ruleFlag = 'double';
+
+        ///根据规则进行检测
+        if( $rule=='int' ):
+
+            $this->ckInt($rule, $viceArr);
+            
+        elseif( $rule=='float' ):
+
+            // $this->ckFloat($rule, $viceArr);
+
+        elseif( $rule=='regex' ):
+            
+            $this->ckRegex($rule, $viceArr);
+        endif;
+    }
+    /**
+     * $viceArr 如：array(1) { [0]=> string(23) "@&:^[1]([3-9])[0-9]{9}$" }
+     */
+    protected function ckRegex($rule, $viceArr){
+        // var_dump($rule);
+        // var_dump($viceArr);
+        // exit;
+
+        $vice_arr = explode('&:', $viceArr[0]);
+        ///需要副规则值，却没给副规则值
+        if( $vice_arr[0]===''||(isset($vice_arr[1])&&$vice_arr[1]==='') ) return $this->mkSysErr('1004', $rule);
+
+        $vice_name = $vice_arr[0];//副规则名
+        $vice_val = $vice_arr[1];//副规则值
+        $this_rule = $rule.'.'.$vice_name;
+
+        ///副规则名不在限定范围内
+        if(!in_array($vice_name, $this->rrange['vice'][$rule])) return $this->mkSysErr('1005', $this_rule);
+        
+    }
+
+    /**
+     * $viceArr 如：Array ( [0] => int [1] => min&:10 [2] => max&:20 )
+     */
+    protected function ckInt($rule, $viceArr=[]){
+
+        if( empty($viceArr) ){///无副规则
+        
+            if(!is_int($this->data[$this->field])) return $this->mkErr('2002', $rule);
+
+        }else{///有副规则
+
+            foreach( $viceArr as $k=>$vice){
+            
+                $vice_arr = explode('&:', $vice);
+                #需要副规则值，却没给副规则值
+                if( $vice_arr[0]==='' ) return $this->mkSysErr('1004', $rule);
+                $vice_name = $vice_arr[0];//副规则名
+                $vice_val = $vice_arr[1];//副规则值
+                $this_rule = $rule.'.'.$vice_name;
+
+                #副规则名不在限定范围内
+                if(!in_array($vice_name, $this->rrange['vice'][$rule])) return $this->mkSysErr('1005', $this_rule);
+
+                #检查数据值
+                if( !$this->ckIntGo($vice_name, $vice_val) ) return $this->mkErr('2003', $rule, $vice_arr);
+            }
+        }
+    }
+
+    protected function ckIntGo($vice_name, $vice_val){
+
+        $is_right = 0;//是否满足规则，0表示否，1表示是
+        ///检查数据
+        switch($vice_name){
+            case '>':
+                $is_right = $this->data[$this->field] > $vice_val;
+            break;
+            case '>=':
+            case 'min':
+                $is_right = $this->data[$this->field] >= $vice_val;
+            break;
+            case '<':
+                $is_right = $this->data[$this->field] < $vice_val;
+            break;
+            case '<=':
+            case 'max':
+                $is_right = $this->data[$this->field] <= $vice_val;
+            break;
+            case '=':
+                $is_right = $this->data[$this->field] == $vice_val;
+            break;
+        }
+
+        return $is_right;
+    }
+
+    /**
+     * 异常处理 Exception Handler
+     */
+    protected function Hexception($fn){
+    
+        if(!is_callable($fn)) return false;
+
+        try{
+            $fn();
+        }catch(Exception $e){
+
+        }
+    }
+
+    /**
+     * 针对 独立型 或 可单独使用的主规则 的规则字段进行数据检查
+     */
+    protected function noSecRule($rule_str){//如：int
+
+        ///该规则为 不可独立 使用的规则
+        if( in_array($rule_str, $this->denySingle) ) return $this->mkSysErr('1001', $rule_str);
+
+        ///规则不存在
+        if(!$this->hasExists($rule_str)) return $this->mkSysErr('1002', $rule_str);
+
+        ///规则数据检测
+        return $this->single($rule_str);
+    }
+
+    /**
+     * 对 独立规则 或 可单独使用的主规则 进行对应数据检测
+     */
+    protected function single($rule){
+
+        ///设定当前规则类型标识，single表示规则为 独立规则 或 可单独使用的主规则
+        $this->ruleFlag = 'single';
+    
+        ///根据规则进行检测
+        if( $rule=='required' ):
+
+            return $this->ckRequired();
+            
+        elseif( $rule=='email' ):
+        elseif( $rule=='cell' ):
+        elseif( $rule=='phone' ):
+        elseif( $rule=='int' ):
+        elseif( $rule=='float' ):
+        
+        endif;
+    }
+
+    protected function ckRequired(){
+        
+        $is_err = (!isset($this->data[$this->field]) || $this->data[$this->field]=='') ? 1 : 0;
+
+        if( $is_err ){
+        
+            $this->mkErr('2001', 'required');
+        }
+        return $this;
+    }
+
+    /**
+     * 设置返回err信息
+     * $code
+     * $rule  string 如：int
+     * $vice  array  如：['min'=>10]
+     */
+    protected function mkErr($code, $rule, $vice=[]){
+        
+        $this->err[$this->field][$rule]['code'] = $code;
+        $this->err[$this->field][$rule]['level'] = $this->code2level($code);
+        $this->err[$this->field][$rule]['msg'] = $this->setMsg($rule, $vice);
+
+        return $this;
+    }
+
+    /**
+     * 设置返回system err信息
+     * $code
+     * $rule
+     */
+    protected function mkSysErr($code, $rule){
+        // var_dump($rule);
+        // echo '<hr/>';
+        
+    
+        $this->sysErr[$this->field][$rule]['code'] = $code;
+        $this->sysErr[$this->field][$rule]['codemsg'] = $this->code2cmsg($code, '{rule}', $rule);
+        $this->sysErr[$this->field][$rule]['level'] = $this->code2level($code);
+
+        return $this;
+    }
+
+    /**
+     * 设置返回信息
+     * $rule  string 如：int
+     * $vice  array  如：['min'=>10]
+     */
+    protected function setMsg($rule, $vice){
+
+        $this_rule = empty($vice) ? $rule : $rule.'.'.$vice[0];
+
+        ///有传则用传的，没传则用默认的
+        $tmp_msg = isset($this->msg[$this->field]) ? $this->msg[$this->field] : $this->dmsg;
+        $this_msg = isset($tmp_msg['default']) ? $tmp_msg['default'] : (isset($tmp_msg[$this_rule])?$tmp_msg[$this_rule]:'');
+
+        return $this->replace([
+            '{'.$vice[0].'}' => $vice[1],
+            '{field}' => $this->field,
+        ], $this_msg);
+    }
+
+    /**
+     * 批量替换字符
+     */
+    protected function replace($replaceArr, $subject){
+    
+        foreach( $replaceArr as $search=>$replace){
+        
+            $subject = str_replace($search, $replace, $subject);
+        }
+        return $subject;
+    }
+}
+

@@ -31,8 +31,22 @@ class UserController extends Controller {
 
     public function index(){ 
 
-        //接收数据
+        ///接收数据
         $request = REQUEST()->all();
+        #初始化参数
+        $user_service = M('UserService');
+
+        ///校验数据  service-check
+        $user_service->checkRequest($request);
+        exit;
+        
+
+        ///根据搜索字段得到搜索条件  service-search
+
+        ///获取列表数据  service-list
+
+        ///额外的逻辑处理  service-logic
+
 
         ///需要搜索的字段
         $search_form = [
