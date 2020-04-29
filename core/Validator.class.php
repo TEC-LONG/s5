@@ -45,20 +45,20 @@ class Validator{
 
         ///默认提示信息（必须）
         $this->dmsg = [
-            'required'  =>  '{field}为必填参数',
-            'email' =>  '',
-            'cell'  =>  '',
-            'phone' =>  '',
-            'int' =>  '{field}必须为整数',
+            'required'  =>  '{field} 为必填参数',
+            'email' =>  '{field} 邮箱格式不正确',
+            'cell'  =>  '{field} 手机号格式不正确',
+            'phone' =>  '{field} 座机号格式不正确',
+            'int' =>  '{field} 必须为整数',
             'int.min' => '{field} 值不能小于 {min}',
             'int.max' => '{field} 值不能小于 {max}',
             'float' =>  '',
-            'regex' =>  ''
+            'regex' =>  '{field} 格式不正确'
         ];
 
         ///错误码对应的提示信息（非必须，通常只对1字开头的参数错误进行设置）
         $this->codeMsg = [
-            '1001' => '规则：{rule}不可独立使用，请为其指定相应的副规则',
+            '1001' => '规则：{rule} 不可独立使用，请为其指定相应的副规则',
             '1002' => '无效的规则：{rule}',
             '1003' => '规则：{rule} 是一个“独立型”规则，不可“主副”联合使用',
             '1004' => '设定为“主副型”规则的规则：{rule} 没有指定副规则',
@@ -70,7 +70,7 @@ class Validator{
             #规则参数错误，针对不可作为独立规则的主规则，如只传递了主规则regex,但是却没有必须的副规则
             'param' => ['1001', '1002', '1003', '1004', '1005'],
             #数据错误，数据不满足规则
-            'data' => ['2001', '2002', '2003']
+            'data' => ['2001', '2002', '2003', '2004', '2005', '2006', '2007']
         ];
     }
 
@@ -85,11 +85,6 @@ class Validator{
         self::$_M->mkrule($fields_rule_arr);
         ///记录并生成用户指定的字段提示信息
         if( !empty($msg) ) self::$_M->mkmsg($msg);
-
-        // echo '<pre>';
-        // var_dump(self::$_M->msg);
-        // echo '<pre>';
-        // exit;
 
         ///根据规则检查字段数据
         self::$_M->ckEveryFields($data);
@@ -119,7 +114,7 @@ class Validator{
         foreach( $msg as $field_rule=>$this_msg){
             
             ///根据分隔符"."炸开字段与规则
-            $tmp = explode('.', $field_rule);
+            $tmp = explode('.', $field_rule);#如：cell.int
             $this_field = array_shift($tmp);
 
             $count = count($tmp);#当前字段的规则层数，如"int.min"是2
@@ -135,10 +130,6 @@ class Validator{
         }
     }
     
-    protected function multiRule($rule_str){
-    
-    }
-
     /**
      * code to code message
      * $code
@@ -219,11 +210,22 @@ class Validator{
         return $this;
     }
 
+    /**
+     * 多个主/独立规则，如：required$||int$|min&:10$|max&:20
+     */
+    protected function multiRule($rule_str){
+    
+        $rules_arr = explode('$||', $rule_str);
+        foreach( $rules_arr as $k=>$rule){
+        
+            $this->singleRule($rule);
+        }
+    }
+
+    /**
+     * 单个主/独立规则，如：int$|min&:10$|max&:20
+     */
     protected function singleRule($rule_str){
-        // var_dump($this->field);
-        // var_dump($rule_str);
-        // echo '<hr/>';
-        // exit;
         
         ///数据不存在，且规则又不是required时，则没必要继续检查（仅required规则负责检查存在与空字符串的问题）
         if( (!isset($this->data[$this->field]))&&($rule_str!='required') ) return true;
@@ -254,10 +256,6 @@ class Validator{
         
         ///根据"$|"切割数据，如：int$|min:10$|max:20 切割后为 Array ( [0] => int [1] => min&:10 [2] => max&:20 )
         $vice = explode('$|', $rule_str);
-        // var_dump($this->field);
-        // var_dump($rule_str);
-        // echo '<hr/>';
-        // exit;
         
         #初始化参数
         $this_rule = array_shift($vice);//第一个元素即为rule
@@ -298,12 +296,9 @@ class Validator{
         endif;
     }
     /**
-     * $viceArr 如：array(1) { [0]=> string(23) "@&:^[1]([3-9])[0-9]{9}$" }
+     * $viceArr 如：array(1) { [0]=> string(23) "@&:/^[1]([3-9])[0-9]{9}$/" }
      */
     protected function ckRegex($rule, $viceArr){
-        // var_dump($rule);
-        // var_dump($viceArr);
-        // exit;
 
         $vice_arr = explode('&:', $viceArr[0]);
         ///需要副规则值，却没给副规则值
@@ -315,7 +310,25 @@ class Validator{
 
         ///副规则名不在限定范围内
         if(!in_array($vice_name, $this->rrange['vice'][$rule])) return $this->mkSysErr('1005', $this_rule);
-        
+
+        ///用规则检测数据
+        if( !$this->ckRegexGo($vice_val) ) return $this->mkErr('2004', $rule);
+    }
+
+    /**
+     * 根据正则规则对数据进行匹配
+     * $vice  string  正则规则，如：/^[1]([3-9])[0-9]{9}$/
+     */
+    protected function ckRegexGo($vice){
+    
+        ///需要检查的数据
+        $subject = $this->data[$this->field];
+
+        ///正则匹配
+        preg_match($vice, $subject, $matches);
+
+        if( empty($matches) ) return false;
+        return true;
     }
 
     /**
@@ -414,26 +427,37 @@ class Validator{
         ///根据规则进行检测
         if( $rule=='required' ):
 
-            return $this->ckRequired();
-            
+            if( !$this->ckRequired() ): $this->mkErr('2001', $rule); endif;
+
         elseif( $rule=='email' ):
+
+            if( !$this->ckRegexGo('') ): $this->mkErr('2004', $rule); endif;
+
         elseif( $rule=='cell' ):
+
+            if( !$this->ckRegexGo('') ): $this->mkErr('2005', $rule); endif;
+
         elseif( $rule=='phone' ):
+
+            if( !$this->ckRegexGo('') ): $this->mkErr('2006', $rule); endif;
+
         elseif( $rule=='int' ):
+
+            $this->ckInt($rule);
+
         elseif( $rule=='float' ):
         
         endif;
+
+        return $this;
     }
 
     protected function ckRequired(){
         
         $is_err = (!isset($this->data[$this->field]) || $this->data[$this->field]=='') ? 1 : 0;
 
-        if( $is_err ){
-        
-            $this->mkErr('2001', 'required');
-        }
-        return $this;
+        if( $is_err ) return false;
+        return true;
     }
 
     /**
@@ -445,6 +469,7 @@ class Validator{
     protected function mkErr($code, $rule, $vice=[]){
         
         $this->err[$this->field][$rule]['code'] = $code;
+        $this->err[$this->field][$rule]['value'] = $this->data[$this->field];
         $this->err[$this->field][$rule]['level'] = $this->code2level($code);
         $this->err[$this->field][$rule]['msg'] = $this->setMsg($rule, $vice);
 
@@ -457,9 +482,6 @@ class Validator{
      * $rule
      */
     protected function mkSysErr($code, $rule){
-        // var_dump($rule);
-        // echo '<hr/>';
-        
     
         $this->sysErr[$this->field][$rule]['code'] = $code;
         $this->sysErr[$this->field][$rule]['codemsg'] = $this->code2cmsg($code, '{rule}', $rule);
@@ -477,10 +499,23 @@ class Validator{
 
         $this_rule = empty($vice) ? $rule : $rule.'.'.$vice[0];
 
-        ///有传则用传的，没传则用默认的
-        $tmp_msg = isset($this->msg[$this->field]) ? $this->msg[$this->field] : $this->dmsg;
-        $this_msg = isset($tmp_msg['default']) ? $tmp_msg['default'] : (isset($tmp_msg[$this_rule])?$tmp_msg[$this_rule]:'');
+        ///有传则用传的
+        if( isset($this->msg[$this->field]) ){
+            
+            $tmp_msg = $this->msg[$this->field];
+            #下标为default表示 独立型规则 或 可以单独使用的主规则 的对应用户指定信息；否则则为 主副型 用户指定信息
+            $this_msg = isset($tmp_msg[$rule]['default']) ? $tmp_msg[$rule]['default'] : (isset($tmp_msg[$rule][$vice[0]])?$tmp_msg[$rule][$vice[0]]:'');
 
+        }
+        
+        ///没传则用默认的
+        if( empty($this_msg) ){
+
+            $tmp_msg = $this->dmsg;
+            $this_msg = isset($tmp_msg[$this_rule]) ? $tmp_msg[$this_rule] : '';
+        }
+
+        ///返回msg
         return $this->replace([
             '{'.$vice[0].'}' => $vice[1],
             '{field}' => $this->field,

@@ -9,33 +9,51 @@ class UserService {
     public function checkRequest($request){
         
         $fields = [//需检查的字段
-            'media_link'  => 'regex',
-            'media_surface'  => 'regexx',
-            'media_type'  => 'int$|',
-            'media_type1'  => 'int$|minn&:10$|max&:20',
-            'media_type2'  => 'int$|min&:10$|max&:20',
-            'media_type3'  => 'int$|min&:10$|max&:20',
-            'title'  => 'required',
-            'topic_type'  => 'required$||int$|min&:10$|max&:20',
-            'cell'  => 'required$||regex$|@&:^[1]([3-9])[0-9]{9}$',
-            'cell1'  => 'regex$|@&:^[1]([3-9])[0-9]{9}$'
+            'media_link'    => 'regex',
+            'media_surface' => 'regexx',
+            'media_type'    => 'int$|',
+            'media_type1'   => 'int$|minn&:10$|max&:20',
+            'title'         => 'required',
+            'topic_type'    => 'required$||int$|>&:10$|<&:20',
+            'cell'          => 'required$||regex$|@&:^[1]([3-9])[0-9]{9}$',
+            'phone'         => 'regex$|@&:/^[1]([3-9])[0-9]{9}$/'
         ];
 
+        // $fields = [//需检查的字段
+        //     'media_link'    => 'required',
+        //     'media_surface' => 'required',
+        //     'media_type'    => 'int$|min&:0',
+        //     'media_type1'   => 'int$|min&:10$|max&:20',
+        //     'title'         => 'required',
+        //     'topic_type'    => 'required$||int$|>&:10$|<&:20',
+        //     'cell'          => 'required$||regex$|@&:/^[1]([3-9])[0-9]{9}$/',
+        //     'phone'         => 'required'
+        // ];
+
         $msg = [//字段对应的提示信息
-            'topic_type.required' => '"topic_type"为必填参数',
-            'topic_type.int.min' => '"状态值"不能小于{min}',
-            'topic_type.int.max' => '"状态值"不能小于{max}',
-            'cell.required' => '"手机号"为必填参数',
-            'cell.regex' => '"手机号"格式不正确'
+            'media_link.regex'      => '链接格式不正确',
+            'media_surface.regex'   => '图片链接格式不正确',
+            'media_type.int'        => '媒体类型值必须为整数',
+            'media_type1.int.min'   => '媒体1类型值不能小于{min}',
+            'media_type1.int.max'   => '媒体1类型值不能大于{max}',
+            'title.required'        => '标题为必填参数',
+            'topic_type.required'   => '话题类型为必填参数',
+            'topic_type.int.>'      => '话题类型的值必须大于{>}',
+            'topic_type.int.<'      => '话题类型的值必须小于{<}',
+            'cell.required'         => '"手机号"为必填参数',
+            'cell.regex'            => '"手机号"格式不正确',
+            'phone.regex'           => '座机号格式不正确',
         ];
 
         $request = [
             'media_link' => 'link',
             'media_surface' => 'link',
-            'media_type2' => 30,
-            'cell1' => 30,
-            'media_type3' => 3,
-            'media_type' => 'aa123'
+            'media_type' => 2,
+            'media_type1' => 12,
+            'title' => '标题组',
+            'topic_type' => 16,
+            'cell' => '18502088664',
+            'phone' => '020-12345'
         ];
 
         $obj = Validator::make($request, $fields, $msg);
