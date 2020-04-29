@@ -15,6 +15,7 @@ class Validator{
     protected $fieldKey;//当前字段对应的key
     protected $data;//原始字段对应的数据数组
     protected $ruleFlag;//当前检测的规则标识，"single"表示当前规则为独立规则或主规则，无副规则；"multi"表示当前规则为主副结构规则
+    protected $nowRuleStr;
 
     protected $fields=[];//需要检查的字段集合
     protected $rule=[];//用户指定的规则集合
@@ -89,7 +90,79 @@ class Validator{
         ///根据规则检查字段数据
         self::$_M->ckEveryFields($data);
 
+        ///处理system级err
+        self::$_M->sysErrHandler();
+
         return self::$_M;
+    }
+
+    protected function sysErrHandler(){
+    
+        $this->Hexception(function($obj){
+
+            if( !empty($obj->sysErr) ){
+                $e = new Exception('检测规则错误，请先指定符合规范的规则');
+                throw($e);
+            }
+        });
+    }
+
+    /**
+     * 异常处理 Exception Handler
+     */
+    protected function Hexception($fn){
+    
+        if(!is_callable($fn)) return false;
+
+        try{
+            $fn($this);
+        }catch(Exception $e){
+            $html = $this->createHtml($e);
+            echo $html;
+            trigger_error($e->getMessage(), E_USER_ERROR);
+        }
+    }
+
+    protected function createHtml($e){
+    
+        $head_ch_name = ['field'=>'字段', 'code'=>'错误码', 'rule'=>'完整规则', 'codemsg'=>'错误信息', 'level'=>'错误级别'];
+
+        $html .= '<table border="1" cellspacing="0"><thead>{thead1}<tr>{thead2}<tr></thead><tbody>{tbody}<tbody></table>';
+        $thead2 = '';
+        $tbody = '';
+        $counter = 0;
+        $col_num = 0;
+        foreach( $this->sysErr as $field=>$sysErr){
+            
+            if( $counter==0 ){
+                $thead2.='<td>'.$head_ch_name['field'].'</td>';
+                $col_num+=1;
+            }
+
+            $tbody .= '<tr>';
+            $tbody .= '<td>'.$field.'</td>';
+
+            foreach( $sysErr as $key=>$val){
+            
+                if( $counter==0 ){
+                    $thead2.='<td>'.$head_ch_name[$key].'</td>';
+                    $col_num+=1;
+                }
+                $tbody .= '<td>'.$val.'</td>';
+            }
+            $tbody .= '</tr>';
+            $counter++;
+        }
+
+        $html = str_replace('{thead2}', $thead2, $html);
+        $html = str_replace('{tbody}', $tbody, $html);
+
+        $thead1 = '<tr><td colspan="'.$col_num.'">时间：'.date('Y-m-d H:i:s').'</td></tr>';
+        // $thead1 .= '<tr><td colspan="'.$col_num.'">错误：'.$e->getMessage().'</td></tr>';
+
+        $html = str_replace('{thead1}', $thead1, $html);
+
+        return $html;
     }
 
     /**
@@ -190,14 +263,9 @@ class Validator{
             $this->fieldKey = $key;//当前正在检查的字段对应的下标
             
             $this_field_rule = $this->rule[$key];//当前字段对应的校验规则组，如：required$||int$|min&:10$|max&:20
-            // var_dump($this_field_rule);
 
             ///检查是否有规则分隔符
             $tmp_flag_pos = strpos($this_field_rule, '$||');
-            // var_dump($this_field_rule);
-            // var_dump($tmp_flag_pos);
-            // echo '<hr/>';
-            
             if( $tmp_flag_pos ){#该字段指定了多个规则检查，如：required$||int$|min&:10$|max&:20
             
                 $this->multiRule($this_field_rule);
@@ -230,6 +298,9 @@ class Validator{
         ///数据不存在，且规则又不是required时，则没必要继续检查（仅required规则负责检查存在与空字符串的问题）
         if( (!isset($this->data[$this->field]))&&($rule_str!='required') ) return true;
         
+        #记录当前的规则字符串，用于保存到err信息
+        $this->nowRuleStr = $rule_str;
+
         #检查规则中是否有"副规则"分隔符
         $tmp_flag_pos = strpos($rule_str, '$|');
         if( $tmp_flag_pos ){##有副规则，如：int$|min&:10$|max&:20
@@ -388,20 +459,6 @@ class Validator{
     }
 
     /**
-     * 异常处理 Exception Handler
-     */
-    protected function Hexception($fn){
-    
-        if(!is_callable($fn)) return false;
-
-        try{
-            $fn();
-        }catch(Exception $e){
-
-        }
-    }
-
-    /**
      * 针对 独立型 或 可单独使用的主规则 的规则字段进行数据检查
      */
     protected function noSecRule($rule_str){//如：int
@@ -468,10 +525,12 @@ class Validator{
      */
     protected function mkErr($code, $rule, $vice=[]){
         
-        $this->err[$this->field][$rule]['code'] = $code;
-        $this->err[$this->field][$rule]['value'] = $this->data[$this->field];
-        $this->err[$this->field][$rule]['level'] = $this->code2level($code);
-        $this->err[$this->field][$rule]['msg'] = $this->setMsg($rule, $vice);
+        $this->err[$this->field]['code'] = $code;
+        $this->err[$this->field]['name'] = $rule;
+        $this->err[$this->field]['rule'] = $this->nowRuleStr;
+        $this->err[$this->field]['value'] = $this->data[$this->field];
+        $this->err[$this->field]['level'] = $this->code2level($code);
+        $this->err[$this->field]['msg'] = $this->setMsg($rule, $vice);
 
         return $this;
     }
@@ -483,9 +542,11 @@ class Validator{
      */
     protected function mkSysErr($code, $rule){
     
-        $this->sysErr[$this->field][$rule]['code'] = $code;
-        $this->sysErr[$this->field][$rule]['codemsg'] = $this->code2cmsg($code, '{rule}', $rule);
-        $this->sysErr[$this->field][$rule]['level'] = $this->code2level($code);
+        // $thisKey = count($this->sysErr[$this->field]);
+        $this->sysErr[$this->field]['code'] = $code;
+        $this->sysErr[$this->field]['rule'] = $this->nowRuleStr;
+        $this->sysErr[$this->field]['codemsg'] = $this->code2cmsg($code, '{rule}', $rule);
+        $this->sysErr[$this->field]['level'] = $this->code2level($code);
 
         return $this;
     }
@@ -534,4 +595,3 @@ class Validator{
         return $subject;
     }
 }
-
