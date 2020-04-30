@@ -522,7 +522,7 @@ class Validator{
 
             if( !$this->ckRegexGo('/^[1]([3-9])[0-9]{9}$/') ): $this->mkErr('2005', $rule); endif;
 
-        elseif( $rule=='phone' ):
+        elseif( $rule=='' ):
 
             if( !$this->ckRegexGo('') ): $this->mkErr('2006', $rule); endif;
 
