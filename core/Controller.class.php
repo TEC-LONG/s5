@@ -60,7 +60,7 @@ class Controller extends \Smarty{
      * @param    $num_per_page    int    每页显示的数据条数，默认为31条
      * @return    array    包含分页各项数据的数组
      */
-    protected function _page($tb, $condition, $request, $num_per_page=31){
+    public function _page($tb, $condition, $request, $num_per_page=31){
         #分页参数
         $page = [];
         $page['numPerPageList'] = [20, 30, 40, 60, 80, 100, 120, 160, 200];
@@ -82,7 +82,7 @@ class Controller extends \Smarty{
      * @param    $$numPerPageList    array    每页展示数据条数列表
      * @return    array    包含分页各项数据的数组
      */
-    protected function _paginate($request, $obj, $numPerPageList=[20, 30, 40, 60, 80, 100, 120, 160, 200]){
+    public function _paginate($request, $obj, $numPerPageList=[20, 30, 40, 60, 80, 100, 120, 160, 200]){
 
         $nowPage = isset($request['pageNum']) ? intval($request['pageNum']) : (isset($_COOKIE[$this->_navTab.'pageNum']) ? intval($_COOKIE[$this->_navTab.'pageNum']) : 1);
         $page = $obj->pagination($nowPage)->pagination;

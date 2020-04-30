@@ -5,8 +5,57 @@ use \Validator;
 
 class UserService {
 
+    public function checkListRequest($request){
+    
+        ///需检查的搜索字段    UTF8编码下：/[x{4e00}-x{9fa5}]+/    不考虑编码用：([x81-xfe][x40-xfe])+
+        $fields = [
+            's_acc' => 'regex$|@&:/^\w+$/',
+            's_nickname' => 'ch-utf8'
+        ];
 
-    public function checkRequest($request){
+        ///字段排除检查值
+        $excludes = [
+            's_acc' => [''],
+            's_nickname' => ['']
+        ];
+
+        ///字段对应的提示信息
+        $msg = [
+            's_acc.regex'       => '账号存在非法的字符（账号只能包含数字、字符和下划线）'
+        ];
+
+        $obj = Validator::make($request, $fields, $msg, $excludes);
+        if( !empty($obj->err) ){
+            echo '<pre>';
+            var_dump($obj->err);
+            exit;
+        }
+        
+        
+    }
+
+    public function getUserList($request, $controller){
+    
+        ///需要搜索的字段
+        $search_form = [
+            ['s_acc', 'like'],
+            ['s_nickname', 'like']
+        ];
+        $condition = F()->S2C($request, $search_form);
+        $conditon[] = ['is_del', 0];
+        $condition[] = ['level', 0];
+
+        ///构建查询对象
+        $obj = M()->table('user')->select('*')->where($condition);
+
+        #分页参数
+        $controller->_datas['page'] = $page = $controller->_paginate($request, $obj);
+
+        #查询数据
+        $controller->_datas['rows'] = $obj->limit($page['limitM'] . ',' . $page['numPerPage'])->get();
+    }
+
+    public function checkRequestTest($request){
         
         $fields = [//需检查的字段
             'media_link'    => 'regex',
@@ -46,20 +95,19 @@ class UserService {
         ];
 
         $request = [
-            'media_link' => 'link',
+            'media_link'    => 'link',
             'media_surface' => 'link',
-            'media_type' => 2,
-            'media_type1' => 12,
-            'title' => '标题组',
-            'topic_type' => 16,
-            'cell' => '18502088664',
-            'phone' => '020-12345'
+            'media_type'    => 2,
+            'media_type1'   => 12,
+            'title'         => '标题组',
+            'topic_type'    => 16,
+            'cell'          => '18502088664',
+            'phone'         => '020-12345'
         ];
 
         $obj = Validator::make($request, $fields, $msg);
         echo '<pre>';
         var_dump($obj->err);
-        var_dump($obj->sysErr);
         
     }
 
