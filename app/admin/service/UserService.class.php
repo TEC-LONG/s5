@@ -7,31 +7,30 @@ class UserService {
 
     public function checkListRequest($request){
     
-        ///需检查的搜索字段    UTF8编码下：/[x{4e00}-x{9fa5}]+/    不考虑编码用：([x81-xfe][x40-xfe])+
+        ///需检查的搜索字段    UTF8编码下：/[x{4e00}-x{9fa5}]+/
         $fields = [
-            's_acc' => 'regex$|@&:/^\w+$/',
-            's_nickname' => 'ch-utf8'
+            's_acc'         => 'regex$|@&:/^\w+$/',
+            's_nickname'    => 'ch-utf8'
         ];
 
         ///字段排除检查值
         $excludes = [
-            's_acc' => [''],
-            's_nickname' => ['']
+            // 's_acc' => [''],
+            // 's_nickname' => ['']
         ];
 
         ///字段对应的提示信息
         $msg = [
-            's_acc.regex'       => '账号存在非法的字符（账号只能包含数字、字符和下划线）'
+            's_acc.regex'   => '账号存在非法的字符（账号只能包含数字、字符和下划线）'
         ];
 
         $obj = Validator::make($request, $fields, $msg, $excludes);
+
         if( !empty($obj->err) ){
             echo '<pre>';
             var_dump($obj->err);
             exit;
         }
-        
-        
     }
 
     public function getUserList($request, $controller){
@@ -106,6 +105,7 @@ class UserService {
         ];
 
         $obj = Validator::make($request, $fields, $msg);
+
         echo '<pre>';
         var_dump($obj->err);
         

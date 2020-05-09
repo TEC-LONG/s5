@@ -16,9 +16,9 @@ class UserController extends Controller {
         $this->_navTab = $navTab = 'admin_user';
 
         $this->_datas['url'] = [
-            'index' => ['url'=>L('/admin/user/index'), 'rel'=>$navTab.'_index'],
-            'ad'    => ['url'=>L('/admin/user/add'), 'rel'=>$navTab.'_add'],
-            'upd'   => ['url'=>L('/admin/user/upd'), 'rel'=>$navTab.'_upd'],
+            'index' => ['url'=>L('/admin/user/index'),  'rel'=>$navTab.'_index'],
+            'ad'    => ['url'=>L('/admin/user/add'),    'rel'=>$navTab.'_add'],
+            'upd'   => ['url'=>L('/admin/user/upd'),    'rel'=>$navTab.'_upd'],
             'post'  => ['url'=>L('/admin/user/post')],
         ];
 
@@ -28,10 +28,14 @@ class UserController extends Controller {
         $this->_datas['navTab'] = $navTab;
     }
 
+    /**
+     * 数据列表
+     */
     public function index(){ 
 
         ///接收数据
         $request = REQUEST()->all();
+
         #初始化参数
         $user_service = M('UserService');
 
@@ -59,12 +63,28 @@ class UserController extends Controller {
         $this->display('user/index.tpl');
     }
 
+    /**
+     * 添加/编辑页
+     */
     public function showEdit(){
     
+        ///接收数据
+        $request = REQUEST()->all();
+
+        ///编辑页需查询回显数据
+        if( isset($request['id']) ){
+        
+            #根据id查询
+            $this->_datas['row'] = M()->table('user')->select('*')->where(['id', $request['id']])->find();
+            $this->assign($this->_datas);
+        }
+        
+        $this->display('user/edit.tpl');
     }
 
     public function post(){
-    
+        ///接收数据
+        $request = REQUEST()->all();
     }
 
     

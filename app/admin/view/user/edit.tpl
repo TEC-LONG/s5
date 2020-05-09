@@ -1,35 +1,35 @@
 <div class="pageContent">
-	<form method="post" action="{$url.adh.url}" class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
+	<form method="post" action="{$url.post.url}" class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
         <div class="pageFormContent" layoutH="56">
             <p>
 				<label>账号：</label>
-				<input name="acc" type="text" class="required" />
+				<input name="acc" type="text" class="required" {if isset($row)} value="{$row.acc}"{/if} />
 			</p>
 			<p>
 				<label>密码：</label>
-				<input name="pwd" type="text" class="required alphanumeric" minlength="6" maxlength="20" />
+				<input name="pwd" type="text" class="required alphanumeric" minlength="6" maxlength="20" alt="不填写则表示不修改密码" />
 			</p>
 			<p>
 				<label>所属组：</label>
 				<select class="combox" name="user_group__id">
 					<option value="">请选择...</option>
 					{foreach $user_group as $v}
-					<option value="{$v['id']}">{$v['name']}</option>
+					<option value="{$v['id']}" {if isset($row)&&$row.user_group__id==$v.id} selected{/if}>{$v['name']}</option>
 					{/foreach}
 				</select>
 			</p>
 			<div class="divider"></div>
 			<p>
 				<label>昵称：</label>
-				<input name="nickname" type="text" class="required" />
+				<input name="nickname" type="text" class="required" {if isset($row)} value="{$row.nickname}"{/if} />
 			</p>
 			<p>
 				<label>手机号：</label>
-				<input name="cell" type="text" class="phone" />
+				<input name="cell" type="text" class="phone" {if isset($row)} value="{$row.cell}"{/if} />
 			</p>
 			<p>
 				<label>邮箱：</label>
-				<input name="email" type="text" class="email" />
+				<input name="email" type="text" class="email" {if isset($row)} value="{$row.email}"{/if} />
 			</p>
 			<div class="divider"></div>
 			<p class="nowrap">

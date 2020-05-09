@@ -352,7 +352,7 @@ class Validator{
         $can_pass = isset($this->excludes[$this->field])&&in_array($this->data[$this->field], $this->excludes[$this->field]);
 
         ///数据不存在，且规则又不是required时，则没必要继续检查（仅required规则负责检查存在与空字符串的问题）
-        $can_pass = $can_pass || (!isset($this->data[$this->field])&&$rule!='required');
+        $can_pass = $can_pass || ((!isset($this->data[$this->field])||$this->data[$this->field]=='')&&$rule!='required');
         
         return $can_pass;
     }
@@ -520,7 +520,8 @@ class Validator{
 
         elseif( $rule=='cell' ):
 
-            if( !$this->ckRegexGo('/^[1]([3-9])[0-9]{9}$/') ): $this->mkErr('2005', $rule); endif;
+            // if( !$this->ckRegexGo('/^[1]([3-9])[0-9]{9}$/') ): $this->mkErr('2005', $rule); endif;
+            if( !$this->ckRegexGo('/^1(3[0-9]|4[57]|5[0-9]|6[0-9]|7[0135678]|8[0-9]|9[0-9])\\d{8}$/') ): $this->mkErr('2005', $rule); endif;
 
         elseif( $rule=='' ):
 
