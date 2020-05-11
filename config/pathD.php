@@ -45,3 +45,4 @@ define('STORAGE_LOG_PATH', STORAGE_PATH . 'log/');
 define('EDITOR_IMG', PUBLIC_PATH . 'tools/editorimg/' );
 define('EDITORMD_IMG', UPLOAD_PATH . 'editormdimg/' );
 define('XHEDITOR_IMG', UPLOAD_PATH . 'xheditorimg/' );
+define('USER_IMG', UPLOAD_PATH . 'userimg/' );

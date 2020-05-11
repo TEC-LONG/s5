@@ -415,6 +415,39 @@ class Validator{
     }
 
     /**
+     * 将所有的非sys错误信息连接成一句返回的错误信息
+     */
+    public function getErrMsg($fieldOrIndex=''){
+
+        ///先判断，后遍历效率更高
+        if( $fieldOrIndex==='' ){///没有指定读取的字段
+        
+            $all_err = [];
+            foreach( $this->err as $tmp_field=>$err){
+            
+                $all_err[] = $err['msg'];
+            }
+            return implode(';', $all_err);
+            
+        }else{///指定了读取的字段或第几个err
+
+            if( is_numeric($fieldOrIndex) ){#指定返回第几个错误
+            
+                foreach( $this->err as $tmp_field=>$err){
+                    return $err['msg'];
+                }
+            }else{#指定具体的字段
+                foreach( $this->err as $tmp_field=>$err){
+            
+                    if( $tmp_field==$fieldOrIndex ){
+                        return $err['msg'];
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * 设置返回system err信息
      * $code
      * $rule

@@ -247,4 +247,11 @@ class FuncTool{
         return $condition;
     }
 
+
+    public function path2src($path){
+    
+        $src = preg_replace('/^.*\/upload\//u', 'upload/', $path);
+        return $src;
+    }
+
 }

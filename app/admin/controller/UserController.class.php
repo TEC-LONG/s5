@@ -2,6 +2,7 @@
 namespace admin\controller;
 use \core\controller;
 use \model\UserModel;
+use \Validator;
 
 class UserController extends Controller {
 
@@ -20,6 +21,7 @@ class UserController extends Controller {
             'ad'    => ['url'=>L('/admin/user/add'),    'rel'=>$navTab.'_add'],
             'upd'   => ['url'=>L('/admin/user/upd'),    'rel'=>$navTab.'_upd'],
             'post'  => ['url'=>L('/admin/user/post')],
+            'del'   => ['url'=>L('/admin/user/del')]
         ];
 
         $this->_datas['ori']    = UserModel::C_ORI;
@@ -33,19 +35,17 @@ class UserController extends Controller {
      */
     public function index(){ 
 
-        ///接收数据
-        $request = REQUEST()->all();
+        ///初始化参数
+        $request        = REQUEST()->all();
+        $user_service   = M('UserService');
 
-        #初始化参数
-        $user_service = M('UserService');
-
-        ///校验数据  service-check
+        ///校验数据
         $user_service->checkListRequest($request);
         
-        ///获取列表数据  service-list
+        ///获取列表数据
         $user_service->getUserList($request, $this);
 
-        ///额外的逻辑处理  service-logic
+        ///额外的逻辑处理
         #表头信息
         $this->_datas['thead'] = [
             ['ch'=>'账号',      'width'=>120],
@@ -68,7 +68,7 @@ class UserController extends Controller {
      */
     public function showEdit(){
     
-        ///接收数据
+        ///初始化参数
         $request = REQUEST()->all();
 
         ///编辑页需查询回显数据
@@ -76,16 +76,59 @@ class UserController extends Controller {
         
             #根据id查询
             $this->_datas['row'] = M()->table('user')->select('*')->where(['id', $request['id']])->find();
-            $this->assign($this->_datas);
         }
         
+        $this->assign($this->_datas);
         $this->display('user/edit.tpl');
     }
 
+    /**
+     * 录入数据
+     */
     public function post(){
-        ///接收数据
-        $request = REQUEST()->all();
+
+        ///初始化参数
+        $request        = REQUEST()->all();
+        $user_service   = M('UserService');
+
+        ///校验数据
+        $user_service->checkPostRequest($request);
+
+        ///文件上传
+        $headimg = $user_service->upheadimg('img');
+
+        ///录入数据
+        if( isset($request['id']) ){#编辑
+        
+            $user_service->update($request, $headimg);
+
+        }else{#新增
+
+            $user_service->insert($request, $headimg);
+        }
+
+        ///返回失败结果
+        JSON()->stat(300)->msg('操作失败')->exec();
     }
 
+    public function del(){
     
+        ///初始化参数
+        $request = REQUEST()->all();
+
+        ///检查数据
+        $obj = Validator::make($request, ['id'=>'required'], ['id.required'=>'非法的操作']);
+        #有错误信息则返回给页面
+        if( !empty($obj->err) ) JSON()->stat(300)->msg($obj->getErrMsg())->exec();
+
+        $navtab = $this->_navTab.'_index';
+        ///执行删除操作  将需要删除的数据 is_del字段设置为1
+        $re = M('UserModel')->fields('is_del')->update([1])->where(['id', '=', $request['id']])->exec();
+        
+        if( $re ){
+            JSON()->navtab($navtab)->msg('删除成功！')->exec();
+        }else{
+            JSON()->stat(300)->msg('操作失败')->exec();
+        }
+    }
 }      

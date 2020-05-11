@@ -33,6 +33,33 @@ class UserService {
         }
     }
 
+    public function checkPostRequest($request){
+    
+        ///需检查的搜索字段
+        $fields = [
+            'acc'       => 'required',
+            'pwd'       => 'required',
+            'nickname'  => 'required',
+            'cell'      => 'cell',
+            'email'     => 'email'
+        ];
+
+        ///字段对应的提示信息
+        $msg = [
+            'acc.required'      => '账号为必填项',
+            'pwd.required'      => '密码为必填项',
+            'nickname.required' => '昵称为必填项',
+            'cell.cell'         => '手机号格式不正确',
+            'email.email'       => '邮箱格式不正确'
+        ];
+
+        ///校验
+        $obj = Validator::make($request, $fields, $msg);
+        #有错误信息则返回给页面
+        if( !empty($obj->err) ) JSON()->stat(300)->msg($obj->getErrMsg())->exec();
+        
+    }
+
     public function getUserList($request, $controller){
     
         ///需要搜索的字段
@@ -52,6 +79,80 @@ class UserService {
 
         #查询数据
         $controller->_datas['rows'] = $obj->limit($page['limitM'] . ',' . $page['numPerPage'])->get();
+    }
+
+    public function upheadimg($input){
+    
+        ///以年份和月份分别来创建保存editor图片的一级和二级目录
+        $first_folder = date('Y');
+        $first_folder_path = USER_IMG . $first_folder;
+
+        if (!is_dir($first_folder_path)) {
+            mkdir($first_folder_path);
+            chmod($first_folder_path, 0757);
+        }
+
+        $second_folder = date('m');
+        $path = $first_folder_path . '/' . $second_folder;
+
+        if (!is_dir($path)) {
+            mkdir($path, 0757);
+            chmod($path, 0757);
+        }
+
+        #图片的命名规则：前缀_随机字符串年月日时分秒.随机字符串.jpg
+        $imgName = uniqid('user_') . date('YmdHis') . '.' . F()->randStr(6);
+
+        if ($file = F()->file($input, $path)->up('editormd_', $imgName)) {
+            //$wholePath = '/home/xx/xx/s5/upload/userimg/2019/11/xx.jpg';
+            $wholePath = $path . '/' . $first_folder . '/' . $second_folder . '/' . $file->getNameWithExtension();
+            $img = F()->path2src($wholePath);//$img = 'upload/userimg/2019/11/xx.jpg';
+
+            return $img;
+        }
+
+        return false;
+    }
+
+    public function update($request, $headimg){
+    
+        #查询已有数据
+        $row = M('UserModel')->select('*')->where(['id', $request['id']])->find();
+        $request['pwd'] = $request['pwd']=='' ? $row['pwd'] : M('UserModel')->make_pwd($request['pwd'], $row['salt']);##密码处理
+        $request['img'] = empty($headimg) ? '' : $headimg;##头像处理
+        $update_data = F()->compare($request, $row, ['acc', 'pwd', 'nickname', 'cell', 'email', 'img']);
+
+        if( empty($update_data) ) JSON()->stat(300)->msg('您还没有修改任何数据！请先修改数据。')->exec();
+
+        $re = M('UserModel')
+        ->fields(array_keys($update_data))
+        ->update($update_data)
+        ->where(['id', '=', $request['id']])
+        ->exec();
+
+        if( $re ) JSON()->navtab($this->_navTab.'_upd')->msg('修改用户成功！')->exec();
+    }
+
+    public function insert($request, $headimg){
+    
+        //构建新增数据
+        $insert = [
+            'acc'       => $request['acc'],
+            'pwd'       => M('UserModel')->make_pwd($request['pwd']),
+            'nickname'  => $request['nickname'],
+            'cell'      => $request['cell'],
+            'email'     => $request['email'],
+            'salt'      => M('UserModel')->make_salt(),
+            'level'     => 0,
+            'ori'       => 1,
+            'img'       => empty($headimg) ? '' : $headimg,
+            'post_date' => time()
+        ];
+
+        $re = M('UserModel')->insert($insert)->exec();
+
+        //执行新增
+        if( $re ) JSON()->navtab($this->_navTab.'_ad')->exec();
     }
 
     public function checkRequestTest($request){

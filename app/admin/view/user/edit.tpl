@@ -9,15 +9,6 @@
 				<label>密码：</label>
 				<input name="pwd" type="text" class="required alphanumeric" minlength="6" maxlength="20" alt="不填写则表示不修改密码" />
 			</p>
-			<p>
-				<label>所属组：</label>
-				<select class="combox" name="user_group__id">
-					<option value="">请选择...</option>
-					{foreach $user_group as $v}
-					<option value="{$v['id']}" {if isset($row)&&$row.user_group__id==$v.id} selected{/if}>{$v['name']}</option>
-					{/foreach}
-				</select>
-			</p>
 			<div class="divider"></div>
 			<p>
 				<label>昵称：</label>
