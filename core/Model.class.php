@@ -485,7 +485,7 @@ class Model extends NiceModel{
         if( $this->is2arr($insert)==1 ){//一维数组  $insert=['zhangsan', 12]或$insert=['name'=>'zhangsan', 'age'=>12]
 
             $tmp_keys = array_keys($insert);
-            if(!is_numeric($tmp_keys[0])){//键为字符串类型，则表示传进来的数组下表代表字段名，值为数据值
+            if(!is_numeric($tmp_keys[0])){//键为字符串类型，则表示传进来的数组下标代表字段名，值为数据值
                 $this->fields = '(`' . implode('`,`', $tmp_keys) . '`)';
             }
 

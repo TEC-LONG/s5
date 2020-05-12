@@ -87,7 +87,7 @@ class ArticleCateService {
         return false;
     }
 
-    public function update($request, $headimg){
+    public function update1($request, $headimg){
     
         #查询已有数据
         $row = M('UserModel')->select('*')->where(['id', $request['id']])->find();
@@ -106,7 +106,7 @@ class ArticleCateService {
         if( $re ) JSON()->navtab($this->_navTab.'_upd')->msg('修改用户成功！')->exec();
     }
 
-    public function insert($request, $headimg){
+    public function insert1($request, $headimg){
     
         //构建新增数据
         $insert = [
@@ -178,6 +178,86 @@ class ArticleCateService {
         $obj = Validator::make($request, $fields, $msg);
         #有错误信息则返回给页面
         // if( !empty($obj->err) ) JSON()->stat(300)->msg($obj->getErrMsg())->exec();
+    }
+
+    public function insert($request, $headimg){
+
+        ///初始化参数
+        $pchild_num = $request['pchild_num'];
+        $arti_cate_model = M('ArticleCategoryModel');
+
+        ///新增当前分类
+        #组装数组
+        $data = [
+            'name'      => $request['name'],
+            'pid'       => $request['pid'],
+            'post_date' => time(),
+            'level'     => $request['plevel']+1
+        ];
+
+        #执行新增并获取新记录的id值
+        if( $arti_cate_model->insert($data)->exec() ){
+            $last_insert_id = $arti_cate_model->last_insert_id();
+        }
+
+        if( isset($last_insert_id) ){///上级分类相关数据更新
+            
+            $pdata = [
+                'child_nums'    => 'child_nums+1'   #子分类数量
+            ];
+            $pdata['child_ids'] = $pchild_num==0 ? $last_insert_id : "concat(child_ids, ',".$last_insert_id."')";   #子分类id值集合
+
+            # pid=0则当前分类为顶级分类，再无上级分类；  level>1则表示有上级分类，则更新上级分类
+            if( $data['pid']==0||(in_array($data['level'], [2, 3])&&1) ){
+                
+            }
+            
+
+        }else{///无新分类id，新增失败
+            JSON()->stat(300)->msg('新增分类失败！')->exec();
+        }
+
+        if ( $insertId=M()->setData('expcat', $datas) ){ 
+
+            $pdatas = ['child_nums'=>'child_nums+1'];
+            if( $pchild_num==0 ){
+                $pdatas['child_ids'] = $insertId;
+            }else{
+                $pdatas['child_ids'] = "concat(child_ids, '," . $insertId . "')";
+            }
+
+            if($datas['pid']==0 || (in_array($datas['level'], [2, 3]) && M()->setData('expcat', $pdatas, 2, ['id'=>$datas['pid']], ['child_nums', 'child_ids']))){
+                $re = AJAXre();
+                $re->navTabId = $this->_navTab.'_index';
+                $re->message = '添加成功！';
+            }else{
+                $re = AJAXre(1);
+            }
+        }else{ 
+            $re = AJAXre(1);
+        }
+
+        echo json_encode($re);
+        exit;
+    
+        //构建新增数据
+        $insert = [
+            'acc'       => $request['acc'],
+            'pwd'       => M('UserModel')->make_pwd($request['pwd']),
+            'nickname'  => $request['nickname'],
+            'cell'      => $request['cell'],
+            'email'     => $request['email'],
+            'salt'      => M('UserModel')->make_salt(),
+            'level'     => 0,
+            'ori'       => 1,
+            'img'       => empty($headimg) ? '' : $headimg,
+            'post_date' => time()
+        ];
+
+        $re = M('UserModel')->insert($insert)->exec();
+
+        //执行新增
+        if( $re ) JSON()->navtab($this->_navTab.'_ad')->exec();
     }
     
 }      

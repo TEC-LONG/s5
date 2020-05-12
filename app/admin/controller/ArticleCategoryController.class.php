@@ -68,12 +68,36 @@ class ArticleCategoryController extends Controller {
         ///录入数据
         if( isset($request['id']) ){#编辑
 
-            
+            $name = $_POST['name'];
+            $ori_name = $_POST['ori_name'];
+
+            $datas = [];
+            if( $name!=$ori_name ) $datas['name'] = $_POST['name'];
+
+            if(empty($datas)){
+                $re = AJAXre(1);
+                echo json_encode($re);
+                exit;
+            }
+
+            $condition = [];
+            $condition['id'] = $_POST['id'];
+
+            if ( M()->setData('expcat', $datas, 2, $condition) ){ 
+                $re = AJAXre();
+                $re->navTabId = $this->_navTab.'_index';
+                $re->message = '修改EXP分类成功！';
+            }else{ 
+                $re = AJAXre(1);
+            }
+
+            echo json_encode($re);
+            exit;
         
         }else{#新增
 
-
-
+            ##新增当前分类
+            $article_cate_service->insert($request);
         }
     }
 
