@@ -25,6 +25,10 @@ class Route{
         'request'   => []
     ];
 
+    private static $_get=[];
+    private static $_post=[];
+    private static $_request=[];
+
     private static $selfObj=NULL;
 
     public static function get($route, $map){
@@ -44,7 +48,24 @@ class Route{
 
     public function navtab($navtab){
         
-        self::$_navtab[self::$count[1]][self::$count[0]] = $navtab;
+        ///                get               2
+        // self::$_navtab[self::$count[1]][self::$count[0]] = $navtab;
+
+        $key    = self::$count[0];
+        $name   = '_'.self::$count[1];# _get/_post/_request
+
+        self::$$name['navtab'][$key] = $navtab;
+        
+        return self::$selfObj;
+    }
+
+    public function name($name){
+    
+        $key    = self::$count[0];
+        $name   = '_'.self::$count[1];# _get/_post/_request
+
+        self::$$name['name'][$key] = $name;
+        
         return self::$selfObj;
     }
 
@@ -64,22 +85,36 @@ class Route{
         
         if( $type=='get' ){#add get
         
-            $key = count(self::$_routes['get']);
-            self::$_maps['get'][$key] = $map;
-            self::$_routes['get'][$key] = '/' . self::$plat . '/' . $route;
+            // $key = count(self::$_routes['get']);
+            // self::$_maps['get'][$key] = $map;
+            // self::$_routes['get'][$key] = '/' . self::$plat . '/' . $route;
+
+            $k = count(self::$_get);
+            self::$_get['maps'][$k]      = $map;
+            self::$_get['routes'][$k]    = '/' . self::$plat . '/' . $route;
 
         }elseif( $type=='post' ) {#add post
-            self::$count = $key = count(self::$_routes['post']);
-            self::$_maps['post'][$key] = $map;
-            self::$_routes['post'][$key] = '/' . self::$plat . '/' . $route;
+
+            // self::$count = $key = count(self::$_routes['post']);
+            // self::$_maps['post'][$key] = $map;
+            // self::$_routes['post'][$key] = '/' . self::$plat . '/' . $route;
+
+            $k = count(self::$_post);
+            self::$_post['maps'][$k]      = $map;
+            self::$_post['routes'][$k]    = '/' . self::$plat . '/' . $route;
 
         }else{#add request
-            self::$count = $key = count(self::$_routes['request']);
-            self::$_maps['request'][$key] = $map;
-            self::$_routes['request'][$key] = '/' . self::$plat . '/' . $route;
+
+            // self::$count = $key = count(self::$_routes['request']);
+            // self::$_maps['request'][$key] = $map;
+            // self::$_routes['request'][$key] = '/' . self::$plat . '/' . $route;
+
+            $k = count(self::$_request);
+            self::$_request['maps'][$k]      = $map;
+            self::$_request['routes'][$k]    = '/' . self::$plat . '/' . $route;
         }
 
-        self::setCount($key, $type);
+        self::setCount($k, $type);
         return self::getObj();
     }
 
@@ -111,7 +146,9 @@ class Route{
         if(!in_array($request_method, ['get', 'post'])) exit('跳转404，记录日志！请求方式非法');
         
         ///匹配routes规则，确定指向哪个控制器下的哪个方法
-        $routes_gather = self::$_routes[$request_method];
+        // $routes_gather = self::$_routes[$request_method];
+        $var_name = '_' . $request_method;
+        $routes_gather = self::$$var_name['routes'];
         // if(!in_array($URI, $routes_gather)){
         //     var_dump($request_method);
         //     var_dump($URI);
@@ -119,7 +156,8 @@ class Route{
         // }
         if(!in_array($URI, $routes_gather)){
             $request_method = 'request';
-            $routes_gather = self::$_routes[$request_method];
+            $var_name = '_' . $request_method;
+            $routes_gather = self::$$var_name['routes'];
             // if(!in_array($URI, $routes_gather)){
             //     var_dump($request_method);
             //     var_dump($URI);
@@ -129,7 +167,7 @@ class Route{
         }
 
         $routes_key = array_search($URI, $routes_gather);#routes的key与map的key一致
-        $map = self::$_maps[$request_method][$routes_key];
+        $map = self::$$var_name['maps'][$routes_key];
 
         #得到控制器名和方法
         $map_str = explode('@', $map);

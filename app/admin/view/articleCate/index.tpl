@@ -61,7 +61,7 @@ var district_ids = [];
 
 <div class="pageFormContent" layoutH="60">
 <!-- 添加 -->
-	<form method="post" action="{$url.adh}"  class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
+	<form method="post" action="{$url.post.url}"  class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
 	<fieldset>
 		<legend>添加EXP分类</legend>
 		<dl>

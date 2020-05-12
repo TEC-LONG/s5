@@ -100,15 +100,21 @@ class UserController extends Controller {
         ///录入数据
         if( isset($request['id']) ){#编辑
         
-            $user_service->update($request, $headimg);
+            $navtab = $this->_navTab.'_upd';
+            $re = $user_service->update($request, $headimg);
 
         }else{#新增
 
-            $user_service->insert($request, $headimg);
+            $navtab = $this->_navTab.'_ad';
+            $re = $user_service->insert($request, $headimg);
         }
 
-        ///返回失败结果
-        JSON()->stat(300)->msg('操作失败')->exec();
+        ///返回结果
+        if( $re ){
+            JSON()->navtab($navtab)->msg('操作成功！')->exec();
+        }else{
+            JSON()->stat(300)->msg('操作失败')->exec();
+        }
     }
 
     public function del(){

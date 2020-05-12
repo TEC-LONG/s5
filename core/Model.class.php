@@ -446,10 +446,19 @@ class Model extends NiceModel{
      */
     public function update($update){
 
-        if( $this->is2arr($update)==1 ){//一维数组  $insert=['zhangsan', 12]
+        if( $this->is2arr($update)==1 ){//一维数组  $insert=['zhangsan', 12, '@age+1', '@concat(child_ids, ',10')']
+
+            $tmp_keys = array_keys($update);
+            if(!is_numeric($tmp_keys[0])){//键为字符串类型，则表示传进来的数组下标代表字段名，值为数据值
+                $this->fields($tmp_keys);
+            }
 
             $this->update[] = array_map(function ($val){
-                return '"' . str_replace('"', '\'', $val) . '"';
+                if( substr($val, 0, 1)=='@' ){#不加引号
+                    return str_replace('"', '\'', str_replace('@', '', $val));
+                }else{#加引号
+                    return '"' . str_replace('"', '\'', $val) . '"';
+                }
             }, $update);
         
         }elseif ($this->is2arr($update)==2) {//二维数组  $insert=[['zhangsan', 12],['lisi', 13]]
@@ -457,7 +466,11 @@ class Model extends NiceModel{
             foreach( $update as $row){
             
                 $this->update[] = array_map(function ($val){
-                    return '"' .  str_replace('"', '\'', $val) . '"';
+                    if( substr($val, 0, 1)=='@' ){#不加引号
+                        return str_replace('"', '\'', str_replace('@', '', $val));
+                    }else{#加引号
+                        return '"' . str_replace('"', '\'', $val) . '"';
+                    }
                 }, $row);
             }
         }

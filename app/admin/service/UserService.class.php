@@ -130,12 +130,13 @@ class UserService {
         ->where(['id', '=', $request['id']])
         ->exec();
 
-        if( $re ) JSON()->navtab($this->_navTab.'_upd')->msg('修改用户成功！')->exec();
+        if( $re ) return true;
+        return false;
     }
 
     public function insert($request, $headimg){
     
-        //构建新增数据
+        ///构建新增数据
         $insert = [
             'acc'       => $request['acc'],
             'pwd'       => M('UserModel')->make_pwd($request['pwd']),
@@ -149,10 +150,11 @@ class UserService {
             'post_date' => time()
         ];
 
+        ///执行新增
         $re = M('UserModel')->insert($insert)->exec();
-
-        //执行新增
-        if( $re ) JSON()->navtab($this->_navTab.'_ad')->exec();
+        
+        if( $re ) return true;
+        return false;
     }
 
     public function checkRequestTest($request){

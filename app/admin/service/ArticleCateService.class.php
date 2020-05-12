@@ -203,61 +203,52 @@ class ArticleCateService {
         if( isset($last_insert_id) ){///上级分类相关数据更新
             
             $pdata = [
-                'child_nums'    => 'child_nums+1'   #子分类数量
+                'child_nums'    => '@child_nums+1'   #子分类数量
             ];
-            $pdata['child_ids'] = $pchild_num==0 ? $last_insert_id : "concat(child_ids, ',".$last_insert_id."')";   #子分类id值集合
+            $pdata['child_ids'] = $pchild_num==0 ? $last_insert_id : "@concat(child_ids, ',".$last_insert_id."')";   #子分类id值集合
 
-            # pid=0则当前分类为顶级分类，再无上级分类；  level>1则表示有上级分类，则更新上级分类
-            if( $data['pid']==0||(in_array($data['level'], [2, 3])&&1) ){
-                
+            # pid=0则当前分类为顶级分类，再无上级分类
+            $is_success = $data['pid']==0;
+            # level>1则表示有上级分类，则更新上级分类
+            $is_success = $is_success || (in_array($data['level'], [2, 3]) && $arti_cate_model->update($pdata)->where(['id', $data['pid']])->exec());
+            if( $is_success ){
+                return true;
             }
+        }
+        JSON()->stat(300)->msg('新增分类失败！')->exec();
+    }
+
+    public function update($request){
+        
+        ///初始化参数
+        $name = $request['name'];
+        $ori_name = $request['ori_name'];
+
+        ///
+        $data = [];
+        if( $name!=$ori_name ) $data['name'] = $name;
+
+        if(empty($data)) JSON()->stat(300)->msg('当前分类名称并没有被修改，请先修改')->exec();
+
+        $re = M('ArticleCategoryModel')->update($data)->where(['id', $request['id']])->exec();
+
+        if(!$re) JSON()->stat(300)->msg('操作失败')->exec();
+        return true;
+    }
+
+    public function recursiveCat(&$tree_in, $cats, $parent_id=0, $space=0){ 
+        
+        foreach( $cats as $cats_val1 ){ 
             
+            if( $cats_val1['pid']==$parent_id ){
+                
+                $cats_val1['space'] = $space;
+                $tree_in[] = $cats_val1;
 
-        }else{///无新分类id，新增失败
-            JSON()->stat(300)->msg('新增分类失败！')->exec();
-        }
-
-        if ( $insertId=M()->setData('expcat', $datas) ){ 
-
-            $pdatas = ['child_nums'=>'child_nums+1'];
-            if( $pchild_num==0 ){
-                $pdatas['child_ids'] = $insertId;
-            }else{
-                $pdatas['child_ids'] = "concat(child_ids, '," . $insertId . "')";
+                $next_space = $space+1;
+                $this->recursiveCat($tree_in, $cats, $cats_val1['id'], $next_space);
             }
-
-            if($datas['pid']==0 || (in_array($datas['level'], [2, 3]) && M()->setData('expcat', $pdatas, 2, ['id'=>$datas['pid']], ['child_nums', 'child_ids']))){
-                $re = AJAXre();
-                $re->navTabId = $this->_navTab.'_index';
-                $re->message = '添加成功！';
-            }else{
-                $re = AJAXre(1);
-            }
-        }else{ 
-            $re = AJAXre(1);
         }
-
-        echo json_encode($re);
-        exit;
-    
-        //构建新增数据
-        $insert = [
-            'acc'       => $request['acc'],
-            'pwd'       => M('UserModel')->make_pwd($request['pwd']),
-            'nickname'  => $request['nickname'],
-            'cell'      => $request['cell'],
-            'email'     => $request['email'],
-            'salt'      => M('UserModel')->make_salt(),
-            'level'     => 0,
-            'ori'       => 1,
-            'img'       => empty($headimg) ? '' : $headimg,
-            'post_date' => time()
-        ];
-
-        $re = M('UserModel')->insert($insert)->exec();
-
-        //执行新增
-        if( $re ) JSON()->navtab($this->_navTab.'_ad')->exec();
     }
     
-}      
+}
