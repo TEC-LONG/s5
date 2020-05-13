@@ -2,14 +2,14 @@
 namespace admin\service;
 use \Validator;
 
-class UserService {
+class ArticleService {
 
     public function checkListRequest($request){
     
         ///需检查的搜索字段    UTF8编码下：/[x{4e00}-x{9fa5}]+/
         $fields = [
-            's_acc'         => 'regex$|@&:/^\w+$/',
-            's_nickname'    => 'ch-utf8'
+            's_id'         => 'int$|min&:1',
+            // 's_'    => 'ch-utf8'
         ];
 
         ///字段排除检查值
@@ -20,7 +20,7 @@ class UserService {
 
         ///字段对应的提示信息
         $msg = [
-            's_acc.regex'   => '账号存在非法的字符（账号只能包含数字、字符和下划线）'
+            's_id.int.min'   => 'ID值不能小于0'
         ];
 
         $obj = Validator::make($request, $fields, $msg, $excludes);
@@ -59,19 +59,17 @@ class UserService {
         
     }
 
-    public function getUserList($request, $controller){
+    public function getArticleList($request, $controller){
     
         ///需要搜索的字段
         $search_form = [
-            ['s_acc', 'like'],
-            ['s_nickname', 'like']
+            ['s_id', '=']
         ];
         $condition = F()->S2C($request, $search_form);
         $condition[] = ['is_del', 0];
-        $condition[] = ['level', 0];
 
         ///构建查询对象
-        $obj = M()->table('user')->select('*')->where($condition);
+        $obj = M('ArticleModel')->select('*')->where($condition);
 
         #分页参数
         $controller->_datas['page'] = $page = $controller->_paginate($request, $obj);

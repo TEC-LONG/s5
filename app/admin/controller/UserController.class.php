@@ -8,20 +8,17 @@ class UserController extends Controller {
 
     ##标准预定义属性
     public $_datas = [];
-    // protected $_navTab;
 
     public function __construct(){
 
         parent::__construct();
 
-        $this->_navTab = $navTab = 'admin_user';
-
         $this->_datas['url'] = [
-            'index' => ['url'=>L('/admin/user/index'),  'rel'=>$navTab.'_index'],
-            'ad'    => ['url'=>L('/admin/user/add'),    'rel'=>$navTab.'_add'],
-            'upd'   => ['url'=>L('/admin/user/upd'),    'rel'=>$navTab.'_upd'],
-            'post'  => ['url'=>L('/admin/user/post')],
-            'del'   => ['url'=>L('/admin/user/del')]
+            'index' => $this->route('get',  '/admin/user/index'),
+            'ad'    => $this->route('get',  '/admin/user/add'),
+            'upd'   => $this->route('get',  '/admin/user/upd'),
+            'post'  => $this->route('post', '/admin/user/post'),
+            'del'   => $this->route('get',  '/admin/user/del')
         ];
 
         $this->_datas['ori']    = UserModel::C_ORI;
@@ -100,12 +97,12 @@ class UserController extends Controller {
         ///录入数据
         if( isset($request['id']) ){#编辑
         
-            $navtab = $this->_navTab.'_upd';
+            $navtab = 'admin_user_upd';
             $re = $user_service->update($request, $headimg);
-
+            
         }else{#新增
-
-            $navtab = $this->_navTab.'_ad';
+            
+            $navtab = 'admin_user_add';
             $re = $user_service->insert($request, $headimg);
         }
 
@@ -127,12 +124,11 @@ class UserController extends Controller {
         #有错误信息则返回给页面
         if( !empty($obj->err) ) JSON()->stat(300)->msg($obj->getErrMsg())->exec();
 
-        $navtab = $this->_navTab.'_index';
         ///执行删除操作  将需要删除的数据 is_del字段设置为1
         $re = M('UserModel')->fields('is_del')->update([1])->where(['id', '=', $request['id']])->exec();
         
         if( $re ){
-            JSON()->navtab($navtab)->msg('删除成功！')->exec();
+            JSON()->navtab($this->navtab)->msg('删除成功！')->exec();
         }else{
             JSON()->stat(300)->msg('操作失败')->exec();
         }

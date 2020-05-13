@@ -176,7 +176,6 @@ class UserController extends Controller {
         }
 
         $re = M('UserModel')
-        ->fields(array_keys($update_data))
         ->update($update_data)
         ->where(['id', '=', $request['id']])
         ->exec();
@@ -282,7 +281,7 @@ class UserController extends Controller {
             $update = F()->compare($request, $ori, ['name', 'sort', 'comm']);
 
             if( empty($update) ) JSON()->stat(300)->msg('您还没有修改任何数据！请先修改数据。')->exec();
-            $re = $obj->fields(array_keys($update))->update($update)->where(['id', $request['id']])->exec();
+            $re = $obj->update($update)->where(['id', $request['id']])->exec();
 
         }else{///新增
 

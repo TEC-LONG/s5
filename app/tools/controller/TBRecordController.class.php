@@ -285,7 +285,7 @@ class TBRecordController extends Controller {
         if(empty($upd_data)) JSON()->stat(300)->msg('没有修改任何数据！')->exec();
 
         #执行更新
-        if( M()->table('tb_record')->fields(array_keys($upd_data))->update($upd_data)->where(['id', $request['id']])->exec() ){
+        if( M()->table('tb_record')->update($upd_data)->where(['id', $request['id']])->exec() ){
             JSON()->navtab($this->_navTab.'_upd')->exec();
         }else{
             JSON()->stat(300)->msg('操作失败！')->exec();

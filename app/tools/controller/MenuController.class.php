@@ -127,7 +127,7 @@ class MenuController extends Controller {
             exit;
         }
 
-        if ( M()->table('menu_permission')->fields(array_keys($datas))->update($datas)->where(['id', $request['id']])->exec() ){ 
+        if ( M()->table('menu_permission')->update($datas)->where(['id', $request['id']])->exec() ){ 
             $re = AJAXre();
             $re->navTabId = $this->_navTab.'_index';
             $re->message = '修改EXP分类成功！';

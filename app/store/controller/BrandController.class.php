@@ -156,7 +156,6 @@ class BrandController extends Controller {
         }
 
         $re = M()->table('tl_goods_brand')
-        ->fields(array_keys($update_data))
         ->update($update_data)
         ->where(['id', '=', $request['id']])
         ->exec();

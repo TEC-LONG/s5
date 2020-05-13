@@ -153,7 +153,6 @@ class EventController extends Controller {
         }
 
         $re = M()->table('event')
-        ->fields(array_keys($update_data))
         ->update($update_data)
         ->where(['id', '=', $request['id']])
         ->exec();

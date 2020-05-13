@@ -159,7 +159,7 @@ class EditorTool {
         }
 
         if(!empty($insert)){
-            M('ImagesModel')->fields(array_keys($insert[0]))->insert($insert)->exec();
+            M('ImagesModel')->insert($insert)->exec();
             setcookie($this->_cookie_name, urlencode(serialize($this->_cookie_imgs[$this->_cookie_name])), time()+7200, '/');
         }
     }

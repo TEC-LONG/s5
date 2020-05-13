@@ -207,7 +207,6 @@ class ProrecordController extends Controller {
         $update_data['upd_time'] = time();
         ///更新数据
         $re = M()->table('prorecord')
-        ->fields(array_keys($update_data))
         ->update($update_data)
         ->where(['id', $request['id']])
         ->exec();
@@ -397,7 +396,6 @@ class ProrecordController extends Controller {
 
         ///更新数据
         $re = M()->table('everyday_things')
-        ->fields(array_keys($update_data))
         ->update($update_data)
         ->where(['id', $request['id']])
         ->exec();
@@ -503,7 +501,6 @@ class ProrecordController extends Controller {
 
         ///更新数据
         $re = M()->table('everyday_things_details')
-        ->fields(array_keys($update_data))
         ->update($update_data)
         ->where(['id', $request['id']])
         ->exec();

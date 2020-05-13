@@ -8,22 +8,19 @@ class ArticleCategoryController extends Controller {
 
     ##标准预定义属性
     public $_datas = [];
-    protected $_navTab;
 
     public function __construct(){
 
         parent::__construct();
 
-        $this->_navTab = $navTab = 'admin_article_category';
-
         $this->_datas['url'] = [
-            'index' => ['url'=>L('/admin/article/cate'),        'rel'=>$navTab.'_index'],
-            'post'  => ['url'=>L('/admin/article/cate/post')],
+            'index' => $this->route('get',  '/admin/article/cate'),
+            'post'  => $this->route('post', '/admin/article/cate/post'),
             // 'del'   => ['url'=>L('/admin/article/cate/del')]
         ];
 
         $this->_datas['level']  = ArticleCategoryModel::C_LEVEL;
-        $this->_datas['navTab'] = $navTab;
+        $this->_datas['navTab'] = $this->navtab;
     }
 
     /**
@@ -71,14 +68,12 @@ class ArticleCategoryController extends Controller {
 
         ///录入数据,如失败，在服务中拦截
         if( isset($request['id']) ){#编辑
-            $navtab = $this->_navTab.'_upd';
             $article_cate_service->update($request);
         }else{#新增
-            $navtab = $this->_navTab.'_ad';
             $article_cate_service->insert($request);
         }
 
-        JSON()->navtab($navtab)->msg('操作成功！')->exec();
+        JSON()->navtab($this->navtab)->msg('操作成功！')->exec();
     }
 
     public function catLookup(){
@@ -105,12 +100,11 @@ class ArticleCategoryController extends Controller {
         #有错误信息则返回给页面
         if( !empty($obj->err) ) JSON()->stat(300)->msg($obj->getErrMsg())->exec();
 
-        $navtab = $this->_navTab.'_index';
         ///执行删除操作  将需要删除的数据 is_del字段设置为1
         $re = M('UserModel')->fields('is_del')->update([1])->where(['id', '=', $request['id']])->exec();
         
         if( $re ){
-            JSON()->navtab($navtab)->msg('删除成功！')->exec();
+            JSON()->navtab($this->navtab)->msg('删除成功！')->exec();
         }else{
             JSON()->stat(300)->msg('操作失败')->exec();
         }

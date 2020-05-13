@@ -182,7 +182,6 @@ class UserController extends Controller {
         }
 
         $re = M('UserModel')
-        ->fields(array_keys($update_data))
         ->update($update_data)
         ->where(['id', '=', $request['id']])
         ->exec();

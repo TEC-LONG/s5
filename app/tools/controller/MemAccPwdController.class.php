@@ -99,7 +99,7 @@ class MemAccPwdController extends Controller {
             $update = F()->compare($request, $ori, ['mem_acc']);
 
             if( empty($update) ) JSON()->stat(300)->msg('您还没有修改任何数据！请先修改数据。')->exec();
-            $re = $obj->fields(array_keys($update))->update($update)->where(['id', $request['id']])->exec();
+            $re = $obj->update($update)->where(['id', $request['id']])->exec();
 
         }else{///新增
 
@@ -190,7 +190,7 @@ class MemAccPwdController extends Controller {
             $update = F()->compare($request, $ori, ['mem_pwd']);
 
             if( empty($update) ) JSON()->stat(300)->msg('您还没有修改任何数据！请先修改数据。')->exec();
-            $re = $obj->fields(array_keys($update))->update($update)->where(['id', $request['id']])->exec();
+            $re = $obj->update($update)->where(['id', $request['id']])->exec();
 
         }else{///新增
 
@@ -281,7 +281,7 @@ class MemAccPwdController extends Controller {
             $update = F()->compare($request, $ori, ['belongs_to']);
 
             if( empty($update) ) JSON()->stat(300)->msg('您还没有修改任何数据！请先修改数据。')->exec();
-            $re = $obj->fields(array_keys($update))->update($update)->where(['id', $request['id']])->exec();
+            $re = $obj->update($update)->where(['id', $request['id']])->exec();
 
         }else{///新增
 
@@ -385,7 +385,7 @@ class MemAccPwdController extends Controller {
             $update = F()->compare($request, $ori, ['mem_acc__id', 'mem_pwd__id', 'belongs_to', 'comm', 'tags']);
 
             if( empty($update) ) JSON()->stat(300)->msg('您还没有修改任何数据！请先修改数据。')->exec();
-            $re = $obj->fields(array_keys($update))->update($update)->where(['id', $request['id']])->exec();
+            $re = $obj->update($update)->where(['id', $request['id']])->exec();
 
         }else{///新增
 

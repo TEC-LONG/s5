@@ -108,7 +108,7 @@ class PermissionController extends Controller {
             $update = F()->compare($request, $ori, ['name', 'flag']);
 
             if( empty($update) ) JSON()->stat(300)->msg('您还没有修改任何数据！请先修改数据。')->exec();
-            $re = $obj->fields(array_keys($update))->update($update)->where(['id', $request['id']])->exec();
+            $re = $obj->update($update)->where(['id', $request['id']])->exec();
 
         }else{///新增
 
@@ -250,7 +250,7 @@ class PermissionController extends Controller {
             if( empty($update) ) JSON()->stat(300)->msg('您还没有修改任何数据！请先修改数据。')->exec();
             
             $update['update_time'] = time();
-            $re = $obj->fields(array_keys($update))->update($update)->where(['id', $request['id']])->exec();
+            $re = $obj->update($update)->where(['id', $request['id']])->exec();
 
         }else{///新增
 

@@ -100,7 +100,7 @@ class CategoryController extends Controller {
             JSON()->stat(300)->msg('尚未修改任何数据！')->exec();
         }
 
-        if ( M()->table('tl_goods_category')->fields(array_keys($datas))->update($datas)->where(['id', $request['id']])->exec() ){ 
+        if ( M()->table('tl_goods_category')->update($datas)->where(['id', $request['id']])->exec() ){ 
             JSON()->navtab($this->_navTab.'_index')->exec();
         }else{ 
             JSON()->stat(300)->msg('操作失败')->exec();

@@ -168,7 +168,7 @@ class ChifanController extends Controller {
             $update = F()->compare($request, $ori, ['cai', 'types', 'main_type', 'second_type', 'descr', 'taste', 'mouthfeel', 'effects', 'effects_comm', 'byeffect']);
             if( empty($update) ) JSON()->stat(300)->msg('您还没有修改任何数据！请先修改数据。')->exec();
 
-            $re = $obj->fields(array_keys($update))->update($update)->where(['id', $request['id']])->exec();
+            $re = $obj->update($update)->where(['id', $request['id']])->exec();
             $id = $request['id'];
 
         }else{///新增
