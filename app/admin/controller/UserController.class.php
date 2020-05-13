@@ -8,7 +8,7 @@ class UserController extends Controller {
 
     ##标准预定义属性
     public $_datas = [];
-    protected $_navTab;
+    // protected $_navTab;
 
     public function __construct(){
 
@@ -27,7 +27,7 @@ class UserController extends Controller {
         $this->_datas['ori']    = UserModel::C_ORI;
         $this->_datas['status'] = UserModel::C_STATUS;
         $this->_datas['level']  = UserModel::C_LEVEL;
-        $this->_datas['navTab'] = $navTab;
+        $this->_datas['navTab'] = $this->navtab;
     }
 
     /**

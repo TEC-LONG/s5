@@ -1,11 +1,13 @@
 <?php
 
 namespace core;
+use Route;
 
 class Controller extends \Smarty{
 
     //protected $smarty;
     protected $manager;
+    protected $navtab;
 
     public function __construct(){ 
 
@@ -21,6 +23,9 @@ class Controller extends \Smarty{
 
         //调用方法检查是否已经登陆
         $this->checkIsLogin();
+
+        ///初始化数据
+        $this->navtab = Route::$navtab;
     }
 
     protected function checkIsLogin(){ 
@@ -219,6 +224,14 @@ class Controller extends \Smarty{
         }
         
         return $con;
+    }
+
+    protected function route($type, $route){
+
+        return [
+            'url'=>L($route),
+            'rel'=>Route::getElem($type, $route, 'navtab')
+        ];
     }
 
 
