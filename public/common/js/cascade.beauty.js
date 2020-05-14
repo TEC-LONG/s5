@@ -97,10 +97,45 @@ function CascadeBeauty(json){
 		}
 	}
 
+	///选中二级分类项时
+	this.selectLv2 = function (lv1_key, lv2_key, showLv2Callback) {
+
+		if ( typeof(this.lv3[lv1_key])==='undefined'||typeof(this.lv3[lv1_key][lv2_key])==='undefined' ){
+			$.ajax({
+				type:'POST',
+				data:{p_id:this.lv2Ids[lv1_key][lv2_key]},
+				dataType:'json',
+				url:this.getChildUrl,
+				async:true,
+				success:function (re){
+					if ( re.length==0 ){
+						if ( typeof(district[p])==='undefined' ){
+							district[p] = [];
+						}
+						district[p][c] = [];
+					}else{
+						if ( typeof(district[p])==='undefined' ){
+							district[p] = [];
+						}
+						district[p][c] = re['child_names'];
+						if ( typeof(district_ids[p])==='undefined' ){
+							district_ids[p] = [];
+						}
+						district_ids[p][c] = re['child_ids'];
+					}
+					//b.ori
+					showD(p,c);
+					//e.ori
+				}
+			});
+		}else{
+			showD(p,c);
+		}
+	}
+
 	this.showLv3 = function (lv1_key, lv2_key) {
 
 		var areaCont = "";
-		var expressC = "";
 
 		for (var k=0; k<this.lv3[lv1_key][lv2_key].length; k++) {
 			areaCont += '<li onClick="selectD(' + lv1_key + ',' + lv2_key + ',' + k + ');"><a href="javascript:void(0)">' + this.lv3[lv1_key][lv2_key][k] + '</a></li>';
@@ -110,17 +145,14 @@ function CascadeBeauty(json){
 		$(this.sort2Id+" li").eq(lv2_key).addClass("active").siblings("li").removeClass("active");
 
 		this.expressLv2 = this.expressLv1 + this.arrow + this.lv2[lv1_key][lv2_key];
-		$("#"+navtab+"selectedSort").html(expressC);
+		$(this.crumbSortId).html(expressLv2);
 
-		$("#"+navtab+"FIRE_parent_id").val(city_ids[p][c]);
-		$("#"+navtab+"FIRE_parent_level").val(city_levels[p][c]);
-		if (typeof(province_child_nums)!='undefined') {
-			$("#"+navtab+"FIRE_parent_child_num").val(city_child_nums[p][c]);
+		if (typeof(arguments[2])=='function') {
+			var callback = arguments[2];
+			callback(lv1_key, lv2_key);
 		}
-		$("."+navtab+"FIRE_this_cat_id").val(city_ids[p][c]);
-		$("."+navtab+"FIRE_this_cat_name").val(city[p][c]);
-		$("."+navtab+"FIRE_show_cat_name").html(city[p][c]);
-		if (district[p][c].length==0) {
+
+		if (this.lv3[lv1_key][lv2_key].length==0) {
 			return false;
 		}
 	}
