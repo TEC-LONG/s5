@@ -63,7 +63,7 @@ var district_ids = [];
 <!-- 添加 -->
 	<form method="post" action="{$url.post.url}"  class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
 	<fieldset>
-		<legend>添加EXP分类</legend>
+		<legend>添加分类</legend>
 		<dl>
 			<dt><div class="button"><div class="buttonContent"><button  id="FIRE_resetCatPid">重置父分类到顶级</button></div></div></dt>
 			<dd>
@@ -73,13 +73,13 @@ var district_ids = [];
 			</dd>
 		</dl>
 		<dl>
-			<dt>EXP分类名称：</dt>
+			<dt>分类名称：</dt>
 			<dd><input class="required" name="name" type="text" /></dd>
 		</dl>
 		<dl class="nowrap"></dl>
 		<dl></dl>
 		<dl>
-			<dt><div class="buttonActive"><div class="buttonContent"><button type="submit">执行新增EXP分类</button></div></div></dt>
+			<dt><div class="buttonActive"><div class="buttonContent"><button type="submit">执行新增分类</button></div></div></dt>
 			<dd></dd>
 		</dl>
 	</fieldset>
@@ -97,7 +97,7 @@ $('#FIRE_resetCatPid').click(function (){
 	<!-- 编辑 -->
 	<form method="post" action="{$url.edith}"  class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
 		<fieldset>
-			<legend>编辑【<strong class="FIRE_show_cat_name">EXP分类</strong>】</legend>
+			<legend>编辑【<strong class="FIRE_show_cat_name">分类</strong>】</legend>
 			<dl class="nowrap">
 				<dt>新分类名称：</dt>
 				<dd>
@@ -108,7 +108,7 @@ $('#FIRE_resetCatPid').click(function (){
 			</dl>
 			<dl></dl>
 			<dl>
-				<dt><div class="buttonActive"><div class="buttonContent"><button type="submit">执行修改EXP分类</button></div></div></dt>
+				<dt><div class="buttonActive"><div class="buttonContent"><button type="submit">执行修改分类</button></div></div></dt>
 				<dd></dd>
 			</dl>
 		</fieldset>

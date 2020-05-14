@@ -58,7 +58,7 @@ class ArticleCateService {
         // if( !empty($obj->err) ) JSON()->stat(300)->msg($obj->getErrMsg())->exec();
     }
 
-    public function insert($request, $headimg){
+    public function insert($request){
 
         ///初始化参数
         $pchild_num = $request['pchild_num'];

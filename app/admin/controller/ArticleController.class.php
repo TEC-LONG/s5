@@ -13,14 +13,15 @@ class ArticleController extends Controller {
         parent::__construct();
 
         $this->_datas['url'] = [
-            'index' => $this->route('get',  '/admin/article'),
-            'ad'    => $this->route('get',  '/admin/article/add'),
-            'upd'   => $this->route('get',  '/admin/article/upd'),
-            'post'  => $this->route('post', '/admin/article/post'),
-            'del'   => $this->route('get',  '/admin/article/del')
+            'index'     => $this->route('get',  '/admin/article'),
+            'ad'        => $this->route('get',  '/admin/article/add'),
+            'upd'       => $this->route('get',  '/admin/article/upd'),
+            'post'      => $this->route('post', '/admin/article/post'),
+            'del'       => $this->route('get',  '/admin/article/del'),
+            'imgupmd'   => $this->route('post', '/tools/editormd/imgUp')
         ];
 
-        $this->_datas['navTab'] = $this->navtab;
+        $this->_datas['navtab'] = $this->navtab;
     }
 
     public function index(){
@@ -65,6 +66,8 @@ class ArticleController extends Controller {
             $this->_datas['html_title'] = '编辑';
             #根据id查询
             $this->_datas['row'] = M()->table('article')->select('*')->where(['id', $request['id']])->find();
+            $this->_datas['row']['crumbs_cat_ids'] = explode('|', $this->_datas['row']['crumbs_cat_ids']);
+            $this->_datas['row']['crumbs_cat_names'] = explode('|', $this->_datas['row']['crumbs_cat_names']);
         }
         
         $this->assign($this->_datas);

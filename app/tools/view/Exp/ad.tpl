@@ -59,7 +59,7 @@
 			</div>
 			<div class="col-md-1">
 				<label for="tools_exp_add_cat">所属EXP分类</label>
-				<select class="form-control" id="tools_exp_add_cat" name="expcat1" onchange="tools_exp_add_get_child_expcat(this, 'lv1');">
+				<select class="form-control" id="tools_exp_add_cat" name="expcat1" onchange="cascade_this(this, 'lv1');">
 					<option value="0">请选择...</option>
 					{foreach $expcat_lv1 as $k=>$v}
 					<option value="{$v.id}|{$v.name}">{$v.name}</option>
@@ -68,7 +68,7 @@
 			</div>
 			<div class="col-md-1 mt-2">
 				<label> </label>
-				<select class="form-control tools_exp_add_cat_lv2" name="expcat2" onchange="tools_exp_add_get_child_expcat(this, 'lv2');" disabled>
+				<select class="form-control tools_exp_add_cat_lv2" name="expcat2" onchange="cascade_this(this, 'lv2');" disabled>
 					<option>请选择...</option>
 				</select>
 			</div>
@@ -88,8 +88,12 @@
 		</div>
 	</form>
 	
-			
+<script src="{$smarty.const.PUB_COMMON_JS}/cascade.js" type="text/javascript"></script>
 <script type="text/javascript">
+var url = '{L("/tools/expcat/getChild")}';
+var cascade = new Cascade(url, 'tools_exp_add_cat_lv2', 'tools_exp_add_cat_lv3');
+
+/*
 var tools_exp_add_get_child_expcat = function (now, type) {
 
 	var pid = $(now).val().split('|')[0];
@@ -133,6 +137,7 @@ var tools_exp_add_get_child_expcat = function (now, type) {
 	});
 	{/literal}
 }
+*/
 
 $(function() {
 	var editor = editormd("editormd", {

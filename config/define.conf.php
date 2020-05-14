@@ -15,6 +15,9 @@ define('PUB_FRONT_JS',      PUB_FRONT . '/js');
 define('PUB_FRONT_FONT',    PUB_FRONT . '/font');
 define('PUB_FRONT_IMG',     PUB_FRONT . '/img');
 
+define('PUB_COMMON',        _PUB_ . '/common');
+define('PUB_COMMON_JS',     PUB_COMMON . '/js');
+
 if ( !defined('BOOTSTRAP4') )	    define('BOOTSTRAP4',    C('URL').'/vendor/twbs/bootstrap/dist');
 if ( !defined('URL_EDMD_FILE') )	define('URL_EDMD_FILE', C('URL').'/storage/edmd');
 

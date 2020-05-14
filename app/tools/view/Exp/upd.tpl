@@ -59,7 +59,7 @@
 			</div>
 			<div class="col-md-1">
 				<label for="tools_exp_add_cat">所属EXP分类</label>
-				<select class="form-control" id="tools_exp_add_cat" name="expcat1" onchange="tools_exp_add_get_child_expcat(this, 'lv1');">
+				<select class="form-control" id="tools_exp_add_cat" name="expcat1" onchange="cascade_this(this, 'lv1');">
 					<option value="0">请选择...</option>
 					{foreach $expcat_lv1 as $k=>$v}
 					<option value="{$v.id}|{$v.name}" {if $v['id']==$row['crumbs_expcat_ids'][0]}selected{/if}>{$v.name}</option>
@@ -68,7 +68,7 @@
 			</div>
 			<div class="col-md-1 mt-2">
 				<label> </label>
-				<select class="form-control tools_exp_add_cat_lv2" name="expcat2" onchange="tools_exp_add_get_child_expcat(this, 'lv2');" disabled>
+				<select class="form-control tools_exp_add_cat_lv2" name="expcat2" onchange="cascade_this(this, 'lv2');" disabled>
 					<option>请选择...</option>
 				</select>
 			</div>
@@ -88,58 +88,26 @@
 		</div>
 	</form>
 	
-			
+<script src="{$smarty.const.PUB_COMMON_JS}/cascade.js" type="text/javascript"></script>
 <script type="text/javascript">
-var tools_exp_add_get_child_expcat = function (now, type) {
 
-	var pid = $(now).val().split('|')[0];
-	var url = '{L("/tools/expcat/getChild")}';
-	if (typeof(arguments[2])=='function') {
-		var func = arguments[2];
-	}
+var expcat2 = "{$row['crumbs_expcat_ids'][1]}|{$row['crumbs_expcat_names'][1]}";
+var expcat3 = "{$row['crumbs_expcat_ids'][2]}|{$row['crumbs_expcat_names'][2]}";
 
-	if (pid==0) {
-		
-		if (type=='lv1') {
-			$('.tools_exp_add_cat_lv2').html('<option value="0">请选择...</option>');
-			$('.tools_exp_add_cat_lv2').attr('disabled', true);
-		}
-		$('.tools_exp_add_cat_lv3').html('<option value="0">请选择...</option>');
-		$('.tools_exp_add_cat_lv3').attr('disabled', true);
-		return false;
-	}
+var url = '{L("/tools/expcat/getChild")}';
+var cascade = new Cascade(url, 'tools_exp_add_cat_lv2', 'tools_exp_add_cat_lv3');
 
-	{literal}
-	$.ajax({
-		type:'POST',
-		data:{p_id:pid},
-		dataType:'json',
-		url:url,
-		async:true,
-		success:function (re){
+cascade_this($('select[name="expcat1"]')[0], 'lv1', function(){
 
-			var options = '<option value="0">请选择...</option>';
-			for(var i in re.child_names){
-				options += '<option value="'+re.child_ids[i]+'|'+re.child_names[i]+'">'+re.child_names[i]+'</option>';
-			}
+	$('select[name="expcat2"]').val(expcat2);
 
-			if (type=='lv1') {
-				$('.tools_exp_add_cat_lv2').html(options);
-				$('.tools_exp_add_cat_lv2').removeAttr('disabled');
-				$('.tools_exp_add_cat_lv3').html('<option value="0">请选择...</option>');
-				$('.tools_exp_add_cat_lv3').attr('disabled', true);
-			} else {
-				$('.tools_exp_add_cat_lv3').html(options);
-				$('.tools_exp_add_cat_lv3').removeAttr('disabled');
-			}
+	cascade_this($('select[name="expcat2"]')[0], 'lv2', function(){
 
-			if (typeof(func)!='undefined') {
-				func();
-			}
-		}
-	});
-	{/literal}
-}
+		$('select[name="expcat3"]').val(expcat3);
+	})
+});
+
+
 $(function() {
 	var editor = editormd("editormd", {
 		htmlDecode: "style,script,iframe",
@@ -162,30 +130,6 @@ $(function() {
 		editorTheme  : "blackboard", 
 	});
 });
-// 			/*
-//  上传的后台只需要返回一个 JSON 数据，结构如下：
-//  {
-// success : 0 | 1,           // 0 表示上传失败，1 表示上传成功
-// message : "提示的信息，上传成功或上传失败及错误信息等。",
-// url     : "图片地址"        // 上传成功时才返回
-//  }
-// 			 */
-//testEditor.getMarkdown();       // 获取 Markdown 源码
-//testEditor.getHTML();           // 获取 Textarea 保存的 HTML 源码
-//testEditor.getPreviewedHTML();  // 获取预览窗口里的 HTML，在开启 watch 且没有开启 saveHTMLToTextarea 时使用
-
-var expcat2 = "{$row['crumbs_expcat_ids'][1]}|{$row['crumbs_expcat_names'][1]}";
-var expcat3 = "{$row['crumbs_expcat_ids'][2]}|{$row['crumbs_expcat_names'][2]}";
-tools_exp_add_get_child_expcat($('select[name="expcat1"]')[0], 'lv1', function(){
-
-	$('select[name="expcat2"]').val(expcat2);
-
-	tools_exp_add_get_child_expcat($('select[name="expcat2"]')[0], 'lv2', function(){
-
-		$('select[name="expcat3"]').val(expcat3);
-	})
-});
-// tools_exp_add_get_child_expcat($('select[name="expcat2"]')[0], 'lv2');
 </script>
 </body>
 </html>
