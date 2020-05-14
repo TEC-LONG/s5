@@ -68,7 +68,7 @@ function CascadeBeauty(json){
 						that.lv2ChildNums[lv1_key] = re['child_child_nums'];
 					}
 					//b.ori
-					this.showLv2(lv1_key, showLv2Callback);
+					that.showLv2(lv1_key, showLv2Callback);
 					//e.ori
 				}
 			});
@@ -98,9 +98,11 @@ function CascadeBeauty(json){
 	}
 
 	///选中二级分类项时
-	this.selectLv2 = function (lv1_key, lv2_key, showLv2Callback) {
+	this.selectLv2 = function (lv1_key, lv2_key, showLv3Callback) {
 
 		if ( typeof(this.lv3[lv1_key])==='undefined'||typeof(this.lv3[lv1_key][lv2_key])==='undefined' ){
+
+			var that = this;
 			$.ajax({
 				type:'POST',
 				data:{p_id:this.lv2Ids[lv1_key][lv2_key]},
@@ -109,27 +111,27 @@ function CascadeBeauty(json){
 				async:true,
 				success:function (re){
 					if ( re.length==0 ){
-						if ( typeof(district[p])==='undefined' ){
-							district[p] = [];
+						if ( typeof(that.lv3[lv1_key])==='undefined' ){
+							that.lv3[lv1_key] = [];
 						}
-						district[p][c] = [];
+						that.lv3[lv1_key][lv2_key] = [];
 					}else{
-						if ( typeof(district[p])==='undefined' ){
-							district[p] = [];
+						if ( typeof(that.lv3[lv1_key])==='undefined' ){
+							that.lv3[lv1_key] = [];
 						}
-						district[p][c] = re['child_names'];
-						if ( typeof(district_ids[p])==='undefined' ){
-							district_ids[p] = [];
+						that.lv3[lv1_key][lv2_key] = re['child_names'];
+						if ( typeof(that.lv3Ids[lv1_key])==='undefined' ){
+							that.lv3Ids[lv1_key] = [];
 						}
-						district_ids[p][c] = re['child_ids'];
+						that.lv3Ids[lv1_key][lv2_key] = re['child_ids'];
 					}
 					//b.ori
-					showD(p,c);
+					that.showLv3(lv1_key,lv2_key, showLv3Callback);
 					//e.ori
 				}
 			});
 		}else{
-			showD(p,c);
+			this.showLv3(lv1_key,lv2_key, showLv3Callback);
 		}
 	}
 
