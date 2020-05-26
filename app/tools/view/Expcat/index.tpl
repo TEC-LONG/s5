@@ -154,7 +154,7 @@ function CascadeBeauty(json){
 		// }
 		
 
-		if ( typeof(this.showLv1Call)=='function' ) {
+		if ( typeof(this.showLv2Call)=='function' ) {
 			this.showLv2Call(lv1_key);
 		}else{
 			console.log('请先设定回调函数：showLv2Call');
@@ -219,7 +219,7 @@ function CascadeBeauty(json){
 		// 	callback(lv1_key, lv2_key);
 		// }
 
-		if ( typeof(this.showLv1Call)=='function' ) {
+		if ( typeof(this.showLv3Call)=='function' ) {
 			this.showLv3Call();
 		}else{
 			console.log('请先设定回调函数：showLv3Call');
@@ -239,7 +239,7 @@ function CascadeBeauty(json){
 		// 	callback(lv1_key, lv2_key, lv3_key);
 		// }
 		
-		if ( typeof(this.showLv1Call)=='function' ) {
+		if ( typeof(this.selectLv3Call)=='function' ) {
 			this.selectLv3Call();
 		}else{
 			console.log('请先设定回调函数：selectLv3Call');
@@ -271,6 +271,16 @@ var cascade_beauty = new CascadeBeauty({
 	"sort2": "sort2",
 	"sort3": "sort3",
 	"crumb_id": "selectedSort",
+	"showLv1Call": function (obj){
+
+		$("#FIRE_parent_id").val("0");
+		$("#FIRE_parent_level").val("0");
+		if (typeof(obj.lv1_child_nums)!='undefined') {
+			$("#FIRE_parent_child_num").val("0");
+		}
+		$(".FIRE_this_cat_name").val("");
+		$(".FIRE_show_cat_name").html("EXP分类");
+	},
 	"showLv2Call": function (obj){
 
 		$("#FIRE_parent_id").val("0");
