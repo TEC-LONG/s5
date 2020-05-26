@@ -48,13 +48,24 @@ var province = {json_encode($first['p_names'])};//一级分类集合
 var province_ids = {json_encode($first['p_ids'])};//一级分类对应的id集合
 var province_levels = {json_encode($first['p_levels'])};//一级分类对应的level集合
 var province_child_nums = {json_encode($first['p_child_nums'])};//一级分类对应的child_nums集合
-var city = [];//二级分类集合
-var city_ids = [];
-var city_levels = [];
-var city_child_nums = [];
-var district = [];//三级分类集合
-var district_ids = [];
-//var district_levels = [];
+var url = init.url.main+'/tools/expcat/getChild';
+// var city = [];//二级分类集合
+// var city_ids = [];
+// var city_levels = [];
+// var city_child_nums = [];
+// var district = [];//三级分类集合
+// var district_ids = [];
+// //var district_levels = [];
+
+
+var CascadeBeauty = new CascadeBeauty({
+	"lv1": province,
+	"lv1_ids": province_ids,
+	"lv1_levels": province_levels,
+	"lv1_child_nums": province_child_nums,
+	"url": url,
+	"sort1": 
+});
 </script>
 
 

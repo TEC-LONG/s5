@@ -159,18 +159,15 @@ function CascadeBeauty(json){
 		}
 	}
 
-	this.clickOption0 = function (pid, type) {
-		if (type=='lv1') {
-			this.selectInnerHtml(this.lv2_class, this.option0);
-			this.toogleDisableLv2('off');
+	this.selectLv3 = function (lv1_key, lv2_key, lv3_key) {
+		$(this.sort3Id+" li").eq(lv3_key).addClass("active").siblings("li").removeClass("active");
+
+		if (typeof(arguments[3])=='function') {
+			var callback = arguments[3];
+			callback(lv1_key, lv2_key, lv3_key);
 		}
-		this.selectInnerHtml(this.lv3_class, this.option0);
-		this.toogleDisableLv3('off');
 	}
-
-	
 }
-
 
 
 
