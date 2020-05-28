@@ -69,10 +69,10 @@ function CascadeBeauty(json){
 	this.sort3Id = '#'+json.sort3;
 	this.crumbSortId = '#'+json.crumb_id;
 
-	this.showLv1Call = json.showLv1Call;
-	this.showLv2Call = json.showLv2Call;
-	this.showLv3Call = json.showLv3Call;
-	this.selectLv3Call = json.selectLv3Call;
+	this.showLv1Call = json.showLv1Call;//显示一级分类栏目时的回调
+	this.showLv2Call = json.showLv2Call;//显示二级分类栏目时的回调
+	this.showLv3Call = json.showLv3Call;//显示三级分类栏目时的回调
+	this.selectLv3Call = json.selectLv3Call;//选中某个三级分类时的回调
 
 	this.arrow = ' <font>&gt;</font> ';
 
@@ -88,10 +88,6 @@ function CascadeBeauty(json){
 		$(this.sort3Id).hide();
 		$(this.crumbSortId).html('无');//面包屑区域填充内容
 
-		// if (typeof(arguments[0])=='function') {
-		// 	var callback = arguments[0];
-		// 	callback(this);
-		// }
 		if ( typeof(this.showLv1Call)=='function' ) {
 			this.showLv1Call(this);
 		}else{
@@ -107,6 +103,7 @@ function CascadeBeauty(json){
 		if ( typeof(this.lv2[lv1_key])==='undefined' ){
 
 			var that = this;
+			{literal}
 			$.ajax({
 				type:'POST',
 				data:{p_id:this.lv1Ids[lv1_key]},
@@ -129,6 +126,7 @@ function CascadeBeauty(json){
 					//e.ori
 				}
 			});
+			{/literal}
 		}else{
 			this.showLv2(lv1_key);
 		}
@@ -138,24 +136,18 @@ function CascadeBeauty(json){
 
 		var areaCont = "";
 		for (var j=0; j<this.lv2[lv1_key].length; j++) {
-			areaCont += '<li onClick="selectC(' + lv1_key + ',' + j + ');"><a href="javascript:void(0)">' + this.lv2[lv1_key][j] + '</a></li>';
+			areaCont += '<li onClick="selectLv2(' + lv1_key + ',' + j + ');"><a href="javascript:void(0)">' + this.lv2[lv1_key][j] + '</a></li>';
 		}
 
 		$(this.sort2Id).html(areaCont).show();
 		$(this.sort3Id).hide();
 		$(this.sort1Id+" li").eq(lv1_key).addClass("active").siblings("li").removeClass("active");
 
-		this.expressLv1 = lv1[lv1_key];
+		this.expressLv1 = this.lv1[lv1_key];
 		$(this.crumbSortId).html(this.expressLv1);//将第一栏被选中项填入面包屑区域
 
-		// if (typeof(arguments[2])=='function') {
-		// 	var callback = arguments[2];
-		// 	callback(lv1_key);
-		// }
-		
-
 		if ( typeof(this.showLv2Call)=='function' ) {
-			this.showLv2Call(lv1_key);
+			this.showLv2Call(this, lv1_key);
 		}else{
 			console.log('请先设定回调函数：showLv2Call');
 			return;
@@ -168,6 +160,7 @@ function CascadeBeauty(json){
 		if ( typeof(this.lv3[lv1_key])==='undefined'||typeof(this.lv3[lv1_key][lv2_key])==='undefined' ){
 
 			var that = this;
+			{literal}
 			$.ajax({
 				type:'POST',
 				data:{p_id:this.lv2Ids[lv1_key][lv2_key]},
@@ -195,6 +188,7 @@ function CascadeBeauty(json){
 					//e.ori
 				}
 			});
+			{/literal}
 		}else{
 			this.showLv3(lv1_key,lv2_key);
 		}
@@ -205,22 +199,17 @@ function CascadeBeauty(json){
 		var areaCont = "";
 
 		for (var k=0; k<this.lv3[lv1_key][lv2_key].length; k++) {
-			areaCont += '<li onClick="selectD(' + lv1_key + ',' + lv2_key + ',' + k + ');"><a href="javascript:void(0)">' + this.lv3[lv1_key][lv2_key][k] + '</a></li>';
+			areaCont += '<li onClick="selectLv3(' + lv1_key + ',' + lv2_key + ',' + k + ');"><a href="javascript:void(0)">' + this.lv3[lv1_key][lv2_key][k] + '</a></li>';
 		}
 		
 		$(this.sort3Id).html(areaCont).show();
 		$(this.sort2Id+" li").eq(lv2_key).addClass("active").siblings("li").removeClass("active");
 
 		this.expressLv2 = this.expressLv1 + this.arrow + this.lv2[lv1_key][lv2_key];
-		$(this.crumbSortId).html(expressLv2);
-
-		// if (typeof(arguments[2])=='function') {
-		// 	var callback = arguments[2];
-		// 	callback(lv1_key, lv2_key);
-		// }
+		$(this.crumbSortId).html(this.expressLv2);
 
 		if ( typeof(this.showLv3Call)=='function' ) {
-			this.showLv3Call();
+			this.showLv3Call(this, lv1_key, lv2_key);
 		}else{
 			console.log('请先设定回调函数：showLv3Call');
 			return;
@@ -234,19 +223,15 @@ function CascadeBeauty(json){
 	this.selectLv3 = function (lv1_key, lv2_key, lv3_key) {
 		$(this.sort3Id+" li").eq(lv3_key).addClass("active").siblings("li").removeClass("active");
 
-		// if (typeof(arguments[3])=='function') {
-		// 	var callback = arguments[3];
-		// 	callback(lv1_key, lv2_key, lv3_key);
-		// }
-		
 		if ( typeof(this.selectLv3Call)=='function' ) {
-			this.selectLv3Call();
+			this.selectLv3Call(this, lv1_key, lv2_key, lv3_key);
 		}else{
 			console.log('请先设定回调函数：selectLv3Call');
 			return;
 		}
 	}
 }
+
 /*初始化参数*/
 var province = {json_encode($first['p_names'])};//一级分类集合
 var province_ids = {json_encode($first['p_ids'])};//一级分类对应的id集合
@@ -275,23 +260,53 @@ var cascade_beauty = new CascadeBeauty({
 
 		$("#FIRE_parent_id").val("0");
 		$("#FIRE_parent_level").val("0");
-		if (typeof(obj.lv1_child_nums)!='undefined') {
+		if (typeof(obj.lv1ChildNums)!='undefined') {
 			$("#FIRE_parent_child_num").val("0");
 		}
 		$(".FIRE_this_cat_name").val("");
 		$(".FIRE_show_cat_name").html("EXP分类");
 	},
-	"showLv2Call": function (obj){
+	"showLv2Call": function (obj, p){
 
-		$("#FIRE_parent_id").val("0");
-		$("#FIRE_parent_level").val("0");
-		if (typeof(obj.lv1_child_nums)!='undefined') {
-			$("#FIRE_parent_child_num").val("0");
+		$("#FIRE_parent_id").val(obj.lv1Ids[p]);
+		$("#FIRE_parent_level").val(obj.lv1Levels[p]);
+		if (typeof(obj.lv1ChildNums)!='undefined') {
+			$("#FIRE_parent_child_num").val(obj.lv1ChildNums[p]);
 		}
-		$(".FIRE_this_cat_name").val("");
-		$(".FIRE_show_cat_name").html("EXP分类");
+		$(".FIRE_this_cat_id").val(obj.lv1Ids[p]);
+		$(".FIRE_this_cat_name").val(obj.lv1[p]);
+		$(".FIRE_show_cat_name").html(obj.lv1[p]);
+	},
+	"showLv3Call": function (obj, p, c) {
+		
+		$("#FIRE_parent_id").val(obj.lv2[p][c]);
+		$("#FIRE_parent_level").val(obj.lv2Levels[p][c]);
+		if (typeof(obj.lv1ChildNums)!='undefined') {
+			$("#FIRE_parent_child_num").val(obj.lv2ChildNums[p][c]);
+		}
+		$(".FIRE_this_cat_id").val(obj.lv2Ids[p][c]);
+		$(".FIRE_this_cat_name").val(obj.lv2[p][c]);
+		$(".FIRE_show_cat_name").html(obj.lv2[p][c]);
+		if (obj.lv3[p][c].length==0) {
+			return false;
+		}
+	},
+	"selectLv3Call": function (obj, p, c, d) {
+		$(".FIRE_this_cat_id").val(obj.lv3Ids[p][c][d]);
+		$(".FIRE_this_cat_name").val(obj.lv3[p][c][d]);
+		$(".FIRE_show_cat_name").html(obj.lv3[p][c][d]);
 	}
 });
+
+var selectLv3 = function (k1, k2, k3) {
+	cascade_beauty.selectLv3(k1, k2, k3);
+}
+var selectLv2 = function (k1, k2) {
+	cascade_beauty.selectLv2(k1, k2);
+}
+var selectLv1 = function (k1) {
+	cascade_beauty.selectLv1(k1);
+}
 </script>
 
 
@@ -326,18 +341,10 @@ var cascade_beauty = new CascadeBeauty({
 // 	intProvince();
 // 	return false;
 // });
+cascade_beauty.showLv1();
 $('#FIRE_resetCatPid').click(function (){
 
-	// cascade_beauty.showLv1(function(obj){
-
-	// 	$("#FIRE_parent_id").val("0");
-	// 	$("#FIRE_parent_level").val("0");
-	// 	if (typeof(obj.lv1_child_nums)!='undefined') {
-	// 		$("#FIRE_parent_child_num").val("0");
-	// 	}
-	// 	$(".FIRE_this_cat_name").val("");
-	// 	$(".FIRE_show_cat_name").html("EXP分类");
-	// });
+	cascade_beauty.showLv1();
 
 	return false;
 });
@@ -371,7 +378,7 @@ $('#FIRE_resetCatPid').click(function (){
 
 
 
-<script src="{$smarty.const.PUBLIC_TOOLS}/cat/jquery.sort.js"></script>
+<!-- <scr ipt src="{$smarty.const.PUBLIC_TOOLS}/cat/jquery.sort.js"></scr ipt> -->
 
 </div>
         
