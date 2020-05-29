@@ -4,6 +4,8 @@ function Cascade(url, lv2_class, lv3_class){
 	this.lv2_class = '.'+lv2_class;
 	this.lv3_class = '.'+lv3_class;
 
+	this.callback = null;
+
 	this.option0 = '<option value="0">请选择...</option>';
 
 	this.clickOption0 = function (pid, type) {

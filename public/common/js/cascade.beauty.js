@@ -2,20 +2,6 @@ function CascadeBeauty(json){
 
 	this.expressLv1 = null;
 	this.expressLv2 = null;
-	this.expressLv3 = null;
-
-	this.lv1 = json.lv1;
-	this.lv2 = [];
-	this.lv3 = [];
-
-	this.lv1Ids = json.lv1_ids;
-	this.lv2Ids = [];
-	this.lv3Ids = [];
-
-	this.lv1Levels = json.lv1_levels;
-	this.lv1ChildNums = json.lv1_child_nums;
-	this.lv2Levels = [];
-	this.lv2ChildNums = [];
 
 	this.getChildUrl = json.url;
 
@@ -25,15 +11,16 @@ function CascadeBeauty(json){
 	this.crumbSortId = '#'+json.crumb_id;
 
 	this.showLv1Call = json.showLv1Call;//显示一级分类栏目时的回调
+	this.selectLv1Call = json.selectLv1Call;//选中某个一级分类时的回调
 	this.showLv2Call = json.showLv2Call;//显示二级分类栏目时的回调
+	this.selectLv2Call = json.selectLv2Call;//选中某个二级分类时的回调
 	this.showLv3Call = json.showLv3Call;//显示三级分类栏目时的回调
 	this.selectLv3Call = json.selectLv3Call;//选中某个三级分类时的回调
 
 	this.one = json.one;
-	this.two = json.two;
-	this.three = json.three;
-
-	/*
+	this.two = [];
+	this.three = [];
+/*
 	
 one = [
 	{"id":10, "name":"吃饭做菜"},
@@ -99,18 +86,20 @@ three = [
 	]
 ];
 
-	*/
+*/
 
 	this.arrow = ' <font>&gt;</font> ';
 
 	this.showLv1 = function () { // show level 1
 		
-		var areaCont = "";
-		for (var i=0; i<this.lv1.length; i++) {
-			areaCont += '<li onClick="selectLv1(' + i + ');"><a href="javascript:void(0)">' + this.lv1[i] + '</a></li>';
+		var one_area = "";
+		for (var one_k=0; one_k<this.one.length; one_k++) {
+			
+			var one_val = this.one[one_k];
+			one_area += '<li onClick="selectLv1(' + one_k + ');"><a href="javascript:void(0)">' + one_val.name + '</a></li>';
 		}
 
-		$(this.sort1Id).html(areaCont);//第一栏内容
+		$(this.sort1Id).html(one_area);//第一栏内容
 		$(this.sort2Id).hide();
 		$(this.sort3Id).hide();
 		$(this.crumbSortId).html('无');//面包屑区域填充内容
@@ -122,222 +111,137 @@ three = [
 	}
 
 	///选中一级分类项时
-	this.selectLv1 = function (lv1_key) {
+	this.selectLv1 = function (one_key) {
 
-		if ( typeof(this.lv2[lv1_key])==='undefined' ){
+		if ( typeof(this.two[one_key])==='undefined' ){
 
 			var that = this;
-			{literal}
+			var now_cat = this.one[one_key];
 			$.ajax({
 				type:'POST',
-				data:{p_id:this.lv1Ids[lv1_key]},
+				data:{p_id:now_cat.id},//当前一级分类的id，作为该一级分类下二级分类的父id
 				dataType:'json',
 				url:this.getChildUrl,
 				async:true,
-				success:function (re){
-
-					if ( re.length==0 ){
-						that.lv2[lv1_key] = [];
+				success:function (two){
+					if ( two.length==0 ){
+						that.two[one_key] = [];
 					}else{
-						that.lv2[lv1_key] = re['child_names'];
-						that.lv2Ids[lv1_key] = re['child_ids'];
+						that.two[one_key] = two;
 
-						that.lv2Levels[lv1_key] = re['child_levels'];
-						that.lv2ChildNums[lv1_key] = re['child_child_nums'];
-						
 						/// 点击一级分类列表中的某个分类时的回调
 						if ( typeof(that.selectLv1Call)=='function' ) {
-							that.selectLv1Call(re, that);
+							//that.selectLv1Call( 当前选中的一级, 当前一级所有的二级, 级联对象)
+							that.selectLv1Call(now_cat, two, that);
 						}
 					}
 					//b.ori
-					that.showLv2(lv1_key);
+					that.showLv2(one_key);
 					//e.ori
 				}
 			});
-			{/literal}
 		}else{
-			this.showLv2(lv1_key);
+			this.showLv2(one_key);
 		}
 	}
 
-	this.showLv2 = function (lv1_key) {
+	this.showLv2 = function (one_key) {
 
-		var areaCont = "";
-		for (var j=0; j<this.lv2[lv1_key].length; j++) {
-			areaCont += '<li onClick="selectLv2(' + lv1_key + ',' + j + ');"><a href="javascript:void(0)">' + this.lv2[lv1_key][j] + '</a></li>';
+		var two_area = "";
+		for (var two_key=0; two_key<this.two[one_key].length; two_key++) {
+			two_area += '<li onClick="selectLv2(' + one_key + ',' + two_key + ');"><a href="javascript:void(0)">' + this.two[one_key][two_key].name + '</a></li>';
 		}
 
-		$(this.sort2Id).html(areaCont).show();
+		$(this.sort2Id).html(two_area).show();
 		$(this.sort3Id).hide();
-		$(this.sort1Id+" li").eq(lv1_key).addClass("active").siblings("li").removeClass("active");
+		$(this.sort1Id+" li").eq(one_key).addClass("active").siblings("li").removeClass("active");
 
-		this.expressLv1 = this.lv1[lv1_key];
+		this.expressLv1 = this.one[one_key].name;
 		$(this.crumbSortId).html(this.expressLv1);//将第一栏被选中项填入面包屑区域
 
 		if ( typeof(this.showLv2Call)=='function' ) {
-			this.showLv2Call(this, lv1_key);
-		}else{
-			console.log('请先设定回调函数：showLv2Call');
-			return;
+			this.showLv2Call(this.one[one_key], this);
 		}
 	}
 
 	///选中二级分类项时
-	this.selectLv2 = function (lv1_key, lv2_key) {
+	this.selectLv2 = function (one_key, two_key) {
 
-		if ( typeof(this.lv3[lv1_key])==='undefined'||typeof(this.lv3[lv1_key][lv2_key])==='undefined' ){
+		if ( typeof(this.three[one_key])==='undefined'||typeof(this.three[one_key][two_key])==='undefined' ){
 
 			var that = this;
-			{literal}
+			var now_cat = this.two[one_key][two_key];
 			$.ajax({
 				type:'POST',
-				data:{p_id:this.lv2Ids[lv1_key][lv2_key]},
+				data:{p_id:now_cat.id},//当前二级分类的id，作为该二级分类下三级分类的父id
 				dataType:'json',
 				url:this.getChildUrl,
 				async:true,
-				success:function (re){
-					if ( re.length==0 ){
-						if ( typeof(that.lv3[lv1_key])==='undefined' ){
-							that.lv3[lv1_key] = [];
+				success:function (three){
+
+					if ( that.three.length==0 ){
+
+						if ( typeof(that.three[one_key])==='undefined' ){
+							that.three[one_key] = [];
 						}
-						that.lv3[lv1_key][lv2_key] = [];
-					}else{
-						if ( typeof(that.lv3[lv1_key])==='undefined' ){
-							that.lv3[lv1_key] = [];
-						}
-						that.lv3[lv1_key][lv2_key] = re['child_names'];
-						if ( typeof(that.lv3Ids[lv1_key])==='undefined' ){
-							that.lv3Ids[lv1_key] = [];
-						}
-						that.lv3Ids[lv1_key][lv2_key] = re['child_ids'];
 					}
+					
+					that.three[one_key][two_key] = three;
+
+					/// 点击二级分类列表中的某个分类时的回调
+					if ( typeof(that.selectLv2Call)=='function' ) {
+						//that.selectLv2Call( 当前选中的二级, 当前二级所有的三级, 级联对象)
+						that.selectLv2Call(now_cat, three, that);
+					}
+
 					//b.ori
-					that.showLv3(lv1_key,lv2_key);
+					that.showLv3(one_key,two_key);
 					//e.ori
+					
 				}
 			});
-			{/literal}
 		}else{
-			this.showLv3(lv1_key,lv2_key);
+			this.showLv3(one_key,two_key);
 		}
 	}
 
-	this.showLv3 = function (lv1_key, lv2_key) {
+	this.showLv3 = function (one_key,two_key) {
 
-		var areaCont = "";
-
-		for (var k=0; k<this.lv3[lv1_key][lv2_key].length; k++) {
-			areaCont += '<li onClick="selectLv3(' + lv1_key + ',' + lv2_key + ',' + k + ');"><a href="javascript:void(0)">' + this.lv3[lv1_key][lv2_key][k] + '</a></li>';
+		var three_area = "";
+		var this_three = this.three[one_key][two_key];
+		for (var three_key=0; three_key<this_three.length; three_key++) {
+			three_area += '<li onClick="selectLv3(' + one_key + ',' + two_key + ',' + three_key + ');"><a href="javascript:void(0)">' + this_three[three_key].name + '</a></li>';
 		}
-		
-		$(this.sort3Id).html(areaCont).show();
-		$(this.sort2Id+" li").eq(lv2_key).addClass("active").siblings("li").removeClass("active");
+		$(this.sort3Id).html(three_area).show();
+		$(this.sort2Id+" li").eq(two_key).addClass("active").siblings("li").removeClass("active");
 
-		this.expressLv2 = this.expressLv1 + this.arrow + this.lv2[lv1_key][lv2_key];
+		this.expressLv2 = this.expressLv1 + this.arrow + this.two[one_key][two_key].name;
 		$(this.crumbSortId).html(this.expressLv2);
 
 		if ( typeof(this.showLv3Call)=='function' ) {
-			this.showLv3Call(this, lv1_key, lv2_key);
-		}else{
-			console.log('请先设定回调函数：showLv3Call');
-			return;
+			this.showLv3Call(this.two[one_key][two_key], this);
 		}
 
-		if (this.lv3[lv1_key][lv2_key].length==0) {
+		if (this_three.length==0) {
 			return false;
 		}
 	}
 
-	this.selectLv3 = function (lv1_key, lv2_key, lv3_key) {
-		$(this.sort3Id+" li").eq(lv3_key).addClass("active").siblings("li").removeClass("active");
+	this.selectLv3 = function (one_key, two_key, three_key) {
+		$(this.sort3Id+" li").eq(three_key).addClass("active").siblings("li").removeClass("active");
 
 		if ( typeof(this.selectLv3Call)=='function' ) {
-			this.selectLv3Call(this, lv1_key, lv2_key, lv3_key);
-		}else{
-			console.log('请先设定回调函数：selectLv3Call');
-			return;
+			this.selectLv3Call(this.three[one_key][two_key][three_key], this);
 		}
 	}
 }
 
 var selectLv3 = function (k1, k2, k3) {
 	cascade_beauty.selectLv3(k1, k2, k3);
-};
+}
 var selectLv2 = function (k1, k2) {
 	cascade_beauty.selectLv2(k1, k2);
-};
+}
 var selectLv1 = function (k1) {
 	cascade_beauty.selectLv1(k1);
-};
-
-
-
-
-
-
-/*初始化参数*/
-var province = {json_encode($first['p_names'])};//一级分类集合
-var province_ids = {json_encode($first['p_ids'])};//一级分类对应的id集合
-var province_levels = {json_encode($first['p_levels'])};//一级分类对应的level集合
-var province_child_nums = {json_encode($first['p_child_nums'])};//一级分类对应的child_nums集合
-var url = init.url.main+'/tools/expcat/getChild';
-// var city = [];//二级分类集合
-// var city_ids = [];
-// var city_levels = [];
-// var city_child_nums = [];
-// var district = [];//三级分类集合
-// var district_ids = [];
-// //var district_levels = [];
-
-var cascade_beauty = new CascadeBeauty({
-	"lv1": province,
-	"lv1_ids": province_ids,
-	"lv1_levels": province_levels,
-	"lv1_child_nums": province_child_nums,
-	"url": url,
-	"sort1": "sort1",
-	"sort2": "sort2",
-	"sort3": "sort3",
-	"crumb_id": "selectedSort",
-	"showLv1Call": function (obj){
-
-		$("#FIRE_parent_id").val("0");
-		$("#FIRE_parent_level").val("0");
-		if (typeof(obj.lv1ChildNums)!='undefined') {
-			$("#FIRE_parent_child_num").val("0");
-		}
-		$(".FIRE_this_cat_name").val("");
-		$(".FIRE_show_cat_name").html("EXP分类");
-	},
-	"showLv2Call": function (obj, p){
-
-		$("#FIRE_parent_id").val(obj.lv1Ids[p]);
-		$("#FIRE_parent_level").val(obj.lv1Levels[p]);
-		if (typeof(obj.lv1ChildNums)!='undefined') {
-			$("#FIRE_parent_child_num").val(obj.lv1ChildNums[p]);
-		}
-		$(".FIRE_this_cat_id").val(obj.lv1Ids[p]);
-		$(".FIRE_this_cat_name").val(obj.lv1[p]);
-		$(".FIRE_show_cat_name").html(obj.lv1[p]);
-	},
-	"showLv3Call": function (obj, p, c) {
-		
-		$("#FIRE_parent_id").val(obj.lv2[p][c]);
-		$("#FIRE_parent_level").val(obj.lv2Levels[p][c]);
-		if (typeof(obj.lv1ChildNums)!='undefined') {
-			$("#FIRE_parent_child_num").val(obj.lv2ChildNums[p][c]);
-		}
-		$(".FIRE_this_cat_id").val(obj.lv2Ids[p][c]);
-		$(".FIRE_this_cat_name").val(obj.lv2[p][c]);
-		$(".FIRE_show_cat_name").html(obj.lv2[p][c]);
-		if (obj.lv3[p][c].length==0) {
-			return false;
-		}
-	},
-	"selectLv3Call": function (obj, p, c, d) {
-		$(".FIRE_this_cat_id").val(obj.lv3Ids[p][c][d]);
-		$(".FIRE_this_cat_name").val(obj.lv3[p][c][d]);
-		$(".FIRE_show_cat_name").html(obj.lv3[p][c][d]);
-	}
-});
+}
