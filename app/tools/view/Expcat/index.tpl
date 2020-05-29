@@ -224,20 +224,20 @@ three = [
 			{literal}
 			$.ajax({
 				type:'POST',
-				data:{p_id:this.lv2Ids[lv1_key][lv2_key]},
-				data:{p_id:this.now_cat.id},//当前二级分类的id，作为该二级分类下三级分类的父id
+				data:{p_id:now_cat.id},//当前二级分类的id，作为该二级分类下三级分类的父id
 				dataType:'json',
 				url:this.getChildUrl,
 				async:true,
 				success:function (three){
-					if ( three.length==0 ){
+
+					if ( that.three.length==0 ){
+
 						if ( typeof(that.three[one_key])==='undefined' ){
 							that.three[one_key] = [];
 						}
-						that.three[one_key][two_key] = [];
-					}else{
-						that.three[one_key][two_key] = three;
 					}
+					
+					that.three[one_key][two_key] = three;
 
 					/// 点击二级分类列表中的某个分类时的回调
 					if ( typeof(that.selectLv2Call)=='function' ) {
@@ -248,6 +248,7 @@ three = [
 					//b.ori
 					that.showLv3(one_key,two_key);
 					//e.ori
+					
 				}
 			});
 			{/literal}
@@ -260,11 +261,9 @@ three = [
 
 		var three_area = "";
 		var this_three = this.three[one_key][two_key];
-
 		for (var three_key=0; three_key<this_three.length; three_key++) {
 			three_area += '<li onClick="selectLv3(' + one_key + ',' + two_key + ',' + three_key + ');"><a href="javascript:void(0)">' + this_three[three_key].name + '</a></li>';
 		}
-		
 		$(this.sort3Id).html(three_area).show();
 		$(this.sort2Id+" li").eq(two_key).addClass("active").siblings("li").removeClass("active");
 
