@@ -6,7 +6,7 @@ use \Validator;
 class ArticleCateService {
 
 
-    public function getCate($pid=0, $prefix='p'){
+    public function getCate($pid=0){
     
         ///初始化参数
         $result = [];
@@ -23,10 +23,10 @@ class ArticleCateService {
             ///数据处理
             foreach( $rows as $k=>$row){
             
-                $result[$prefix . '_names'][$k]      = $row['name'];
-                $result[$prefix . 'ids'][$k]         = $row['id'];
-                $result[$prefix . 'levels'][$k]      = $row['level'];
-                $result[$prefix . 'child_nums'][$k]  = $row['child_nums'];
+                $result[$k]['id']           = $row['id'];
+                $result[$k]['name']         = $row['name'];
+                $result[$k]['level']        = $row['level'];
+                $result[$k]['child_num']    = $row['child_num'];
             }
         }
 

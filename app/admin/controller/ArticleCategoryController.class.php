@@ -32,7 +32,7 @@ class ArticleCategoryController extends Controller {
         $article_cate_service = M('ArticleCateService');
 
         ///查询列表页数据
-        $this->_datas['first'] = $article_cate_service->getCate();
+        $this->_datas['one'] = $article_cate_service->getCate();
 
         //分配模板变量&渲染模板
         $this->assign($this->_datas);
@@ -48,7 +48,7 @@ class ArticleCategoryController extends Controller {
         $article_cate_service = M('ArticleCateService');
 
         ///查询列表页数据
-        $child = $article_cate_service->getCate($_POST['p_id'], 'child');
+        $child = $article_cate_service->getCate($_POST['p_id']);
 
         ///返回数据
         JSON()->arr($child)->exec();

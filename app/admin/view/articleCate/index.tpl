@@ -33,104 +33,122 @@ a { text-decoration: none; color: #333; }
 .wareSortBtn input:disabled { border-color: #ddd; background-color: #f6f6f6; color: #9a9a9a; cursor: default; }
 </style>
 {/literal}
+<script src="{$smarty.const.PUB_COMMON_JS}/cascade.beauty.js" type="text/javascript"></script>
+<script type="text/javascript">
+/*初始化参数*/
+var one = {json_encode($one)};
+var url = init.url.main+'/admin/article/cate/child';
+</script>
 
 
 	<div class="wareSort clearfix">
-		<ul id="sort1"></ul>
-		<ul id="sort2" style="display: none;"></ul>
-		<ul id="sort3" style="display: none;"></ul>
+		<ul id="a_a_c_sort1"></ul>
+		<ul id="a_a_c_sort2" style="display: none;"></ul>
+		<ul id="a_a_c_sort3" style="display: none;"></ul>
 	</div>
-	<div class="selectedSort"><b>您当前选择的商品类别是：</b><i id="selectedSort"></i></div>
-
-<script type="text/javascript">
-/*初始化参数*/
-var province = {json_encode($first['p_names'])};//一级分类集合
-var province_ids = {json_encode($first['p_ids'])};//一级分类对应的id集合
-var province_levels = {json_encode($first['p_levels'])};//一级分类对应的level集合
-var province_child_nums = {json_encode($first['p_child_nums'])};//一级分类对应的child_nums集合
-var url = init.url.main+'/tools/expcat/getChild';
-// var city = [];//二级分类集合
-// var city_ids = [];
-// var city_levels = [];
-// var city_child_nums = [];
-// var district = [];//三级分类集合
-// var district_ids = [];
-// //var district_levels = [];
+	<div class="selectedSort"><b>您当前选择的商品类别是：</b><i id="a_a_c_selectedSort"></i></div>
 
 
-var CascadeBeauty = new CascadeBeauty({
-	"lv1": province,
-	"lv1_ids": province_ids,
-	"lv1_levels": province_levels,
-	"lv1_child_nums": province_child_nums,
-	"url": url,
-	"sort1": 
-});
-</script>
-
-
-
-<div class="pageFormContent" layoutH="60">
-<!-- 添加 -->
-	<form method="post" action="{$url.post.url}"  class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
-	<fieldset>
-		<legend>添加分类</legend>
-		<dl>
-			<dt><div class="button"><div class="buttonContent"><button  id="FIRE_resetCatPid">重置父分类到顶级</button></div></div></dt>
-			<dd>
-				<input type="hidden" id="FIRE_parent_id" name="pid" value="0">
-				<input type="hidden" id="FIRE_parent_level" name="plevel" value="0">
-				<input type="hidden" id="FIRE_parent_child_num" name="pchild_num" value="0">
-			</dd>
-		</dl>
-		<dl>
-			<dt>分类名称：</dt>
-			<dd><input class="required" name="name" type="text" /></dd>
-		</dl>
-		<dl class="nowrap"></dl>
-		<dl></dl>
-		<dl>
-			<dt><div class="buttonActive"><div class="buttonContent"><button type="submit">执行新增分类</button></div></div></dt>
-			<dd></dd>
-		</dl>
-	</fieldset>
-	{literal}
-<script type="text/javascript">
-$('#FIRE_resetCatPid').click(function (){
-	intProvince();
-	return false;
-});
-</script>
-	{/literal}
-	</form>
-
-
-	<!-- 编辑 -->
-	<form method="post" action="{$url.edith}"  class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
+	<div class="pageFormContent" layoutH="60">
+	<!-- 添加 -->
+		<form method="post" action="{$url.post.url}"  class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
 		<fieldset>
-			<legend>编辑【<strong class="FIRE_show_cat_name">分类</strong>】</legend>
-			<dl class="nowrap">
-				<dt>新分类名称：</dt>
+			<legend>添加分类</legend>
+			<dl>
+				<dt><div class="button"><div class="buttonContent"><button  id="a_a_c_resetCatPid">重置父分类到顶级</button></div></div></dt>
 				<dd>
-					<input type="hidden" class="FIRE_this_cat_id" name="id">
-					<input type="hidden" class="FIRE_this_cat_name" name="ori_name">
-					<input class="required FIRE_this_cat_name" id="FIRE_this_cat_name" name="name" type="text" />
+					<input type="hidden" id="a_a_c_parent_id" name="pid" value="0">
+					<input type="hidden" id="a_a_c_parent_level" name="plevel" value="0">
+					<input type="hidden" id="a_a_c_parent_child_num" name="pchild_num" value="0">
 				</dd>
 			</dl>
+			<dl>
+				<dt>分类名称：</dt>
+				<dd><input class="required" name="name" type="text" /></dd>
+			</dl>
+			<dl class="nowrap"></dl>
 			<dl></dl>
 			<dl>
-				<dt><div class="buttonActive"><div class="buttonContent"><button type="submit">执行修改分类</button></div></div></dt>
+				<dt><div class="buttonActive"><div class="buttonContent"><button type="submit">执行新增分类</button></div></div></dt>
 				<dd></dd>
 			</dl>
 		</fieldset>
-	</form>
+		</form>
+
+
+		<!-- 编辑 -->
+		<form method="post" action="{$url.post.url}"  class="pageForm required-validate" onsubmit="return validateCallback(this, navTabAjaxDone);">
+			<fieldset>
+				<legend>编辑【<strong class="a_a_c_show_cat_name">分类</strong>】</legend>
+				<dl class="nowrap">
+					<dt>新分类名称：</dt>
+					<dd>
+						<input type="hidden" class="a_a_c_this_cat_id" name="id">
+						<input type="hidden" class="a_a_c_this_cat_name" name="ori_name">
+						<input class="required a_a_c_this_cat_name" id="a_a_c_this_cat_name" name="name" type="text" />
+					</dd>
+				</dl>
+				<dl></dl>
+				<dl>
+					<dt><div class="buttonActive"><div class="buttonContent"><button type="submit">执行修改分类</button></div></div></dt>
+					<dd></dd>
+				</dl>
+			</fieldset>
+		</form>
+	</div>
 
 </div>
+{literal}
+<script type="text/javascript">
+/// 创建分类联动对象
+var cascade_beauty = new CascadeBeauty({
+	"one": one,
+	"url": url,
+	"sort1": "a_a_c_sort1",
+	"sort2": "a_a_c_sort2",
+	"sort3": "a_a_c_sort3",
+	"crumb_id": "a_a_c_selectedSort",
+	"showLv1Call": function (obj){
 
+		$("#a_a_c_parent_id").val("0");
+		$("#a_a_c_parent_level").val("0");
+		$("#a_a_c_parent_child_num").val("0");
+		$(".a_a_c_this_cat_name").val("");
+		$(".a_a_c_show_cat_name").html("EXP分类");
+	},
+	"showLv2Call": function (now_select_one, obj){
 
+		$("#a_a_c_parent_id").val(now_select_one.id);
+		$("#a_a_c_parent_level").val(now_select_one.level);
+		$("#a_a_c_parent_child_num").val(now_select_one.child_num);
 
+		$(".a_a_c_this_cat_id").val(now_select_one.id);
+		$(".a_a_c_this_cat_name").val(now_select_one.name);
+		$(".a_a_c_show_cat_name").html(now_select_one.name);
+	},
+	"showLv3Call": function (now_select_two, obj) {
+		
+		$("#a_a_c_parent_id").val(now_select_two.id);
+		$("#a_a_c_parent_level").val(now_select_two.level);
+		$("#a_a_c_parent_child_num").val(now_select_two.child_num);
 
-<script src="{$smarty.const.PUBLIC_TOOLS}/cat/jquery.sort.js"></script>
+		$(".a_a_c_this_cat_id").val(now_select_two.id);
+		$(".a_a_c_this_cat_name").val(now_select_two.name);
+		$(".a_a_c_show_cat_name").html(now_select_two.name);
+	},
+	"selectLv3Call": function (now_select_three, obj) {
+		$(".a_a_c_this_cat_id").val(now_select_three.id);
+		$(".a_a_c_this_cat_name").val(now_select_three.name);
+		$(".a_a_c_show_cat_name").html(now_select_three.name);
+	}
+});
 
-</div>
-        
+/// 加载页面时显示所有一级分类
+cascade_beauty.showLv1();
+/// 点击重置时初始化到仅展示一级分类
+$('#a_a_c_resetCatPid').click(function (){
+	cascade_beauty.showLv1();
+	return false;
+});
+</script>
+{/literal}
