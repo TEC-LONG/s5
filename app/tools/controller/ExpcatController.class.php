@@ -44,6 +44,33 @@ class ExpcatController extends Controller {
         $this->display('Expcat/index.tpl');
     }
 
+    public function index1(){ 
+
+        #查询列表页数据
+        $expcats = M()->table('expcat')
+        ->select('id,name,level,child_nums')
+        ->where([
+            ['pid', 0],
+            ['level', 1]
+        ])->get();
+
+        $one = [];
+        foreach( $expcats as $k=>$expcat ){
+
+            $one[$k]['id']          = $expcat['id'];
+            $one[$k]['name']        = $expcat['name'];
+            $one[$k]['level']       = $expcat['level'];
+            $one[$k]['child_num']   = $expcat['child_nums'];
+        }
+
+        //分配模板变量&渲染模板
+        $this->assign([
+            'one'=>$one,
+            'url'=>$this->_url
+        ]);
+        $this->display('Expcat/index.tpl');
+    }
+
     //列表页ajax获得子分类
     public function getChild(){ 
 
@@ -60,6 +87,25 @@ class ExpcatController extends Controller {
                 $child['child_ids'][$row_key] = $row['id'];
                 $child['child_levels'][$row_key] = $row['level'];
                 $child['child_child_nums'][$row_key] = $row['child_nums'];
+            }
+        }
+
+        echo json_encode($child); 
+        exit;
+    }
+    public function getChild1(){ 
+
+        //查询数据
+        $rows = M()->table('expcat')->select('id, name, level, child_nums')->where(['pid', $_POST['p_id']])->get();
+
+        $child = [];
+        if( !empty($rows) ){
+            foreach( $rows as $k=>$row ){ 
+
+                $child[$k]['id'] = $row['id'];
+                $child[$k]['name'] = $row['name'];
+                $child[$k]['level'] = $row['level'];
+                $child[$k]['child_num'] = $row['child_nums'];
             }
         }
 

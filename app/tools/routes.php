@@ -44,8 +44,8 @@
     Route::post('exp/updh', 'Exp@updh');
     // Route::post('exp/imgupmd', 'Exp@imgupmd');
 
-    Route::get('expcat/index', 'Expcat@index')->navtab('tools_expcat_index');##EXP分类
-    Route::post('expcat/getChild', 'Expcat@getChild');
+    Route::get('expcat/index', 'Expcat@index1')->navtab('tools_expcat_index');##EXP分类
+    Route::post('expcat/getChild', 'Expcat@getChild1');
     Route::post('expcat/adh', 'Expcat@adh');
     Route::post('expcat/edith', 'Expcat@edith');
     Route::get('expcat/catLookup', 'Expcat@catLookup');##分类查找带回
