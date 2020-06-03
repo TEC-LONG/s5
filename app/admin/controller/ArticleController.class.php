@@ -55,9 +55,13 @@ class ArticleController extends Controller {
         $this->display('article/index.tpl');
     }
 
+    /**
+     * 添加/编辑 页
+     */
     public function showEdit(){
         ///初始化参数
-        $request = REQUEST()->all();
+        $request                    = REQUEST()->all();
+        $this->_datas['cate_one']   = M('ArticleCategoryModel')->getCateOne();
         $this->_datas['html_title'] = '添加';
         
         ///编辑页需查询回显数据
@@ -65,14 +69,64 @@ class ArticleController extends Controller {
             
             $this->_datas['html_title'] = '编辑';
             #根据id查询
-            $this->_datas['row'] = M()->table('article')->select('*')->where(['id', $request['id']])->find();
-            $this->_datas['row']['crumbs_cat_ids'] = explode('|', $this->_datas['row']['crumbs_cat_ids']);
-            $this->_datas['row']['crumbs_cat_names'] = explode('|', $this->_datas['row']['crumbs_cat_names']);
+            $this->_datas['row'] = M('ArticleModel')->getArticleById($request['id']);
+
+            $this->_datas['row']['crumbs_cat_ids']      = explode('|', $this->_datas['row']['crumbs_cat_ids']);
+            $this->_datas['row']['crumbs_cat_names']    = explode('|', $this->_datas['row']['crumbs_cat_names']);
         }
         
         $this->assign($this->_datas);
         $this->display('article/edit.tpl');
     }
+
+    /**
+     * 添加/编辑 文章
+     */
+    public function post(){
+    
+        ///初始化参数
+        $request            = REQUEST()->all('n');
+        $article_service    = M('ArticleService');
+
+        ///检查数据
+        $this->checkPostRequest($request);
+
+        ///录入数据,如失败，在服务中拦截
+        if( isset($request['id']) ){#编辑
+            $article_service->update($request);
+        }else{#新增
+            $article_service->insert($request);
+        }
+
+        JSON()->navtab($this->navtab)->msg('操作成功！')->exec();
+    }
+
+    private function checkPostRequest($request){
+    
+        ///需检查的搜索字段
+        $fields = [
+            'title'     => 'required',
+            'content'   => 'required'
+        ];
+
+        ///字段对应的提示信息
+        $msg = [
+            'title.required'    => '请填写标题',
+            'content.required'  => '请填写内容'
+        ];
+
+        ///校验
+        $obj = Validator::make($request, $fields, $msg);
+        #有错误信息则返回给页面
+        if( !empty($obj->err) ) JSON()->stat(300)->msg($obj->getErrMsg())->exec();
+    }
+
+
+
+
+
+
+
 
     ###info综合  包括: info()
     public function info(){ 
@@ -86,10 +140,7 @@ class ArticleController extends Controller {
         $this->display('Exp/newinfo.tpl');
     }
 
-    private function get_expcat_lv1(){
     
-        return M()->table('expcat')->select('id, name, level')->where(['pid', 0])->get();
-    }
     public function ad(){
 
         //获得所有的一级分类

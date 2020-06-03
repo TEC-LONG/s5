@@ -52,8 +52,9 @@ function Cascade(url, lv2_class, lv3_class){
 			success:function (re){
 
 				var options = that.option0;
-				for(var i in re.child_names){
-					options += '<option value="'+re.child_ids[i]+'|'+re.child_names[i]+'">'+re.child_names[i]+'</option>';
+				for(var i in re){
+					// options += '<option value="'+re.child_ids[i]+'|'+re.child_names[i]+'">'+re.child_names[i]+'</option>';
+					options += '<option value="'+re[i].id+'|'+re[i].child_name+'">'+re[i].name+'</option>';
 				}
 
 				if (type=='lv1') {

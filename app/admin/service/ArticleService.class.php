@@ -4,6 +4,121 @@ use \Validator;
 
 class ArticleService {
 
+    /**
+     * 获取文章列表
+     */
+    public function getArticleList($request, $controller){
+    
+        ///需要搜索的字段
+        $search_form = [
+            ['s_id', '=']
+        ];
+        $condition = F()->S2C($request, $search_form);
+        $condition[] = ['is_del', 0];
+
+        ///构建查询对象
+        $obj = M('ArticleModel')->select('*')->where($condition);
+
+        #分页参数
+        $controller->_datas['page'] = $page = $controller->_paginate($request, $obj);
+
+        #查询数据
+        $controller->_datas['rows'] = $obj->limit($page['limitM'] . ',' . $page['numPerPage'])->get();
+    }
+
+    /**
+     * 添加文章
+     */
+    public function insert($request){
+
+        /// 分类数据初步处理
+        $cate = $this->cateFirstH($request);
+    
+        ///构建新增数据
+        $insert                         = [];
+        $insert['title']                = $request['title'];
+        $insert['tags']                 = empty($request['tags']) ? '' : $request['tags'];
+        $insert['post_date']            = time();
+        $insert['content']              = str_replace('"', '&quot;',str_replace('\\', '\\\\', $request['content']));
+        $insert['content_html']         = $request['editormd-html-code'];
+        $insert['article_category__id'] = $cate['three'][0];
+        $insert['crumbs_expcat_ids']    = $cate['one'][0] . '|' . $cate['two'][0] . '|' . $cate['three'][0];
+        $insert['crumbs_expcat_names']  = $cate['one'][1] . '|' . $cate['two'][1] . '|' . $cate['three'][1];
+
+        ///执行新增
+        $re = M('ArticleModel')->insert($insert)->exec();
+        
+        if( $re ) return true;
+        return false;
+    }
+
+    /**
+     * 编辑文章
+     */
+    public function update($request){
+
+        /// 分类数据初步处理
+        $cate = $this->cateFirstH($request);
+
+
+    
+        $request = REQUEST()->all('n');
+        // F()->print_r($request);
+
+        ///个别数据处理
+        $expcat1_arr = explode('|', $request['expcat1']);
+        $expcat2_arr = explode('|', $request['expcat2']);
+        $expcat3_arr = explode('|', $request['expcat3']);
+
+        $request['expcat__id'] = $expcat3_arr[0];
+        $request['expcat__name'] = $expcat3_arr[1];
+        $request['content_html'] = $request['editormd-html-code'];
+        $request['content'] = str_replace('"', '&quot;',str_replace('\\', '\\\\', $request['content']));
+        $request['crumbs_expcat_ids'] = $expcat1_arr[0] . '|' . $expcat2_arr[0] . '|' . $expcat3_arr[0];
+        $request['crumbs_expcat_names'] = $expcat1_arr[1] . '|' . $expcat2_arr[1] . '|' . $expcat3_arr[1];
+
+        ///取出修改了的数据
+        #查询已有数据
+        $row = M()->table('expnew')->select('*')->where(['id', $request['id']])->find();
+        $update_data = F()->compare($request, $row, ['title', 'tags', 'content', 'crumbs_expcat_names', 'crumbs_expcat_ids', 'expcat__id', 'expcat__name', 'content_html']);
+
+        if( empty($update_data) ){
+            $this->jump('您还没有修改任何数据！请先修改数据。', 'p=tools&m=exp&a=upd&id='.$request['id']);
+        }
+
+        $update_data['upd_time'] = time();
+        ///更新数据
+        $re = M()->table('expnew')
+        ->fields(array_keys($update_data))
+        ->update($update_data)
+        ->where(['id', $request['id']])
+        ->exec();
+
+        if( $re ){
+
+            J('修改成功！', '/tools/exp/upd?id='.$request['id']);
+        }else{
+            J('修改成功！', '/tools/exp/upd?id='.$request['id']);
+        }
+    }
+
+    /**
+     * 分类数据初步处理
+     */
+    private function cateFirstH($request){
+
+        $cate = [];
+    
+        $cate['one']    = explode('|', $request['cate1']);
+        $cate['two']    = explode('|', $request['cate2']);
+        $cate['three']  = explode('|', $request['cate3']);
+
+        return $cate;
+    }
+
+
+
+
     public function checkListRequest($request){
     
         ///需检查的搜索字段    UTF8编码下：/[x{4e00}-x{9fa5}]+/
@@ -30,52 +145,6 @@ class ArticleService {
             var_dump($obj->err);
             exit;
         }
-    }
-
-    public function checkPostRequest($request){
-    
-        ///需检查的搜索字段
-        $fields = [
-            'acc'       => 'required',
-            'pwd'       => 'required',
-            'nickname'  => 'required',
-            'cell'      => 'cell',
-            'email'     => 'email'
-        ];
-
-        ///字段对应的提示信息
-        $msg = [
-            'acc.required'      => '账号为必填项',
-            'pwd.required'      => '密码为必填项',
-            'nickname.required' => '昵称为必填项',
-            'cell.cell'         => '手机号格式不正确',
-            'email.email'       => '邮箱格式不正确'
-        ];
-
-        ///校验
-        $obj = Validator::make($request, $fields, $msg);
-        #有错误信息则返回给页面
-        if( !empty($obj->err) ) JSON()->stat(300)->msg($obj->getErrMsg())->exec();
-        
-    }
-
-    public function getArticleList($request, $controller){
-    
-        ///需要搜索的字段
-        $search_form = [
-            ['s_id', '=']
-        ];
-        $condition = F()->S2C($request, $search_form);
-        $condition[] = ['is_del', 0];
-
-        ///构建查询对象
-        $obj = M('ArticleModel')->select('*')->where($condition);
-
-        #分页参数
-        $controller->_datas['page'] = $page = $controller->_paginate($request, $obj);
-
-        #查询数据
-        $controller->_datas['rows'] = $obj->limit($page['limitM'] . ',' . $page['numPerPage'])->get();
     }
 
     public function upheadimg($input){
@@ -108,48 +177,6 @@ class ArticleService {
             return $img;
         }
 
-        return false;
-    }
-
-    public function update($request, $headimg){
-    
-        #查询已有数据
-        $row = M('UserModel')->select('*')->where(['id', $request['id']])->find();
-        $request['pwd'] = $request['pwd']=='' ? $row['pwd'] : M('UserModel')->make_pwd($request['pwd'], $row['salt']);##密码处理
-        $request['img'] = empty($headimg) ? '' : $headimg;##头像处理
-        $update_data = F()->compare($request, $row, ['acc', 'pwd', 'nickname', 'cell', 'email', 'img']);
-
-        if( empty($update_data) ) JSON()->stat(300)->msg('您还没有修改任何数据！请先修改数据。')->exec();
-
-        $re = M('UserModel')
-        ->update($update_data)
-        ->where(['id', '=', $request['id']])
-        ->exec();
-
-        if( $re ) return true;
-        return false;
-    }
-
-    public function insert($request, $headimg){
-    
-        ///构建新增数据
-        $insert = [
-            'acc'       => $request['acc'],
-            'pwd'       => M('UserModel')->make_pwd($request['pwd']),
-            'nickname'  => $request['nickname'],
-            'cell'      => $request['cell'],
-            'email'     => $request['email'],
-            'salt'      => M('UserModel')->make_salt(),
-            'level'     => 0,
-            'ori'       => 1,
-            'img'       => empty($headimg) ? '' : $headimg,
-            'post_date' => time()
-        ];
-
-        ///执行新增
-        $re = M('UserModel')->insert($insert)->exec();
-        
-        if( $re ) return true;
         return false;
     }
 
