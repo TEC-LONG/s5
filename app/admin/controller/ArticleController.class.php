@@ -92,13 +92,21 @@ class ArticleController extends Controller {
         $this->checkPostRequest($request);
 
         ///录入数据,如失败，在服务中拦截
-        if( isset($request['id']) ){#编辑
-            $article_service->update($request);
-        }else{#新增
-            $article_service->insert($request);
+        try {
+            if( isset($request['id']) ){#编辑
+                $url = $this->_datas['url']['upd']['url'] . '?id=' . $request['id'];
+                $article_service->update($request, $this->_datas['url']);
+            }else{#新增
+                $url = $this->_datas['url']['ad']['url'];
+                $article_service->insert($request, $this->_datas['url']);
+            }
+        } catch (\Exception $e) {
+            
+            $json = JSON()->decode($e->getMessage());
+            J($json->msg, $json->url);
         }
 
-        JSON()->navtab($this->navtab)->msg('操作成功！')->exec();
+        J('操作成功！', $url);
     }
 
     private function checkPostRequest($request){
@@ -118,7 +126,15 @@ class ArticleController extends Controller {
         ///校验
         $obj = Validator::make($request, $fields, $msg);
         #有错误信息则返回给页面
-        if( !empty($obj->err) ) JSON()->stat(300)->msg($obj->getErrMsg())->exec();
+        // if( !empty($obj->err) ) JSON()->stat(300)->msg($obj->getErrMsg())->exec();
+        if( !empty($obj->err) ){
+
+            if( isset($request['id']) ){# 编辑
+                J($obj->getErrMsg(), $this->_datas['url']['upd']['url'].'?id='.$request['id']);
+            }else{# 新增
+                J($obj->getErrMsg(), $this->_datas['url']['ad']['url']);
+            }
+        }
     }
 
 

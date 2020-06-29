@@ -29,11 +29,11 @@ class ArticleService {
     /**
      * 添加文章
      */
-    public function insert($request){
+    public function insert($request, $urls){
 
         /// 分类数据初步处理
         $cate = $this->cateFirstH($request);
-    
+        
         ///构建新增数据
         $insert                         = [];
         $insert['title']                = $request['title'];
@@ -42,64 +42,59 @@ class ArticleService {
         $insert['content']              = str_replace('"', '&quot;',str_replace('\\', '\\\\', $request['content']));
         $insert['content_html']         = $request['editormd-html-code'];
         $insert['article_category__id'] = $cate['three'][0];
-        $insert['crumbs_expcat_ids']    = $cate['one'][0] . '|' . $cate['two'][0] . '|' . $cate['three'][0];
-        $insert['crumbs_expcat_names']  = $cate['one'][1] . '|' . $cate['two'][1] . '|' . $cate['three'][1];
+        $insert['crumbs_cat_ids']       = $cate['one'][0] . '|' . $cate['two'][0] . '|' . $cate['three'][0];
+        $insert['crumbs_cat_names']     = $cate['one'][1] . '|' . $cate['two'][1] . '|' . $cate['three'][1];
 
         ///执行新增
         $re = M('ArticleModel')->insert($insert)->exec();
-        
-        if( $re ) return true;
-        return false;
+
+        # 不成功，抛出异常
+        if( !$re ) THROWE(JSON()->arr([
+            'msg'   => '操作失败',
+            'url'   => $urls['ad']['url']
+        ])->exec('return'));
     }
 
     /**
      * 编辑文章
      */
-    public function update($request){
+    public function update($request, $urls){
 
         /// 分类数据初步处理
         $cate = $this->cateFirstH($request);
 
-
+        /// 过滤出改变了的数据
+        $request['content']                 = str_replace('"', '&quot;',str_replace('\\', '\\\\', $request['content']));
+        $request['content_html']            = $request['editormd-html-code'];
+        $request['article_category__id']    = $cate['three'][0];
+        $request['crumbs_cat_ids']          = $cate['one'][0] . '|' . $cate['two'][0] . '|' . $cate['three'][0];
+        $request['crumbs_cat_names']        = $cate['one'][1] . '|' . $cate['two'][1] . '|' . $cate['three'][1];
     
-        $request = REQUEST()->all('n');
-        // F()->print_r($request);
+        # 对比新老数据
+        ## 查询已有数据
+        $row = M()->table('article')->select('*')->where(['id', $request['id']])->find();
+        $update_data = F()->compare($request, $row, ['title', 'tags', 'content', 'crumbs_cat_names', 'crumbs_cat_ids', 'article_category__id', 'content_html']);
 
-        ///个别数据处理
-        $expcat1_arr = explode('|', $request['expcat1']);
-        $expcat2_arr = explode('|', $request['expcat2']);
-        $expcat3_arr = explode('|', $request['expcat3']);
+        // if( empty($update_data) ) THROWE('您还没有修改任何数据！请先修改数据。');
+        if( empty($update_data) ) THROWE(JSON()->arr([
+            'msg'   => '您还没有修改任何数据！请先修改数据',
+            'url'   => $urls['upd']['url'].'?id='.$request['id']
+        ])->exec('return'));
 
-        $request['expcat__id'] = $expcat3_arr[0];
-        $request['expcat__name'] = $expcat3_arr[1];
-        $request['content_html'] = $request['editormd-html-code'];
-        $request['content'] = str_replace('"', '&quot;',str_replace('\\', '\\\\', $request['content']));
-        $request['crumbs_expcat_ids'] = $expcat1_arr[0] . '|' . $expcat2_arr[0] . '|' . $expcat3_arr[0];
-        $request['crumbs_expcat_names'] = $expcat1_arr[1] . '|' . $expcat2_arr[1] . '|' . $expcat3_arr[1];
-
-        ///取出修改了的数据
-        #查询已有数据
-        $row = M()->table('expnew')->select('*')->where(['id', $request['id']])->find();
-        $update_data = F()->compare($request, $row, ['title', 'tags', 'content', 'crumbs_expcat_names', 'crumbs_expcat_ids', 'expcat__id', 'expcat__name', 'content_html']);
-
-        if( empty($update_data) ){
-            $this->jump('您还没有修改任何数据！请先修改数据。', 'p=tools&m=exp&a=upd&id='.$request['id']);
-        }
-
-        $update_data['upd_time'] = time();
         ///更新数据
-        $re = M()->table('expnew')
+        $update_data['upd_time'] = time();
+
+        $re = M()->table('article')
         ->fields(array_keys($update_data))
         ->update($update_data)
         ->where(['id', $request['id']])
         ->exec();
 
-        if( $re ){
-
-            J('修改成功！', '/tools/exp/upd?id='.$request['id']);
-        }else{
-            J('修改成功！', '/tools/exp/upd?id='.$request['id']);
-        }
+        # 不成功，抛出异常
+        if( !$re ) THROWE(JSON()->arr([
+            'msg'   => '修改失败！',
+            'url'   => $urls['upd']['url'].'?id='.$request['id']
+        ])->exec('return'));
     }
 
     /**
@@ -115,6 +110,7 @@ class ArticleService {
 
         return $cate;
     }
+
 
 
 

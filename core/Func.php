@@ -179,6 +179,9 @@ function handler_init_special_fields(&$init){
     return $select;
 }
 
+/**
+ * 
+ */
 function G($globalVarName='', $globalVarValue=NULL){
 
     if( $globalVarValue!==NULL ){#增加变量
@@ -188,6 +191,9 @@ function G($globalVarName='', $globalVarValue=NULL){
     return $GLOBALS[$globalVarName];
 }
 
+/**
+ * 
+ */
 function J($msg='操作成功！', $route='default', $time=2){
     
     echo $msg; 
@@ -200,20 +206,43 @@ function J($msg='操作成功！', $route='default', $time=2){
             $route_str = '';
         elseif(G('plat')=='home'):
             $route_str = '';
+        elseif(G('plat')=='admin'):
+            $route_str = '';
         endif;
 
     }else{
         $route_str = $route;
     }
-    $url = C('URL') . $route_str;
+
+    preg_match('/^http.*/', $route_str, $matches);
+    if( isset($matches[0]) ){
+    
+        $url = $route_str;
+    }else{
+        $url = C('URL') . $route_str;
+    }
+
     header("Refresh:{$time}; url={$url}");
     exit;
 }
 
+/**
+ * 
+ */
 function REGEX(){
     return M('RegexTool');
 }
 
+/**
+ * 抛出异常
+ */
+function THROWE($data){
+
+    if( is_array($data) ){
+        $data = json_encode($data);
+    }
+    throw new \Exception($data);
+}
 
 
 

@@ -108,9 +108,7 @@ class JsonTool{
             }else{
                 $this->_re[$key_val_arr[0]] = $key_val_arr[1];
             }
-            
         }
-
         return $this;
     }
 
@@ -130,5 +128,23 @@ class JsonTool{
         }elseif ($type==='return') {
             return $this->_re;
         }
+    }
+
+    /**
+     * 解析Json
+     */
+    public function decode($str, $prefix='j_'){
+    
+        $data = json_decode($str, true);
+        // if (($data && is_object($data)) || (is_array($data) && !empty($data))) {
+        if ( is_array($data) && !empty($data) ) {
+
+            foreach( $data as $k=>$v){
+                $key = $prefix . $k;
+                $this->$key = $v;
+            }
+            return $this;
+        }
+        return $str;
     }
 }

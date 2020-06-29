@@ -20,7 +20,10 @@
 			<a class="nav-link active">{$html_title}文章</a>
 		</li>
 	</ul>
-	<form class="needs-validation" action="{$url.updh.url}?id={$row.id}" method="post">
+	<form class="needs-validation" action="{$url.post.url}" method="post">
+		{if isset($row)}
+		<input type="hidden" name="id" value="{$row.id}">
+		{/if}
 		<div class="form-row d-flex mt-3">
 			<div class="col-md-1"></div>
 			<div class="col-md-2">
@@ -57,7 +60,7 @@
 				<button class="btn btn-success" type="submit" style="margin-top:32px;">点击{$html_title}</button>
 			</div>
 		</div>
-		<div class="form-row d-flex mt-3" id="{$navtab}_editormd">
+		<div class="form-row d-flex mt-3" id="editormd">
 			<textarea style="display:none;" name="content">{$row.content}</textarea>
 		</div>
 	</form>
@@ -68,7 +71,7 @@ var url = '{L("/admin/article/cate/child")}';
 var cascade = new Cascade(url, 'admin_article_cat_lv2', 'admin_article_cat_lv3');
 
 $(function() {
-	var editor = editormd("{$navtab}_editormd", {
+	var editor = editormd("editormd", {
 		htmlDecode			:	"style,script,iframe",
 		width				:	"95%",
 		height				:	'640px',
