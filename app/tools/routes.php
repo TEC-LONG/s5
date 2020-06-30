@@ -59,7 +59,7 @@
 
     #记忆系统
     Route::get('accPwd/index', 'MemAccPwd@index')->navtab('tools_memAccPwd_index');##工程信息管理
-    Route::post('accPwd/edit', 'MemAccPwd@adUpd');
+    Route::get('accPwd/edit', 'MemAccPwd@adUpd');
     Route::post('accPwd/post', 'MemAccPwd@post');
     Route::post('accPwd/del', 'MemAccPwd@del');
     Route::get('accPwd/accIndex', 'MemAccPwd@accIndex');##账号列表

@@ -19,7 +19,7 @@ if( Route::$plat=='tools' ){
     include TOOLS_CONF_PATH . 'AutoTb.conf.php';
 }elseif( Route::$plat=='admin' ){
     //引入模板配置文件
-    include CONFIG_PATH . 'template_conf.php';
+    // include CONFIG_PATH . 'template_conf.php';
 }
 
 //引入核心应用类文件

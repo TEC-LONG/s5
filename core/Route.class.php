@@ -33,7 +33,9 @@ class Route{
     }
 
     /**
-     * $gain  string  获取的目标，取值范围为："navtab"、"name"
+     * @param   $type   int         [路由类型，取值范围："get"、"post"、"request"]
+     * @param   $route  string      [路由全名，如："/admin/article"]
+     * @param   $gain   string      [获取的目标，取值范围为："navtab"、"name"]
      *                              get   /admin/..   navtab
      */
     public static function getElem($type, $route, $gain){
@@ -71,7 +73,7 @@ class Route{
     public function name($name=''){
     
         $key    = self::$count[0];
-        $type_name   = '_'.self::$count[1];# _get/_post/_request
+        $type_name   = '_'.self::$count[1];# _get、_post、_request
 
         self::$$type_name['names'][$key] = empty($name) ? (isset(self::$$type_name['navtabs'][$key])?self::$$type_name['navtabs'][$key]:'') : $name;
         

@@ -238,7 +238,7 @@ class ArticleController extends Controller {
         $update_data = F()->compare($request, $row, ['title', 'tags', 'content', 'crumbs_expcat_names', 'crumbs_expcat_ids', 'expcat__id', 'expcat__name', 'content_html']);
 
         if( empty($update_data) ){
-            $this->jump('您还没有修改任何数据！请先修改数据。', 'p=tools&m=exp&a=upd&id='.$request['id']);
+            J('您还没有修改任何数据！请先修改数据。', '/tools/exp/upd?id='.$request['id']);
         }
 
         $update_data['upd_time'] = time();
