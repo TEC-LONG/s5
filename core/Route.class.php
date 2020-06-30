@@ -6,8 +6,8 @@ class Route{
     public static $plat;
     public static $controller;
     public static $method;
-    public static $navtab;
     public static $name;
+    public static $navtab;
 
     private static $count=[];
 
@@ -162,8 +162,8 @@ class Route{
         $routes_key = array_search($URI, $routes_gather);#routes的key与map的key一致
 
         $map            = self::$$var_name['maps'][$routes_key];
-        self::$name     = self::$$var_name['names'][$routes_key];
-        self::$navtab   = self::$$var_name['navtabs'][$routes_key];
+        self::$name     = !isset(self::$$var_name['names'][$routes_key])    ? '' : self::$$var_name['names'][$routes_key];
+        self::$navtab   = !isset(self::$$var_name['navtabs'][$routes_key])  ? '' : self::$$var_name['navtabs'][$routes_key];
 
         #得到控制器名和方法
         $map_str = explode('@', $map);

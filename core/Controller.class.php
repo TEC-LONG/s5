@@ -76,8 +76,15 @@ class Controller extends \Smarty{
     } 
 
     /**
-     *                       get     /admin/user/index
+     * @method  route
+     * 方法作用: 构建跳转链接信息
+     * 
+     * @param    $type      array       [路由类型，取值范围："get"、"post"、"request"]
+     * @param    $route     string      [路由全名，如："/admin/article"]
+     * 
+     * @return    array    [如return ['url'=>'https://xx.xx.xx/a/b', 'rel'=>'链接页面对应的navtab值'];]
      */
+    ///                       get     /admin/user/index
     protected function route($type, $route){
 
         return [

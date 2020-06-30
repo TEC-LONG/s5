@@ -14,10 +14,12 @@ class RequestTool{
     /**
      * @method    all
      * 方法作用：根据指定的模式，过滤接收的数据，并返回过滤后的数据
+     * 
      * @param    $mod    string    模式标识
                     $mod='s' 表示strict严格模式，该模式将使用 "trim,htmlspecialchars,单引转换实体" 来过滤接收的数据
                     $mod='n' 表示normal普通模式，该模式将使用 "trim,htmlspecialchars" 来过滤接收的数据
                     $mod='l' 表示light轻量模式，该模式将使用 "trim" 来过滤接收的数据
+     *
      * @return    array
      */
     public function all($mod='s'){
@@ -44,15 +46,16 @@ class RequestTool{
     }
 
     /**
-     * @method    vars
+     * @method  vars
      * 方法作用：该方法专门用于开放单独的过滤方式
-     * @param    $request    string    需要过滤的字符串数据
-     * @param    $type    string    过滤方式
-                    $type='trim'  表示使用 "trim" 过滤
-                    $type='htmlspecialchars'  表示使用 "htmlspecialchars" 过滤
-                    $type='htmlspecialchars_decode'  表示使用 "htmlspecialchars_decode" 逆处理htmlspecialchars过滤后的数据
-                    $type='danyin'  表示使用 "单引转换实体" 将目标字符串中的单引号进行实体转换过滤
-                    $type='danyin_decode'  表示使用 "逆向单引转换实体" 逆处理danyin过滤后的字符串
+     * 
+     * @param    $request   string|array    需要过滤的字符串或数组数据
+     * @param    $type      string          过滤方式
+                    $type='trim'                    表示使用 "trim" 过滤
+                    $type='htmlspecialchars'        表示使用 "htmlspecialchars" 过滤
+                    $type='htmlspecialchars_decode' 表示使用 "htmlspecialchars_decode" 逆处理htmlspecialchars过滤后的数据
+                    $type='danyin'                  表示使用 "单引转换实体" 将目标字符串中的单引号进行实体转换过滤
+                    $type='danyin_decode'           表示使用 "逆向单引转换实体" 逆处理danyin过滤后的字符串
      * @return    string
      */
     public function vars($request, $type='trim'){

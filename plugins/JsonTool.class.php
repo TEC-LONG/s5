@@ -14,9 +14,11 @@ class JsonTool{
     }
 
     /**
-     * @method    obj
+     * @method  obj
      * 方法作用：根据字符串生成json对象，默认生成空的json对象
+     * 
      * @param    $str    string    json字符串
+     * 
      * @return    object
      */
     public function obj($str='{}'){
@@ -27,9 +29,11 @@ class JsonTool{
     }
 
     /**
-     * @method    arr
+     * @method  arr
      * 方法作用：调用此方法，可以最终根据指定的数组转换为json字符串
+     * 
      * @param    $arr    array    数组
+     * 
      * @return    object
      */
     public function arr($arr=[]){
@@ -40,9 +44,11 @@ class JsonTool{
     }
 
     /**
-     * @method    stat
+     * @method  stat
      * 方法作用：设置返回的状态码，这个方法专门针对jui后台框架，如果不是为了支持jui框架，则请根据实际需要来调用
+     * 
      * @param    $stat    int    状态码，200成功；300失败
+     * 
      * @return    object
      */
     public function stat($stat=200){
@@ -55,9 +61,11 @@ class JsonTool{
     }
 
     /**
-     * @method    msg
+     * @method  msg
      * 方法作用：设置返回的提示信息，这个方法专门针对jui后台框架，如果不是为了支持jui框架，则请根据实际需要来调用
+     * 
      * @param    $msg    string    提示信息
+     * 
      * @return    object
      */
     public function msg($msg='操作成功'){
@@ -70,9 +78,11 @@ class JsonTool{
     }
 
     /**
-     * @method    navtab
+     * @method  navtab
      * 方法作用：设置返回的navtabId，这个方法专门针对jui后台框架刷新页面使用，如果不是为了支持jui框架，则请根据实际需要来调用
+     * 
      * @param    $navtab    string    jui框架页面的navtabId
+     * 
      * @return    object
      */
     public function navtab($navtab){
@@ -85,9 +95,11 @@ class JsonTool{
     }
 
     /**
-     * @method    vars
+     * @method  vars
      * 方法作用：设置json额外内容，这个方法是用于拓展json返回的内容，请根据实际需要来调用
+     * 
      * @param    $key_val_arr    array    值对信息，如：$key_val_arr=['msg', 'xxxxx'] 或 $key_val_arr=[['stat', 300], ['msg', 'xxx']]
+     * 
      * @return    object
      */
     public function vars($key_val_arr){
@@ -113,8 +125,9 @@ class JsonTool{
     }
 
     /**
-     * @method    exec
+     * @method  exec
      * 方法作用：将构建好的Json对象以指定方式返回
+     * 
      * @param    $type    string    返回类型
                         $type='echo'表示以echo方式输出json字符串
                         $type='return'表示以return方式返回json对象
@@ -131,7 +144,13 @@ class JsonTool{
     }
 
     /**
-     * 解析Json
+     * @method  decode
+     * 方法作用：将构建好的Json对象以指定方式返回
+     * 
+     * @param    $str       string    json字符串
+     * @param    $prefix    string    解析后的属性前缀
+     * 
+     * @return    mixed
      */
     public function decode($str, $prefix='j_'){
     
@@ -145,6 +164,6 @@ class JsonTool{
             }
             return $this;
         }
-        return $str;
+        return $str;/// 非标准json格式字符串，则原样将该字符串返回
     }
 }
