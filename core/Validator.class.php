@@ -45,28 +45,27 @@ class Validator{
         ///不可作为独立规则的主规则
         $this->denySingle = ['regex'];
 
-        ///默认提示信息（必须）
-        $this->dmsg = [
-            'required'  =>  '{field} 为必填参数',
-            'email'     =>  '{field} 邮箱格式不正确',
-            'cell'      =>  '{field} 手机号格式不正确',
-            'phone'     =>  '{field} 座机号格式不正确',
-            'int'       =>  '{field} 必须为整数',
-            'int.min'   =>  '{field} 值不能小于 {min}',
-            'int.max'   =>  '{field} 值不能小于 {max}',
-            'float'     =>  '',
-            'regex'     =>  '{field} 格式不正确',
-            'ch-utf8'   =>  '{field} 必须为UTF-8编码的中文',
-            'ip'        =>  '{field} 必须为IP格式'
-        ];
-
-        ///错误码对应的提示信息（非必须，通常只对1字开头的参数错误进行设置）
+        ///错误码对应的提示信息
         $this->codeMsg = [
-            '1001' => '规则：{rule} 不可独立使用，请为其指定相应的副规则',
-            '1002' => '无效的规则：{rule}',
-            '1003' => '规则：{rule} 是一个“独立型”规则，不可“主副”联合使用',
-            '1004' => '设定为“主副型”规则的规则：{rule} 没有指定副规则',
-            '1005' => '找不到规则：{rule} 的处理方式，如需处理该规则，请先拓展该规则的处理方式'
+            '1001'      => '规则：{rule} 不可独立使用，请为其指定相应的副规则',
+            '1002'      => '无效的规则：{rule}',
+            '1003'      => '规则：{rule} 是一个“独立型”规则，不可“主副”联合使用',
+            '1004'      => '设定为“主副型”规则的规则：{rule} 没有指定副规则',
+            '1005'      => '找不到规则：{rule} 的处理方式，如需处理该规则，请先拓展该规则的处理方式',
+            '2001'      => '{field} 为必填参数',
+            '2002'      => '{field} 必须为整数',
+            '2003.1'    => '{field} 值需要大于 {val}',
+            '2003.2'    => '{field} 值需要大于等于 {val}',
+            '2003.3'    => '{field} 值需要小于 {val}',
+            '2003.4'    => '{field} 值需要小于等于 {val}',
+            '2003.5'    => '{field} 值需要等于 {val}',
+            '2004'      => '{field} 邮箱格式不正确',
+            '2005'      => '{field} 手机号格式不正确',
+            '2006'      => '{field} 座机号格式不正确',# 座机号规则暂未构建，故当前暂未支持座机号检测！！
+            '2007'      => '',# 号码未分配，预定为float
+            '2008'      => '{field} 必须为IP格式',
+            '2009'      => '{field} 必须为UTF-8编码的中文',
+            '2010'      => '{field} 数据不符合当前自定义正则规则',
         ];
 
         ///错误码对应的级别（必须）
@@ -149,13 +148,13 @@ class Validator{
      */
     protected function createHtml($e){
     
-        $head_ch_name = ['field'=>'字段', 'code'=>'错误码', 'rule'=>'完整规则', 'codemsg'=>'错误信息', 'level'=>'错误级别'];
+        $head_ch_name   = ['field'=>'字段', 'code'=>'错误码', 'rule'=>'完整规则', 'codemsg'=>'错误信息', 'level'=>'错误级别'];
+        $html           = '<table border="1" cellspacing="0"><thead>{thead1}<tr>{thead2}<tr></thead><tbody>{tbody}<tbody></table>';
 
-        $html .= '<table border="1" cellspacing="0"><thead>{thead1}<tr>{thead2}<tr></thead><tbody>{tbody}<tbody></table>';
-        $thead2 = '';
-        $tbody = '';
-        $counter = 0;
-        $col_num = 0;
+        $thead2     = '';
+        $tbody      = '';
+        $counter    = 0;
+        $col_num    = 0;
         foreach( $this->sysErr as $field=>$sysErr){
             
             if( $counter==0 ){
@@ -400,7 +399,7 @@ class Validator{
      * 设置返回err信息
      * $code
      * $rule  string 如：int
-     * $vice  array  如：['min'=>10]
+     * $vice  array  如：['min', 10]
      */
     protected function mkErr($code, $rule, $vice=[]){
         
@@ -409,7 +408,7 @@ class Validator{
         $this->err[$this->field]['rule'] = $this->nowRuleStr;
         $this->err[$this->field]['value'] = $this->data[$this->field];
         $this->err[$this->field]['level'] = $this->code2level($code);
-        $this->err[$this->field]['msg'] = $this->setMsg($rule, $vice);
+        $this->err[$this->field]['msg'] = $this->setMsg($rule, $vice, $code);
 
         return $this;
     }
@@ -466,9 +465,9 @@ class Validator{
     /**
      * 设置返回信息
      * $rule  string 如：int
-     * $vice  array  如：['min'=>10]
+     * $vice  array  如：['min',10]
      */
-    protected function setMsg($rule, $vice){
+    protected function setMsg($rule, $vice, $code){
 
         $this_rule = empty($vice) ? $rule : $rule.'.'.$vice[0];
 
@@ -478,19 +477,17 @@ class Validator{
             $tmp_msg = $this->msg[$this->field];
             #下标为default表示 独立型规则 或 可以单独使用的主规则 的对应用户指定信息；否则则为 主副型 用户指定信息
             $this_msg = isset($tmp_msg[$rule]['default']) ? $tmp_msg[$rule]['default'] : (isset($tmp_msg[$rule][$vice[0]])?$tmp_msg[$rule][$vice[0]]:'');
-
         }
         
         ///没传则用默认的
         if( empty($this_msg) ){
 
-            $tmp_msg = $this->dmsg;
-            $this_msg = isset($tmp_msg[$this_rule]) ? $tmp_msg[$this_rule] : '';
+            $this_msg = $this->code2cmsg($code, '{field}', $this_rule);
         }
 
         ///返回msg
         return $this->replace([
-            '{'.$vice[0].'}' => $vice[1],
+            '{val}' => $vice[1],
             '{field}' => $this->field,
         ], $this_msg);
     }
@@ -556,7 +553,7 @@ class Validator{
             // if( !$this->ckRegexGo('/^[1]([3-9])[0-9]{9}$/') ): $this->mkErr('2005', $rule); endif;
             if( !$this->ckRegexGo('/^1(3[0-9]|4[57]|5[0-9]|6[0-9]|7[0135678]|8[0-9]|9[0-9])\\d{8}$/') ): $this->mkErr('2005', $rule); endif;
 
-        elseif( $rule=='' ):
+        elseif( $rule=='phone' ):
 
             if( !$this->ckRegexGo('') ): $this->mkErr('2006', $rule); endif;
 
@@ -592,7 +589,7 @@ class Validator{
         if(!in_array($vice_name, $this->rrange['vice'][$rule])) return $this->mkSysErr('1005', $this_rule);
 
         ///用规则检测数据
-        if( !$this->ckRegexGo($vice_val) ) return $this->mkErr('2004', $rule);
+        if( !$this->ckRegexGo($vice_val) ) return $this->mkErr('2010', $rule);
     }
 
     /**
@@ -646,35 +643,35 @@ class Validator{
                 if(!in_array($vice_name, $this->rrange['vice'][$rule])) return $this->mkSysErr('1005', $this_rule);
 
                 #检查数据值
-                if( !$this->ckIntGo($vice_name, $vice_val) ) return $this->mkErr('2003', $rule, $vice_arr);
+                if( $this->ckIntGo($vice_name, $vice_val) ) return $this->mkErr('2003', $rule, $vice_arr);
             }
         }
     }
 
     protected function ckIntGo($vice_name, $vice_val){
 
-        $is_right = 0;//是否满足规则，0表示否，1表示是
+        $code       = 0;
         ///检查数据
         switch($vice_name){
             case '>':
-                $is_right = $this->data[$this->field] > $vice_val;
+                ($this->data[$this->field] > $vice_val) || ($code = '2003.1');
             break;
             case '>=':
             case 'min':
-                $is_right = $this->data[$this->field] >= $vice_val;
+                ($this->data[$this->field] >= $vice_val) || ($code = '2003.2');
             break;
             case '<':
-                $is_right = $this->data[$this->field] < $vice_val;
+                ($this->data[$this->field] < $vice_val) || ($code = '2003.3');
             break;
             case '<=':
             case 'max':
-                $is_right = $this->data[$this->field] <= $vice_val;
+                ($this->data[$this->field] <= $vice_val) || ($code = '2003.4');
             break;
             case '=':
-                $is_right = $this->data[$this->field] == $vice_val;
+                ($this->data[$this->field] == $vice_val) || ($code = '2003.5');
             break;
         }
 
-        return $is_right;
+        return $code;
     }
 }
