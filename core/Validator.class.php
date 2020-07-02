@@ -78,7 +78,18 @@ class Validator{
     }
 
     /**
+     * @method  make
+     * 方法作用：校验数据入口方法
      * 
+     * @param    $data              array    被校验的数据
+     * @param    $fields_rule_arr   array    需要校验的字段与字段对应的校验规则
+     * @param    $msg               array    "字段.规则" 对应的违规提示信息
+     * @param    $excludes          array    字段对应的排除检查值
+                    $excludes = [
+                        'members'   => ['zhangsan', 'lisi'],    # <=== members字段排除检查多个值
+                        'age'       => 12                       # <=== age字段排除检查单个值
+                    ]
+     * @return    Validator object
      */
     public static function make($data, $fields_rule_arr, $msg=[], $excludes=[]){
 
@@ -348,11 +359,20 @@ class Validator{
     protected function can_pass($rule){
 
         ///值为指定的排除值，则不检查
-        $can_pass = isset($this->excludes[$this->field])&&in_array($this->data[$this->field], $this->excludes[$this->field]);
+        if( isset($this->excludes[$this->field]) ){# 当前被检查的字段存在排除值时
 
-        ///数据不存在，且规则又不是required时，则没必要继续检查（仅required规则负责检查存在与空字符串的问题）
-        $can_pass = $can_pass || ((!isset($this->data[$this->field])||$this->data[$this->field]=='')&&$rule!='required');
-        
+            # 支持给定的排除值为数组和单值类型
+            if( is_array($this->excludes[$this->field]) ){
+            
+                $can_pass = in_array($this->data[$this->field], $this->excludes[$this->field]);
+            }else{
+                $can_pass = $this->data[$this->field]==$this->excludes[$this->field];
+            }
+        }else{# 当前被检查的字段不存在排除值
+            ## 数据不存在，且规则又不是required时，则没必要继续检查（仅required规则负责检查存在与空字符串的问题）
+            $can_pass = ($this->data[$this->field]=='')&&($rule!='required');
+        }
+
         return $can_pass;
     }
 
@@ -403,18 +423,23 @@ class Validator{
      */
     protected function mkErr($code, $rule, $vice=[]){
         
-        $this->err[$this->field]['code'] = $code;
-        $this->err[$this->field]['name'] = $rule;
-        $this->err[$this->field]['rule'] = $this->nowRuleStr;
-        $this->err[$this->field]['value'] = $this->data[$this->field];
-        $this->err[$this->field]['level'] = $this->code2level($code);
-        $this->err[$this->field]['msg'] = $this->setMsg($rule, $vice, $code);
+        $this->err[$this->field]['code']    = $code;
+        $this->err[$this->field]['name']    = $this->field;
+        $this->err[$this->field]['value']   = $this->data[$this->field];
+        $this->err[$this->field]['rule']    = $this->nowRuleStr;
+        $this->err[$this->field]['level']   = $this->code2level($code);
+        $this->err[$this->field]['msg']     = $this->setMsg($rule, $vice, $code);
 
         return $this;
     }
 
     /**
-     * 将所有的非sys错误信息连接成一句返回的错误信息
+     * @method  getErrMsg
+     * 方法作用：将所有的非sys错误信息连接成一句返回的错误信息
+     * 
+     * @param   $fieldOrIndex  string|int    指定的字段或索引
+     * 
+     * @return  string
      */
     public function getErrMsg($fieldOrIndex=''){
 
@@ -482,7 +507,7 @@ class Validator{
         ///没传则用默认的
         if( empty($this_msg) ){
 
-            $this_msg = $this->code2cmsg($code, '{field}', $this_rule);
+            $this_msg = $this->code2cmsg($code, '{field}', $this->field);
         }
 
         ///返回msg
