@@ -55,6 +55,8 @@ class JsonTool{
     
         if( is_object($this->_re) ){
             $this->_re->statusCode = $stat;
+        }elseif( is_array($this->_re) ){
+            $this->_re['statusCode'] = $stat;
         }
 
         return $this;
@@ -72,6 +74,8 @@ class JsonTool{
     
         if( is_object($this->_re) ){
             $this->_re->message = $msg;
+        }elseif( is_array($this->_re) ){
+            $this->_re['message'] = $msg;
         }
 
         return $this;
@@ -89,6 +93,8 @@ class JsonTool{
     
         if( is_object($this->_re) ){
             $this->_re->navTabId = $navtab;
+        }elseif( is_array($this->_re) ){
+            $this->_re['navTabId'] = $navtab;
         }
 
         return $this;
@@ -104,7 +110,7 @@ class JsonTool{
      */
     public function vars($key_val_arr){
     
-        if( is_array($key_val_arr[0]) ){//二维数组，对个值对
+        if( is_array($key_val_arr[0]) ){//二维数组，多个值对
         
             foreach( $key_val_arr as $v){
                 if( is_object($this->_re) ){
@@ -136,10 +142,11 @@ class JsonTool{
     public function exec($type='echo'){
     
         if( $type==='echo' ){
+            header('Content-Type:application/json');
             echo json_encode($this->_re);
             exit;
         }elseif ($type==='return') {
-            return $this->_re;
+            return json_encode($this->_re);
         }
     }
 

@@ -73,7 +73,7 @@ class Validator{
             #规则参数错误，针对不可作为独立规则的主规则，如只传递了主规则regex,但是却没有必须的副规则
             'param' => ['1001', '1002', '1003', '1004', '1005'],
             #数据错误，数据不满足规则
-            'data' => ['2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009']
+            'data' => ['2001', '2002', '2003.*', '2004', '2005', '2006', '2007', '2008', '2009']
         ];
     }
 
@@ -264,8 +264,17 @@ class Validator{
         
             if( in_array($code, $arr) ){
                 return $level;
+            }elseif( strpos($code, '.') ){
+                
+                $tmp_arr = explode('.', $code);
+                $this_code = $tmp_arr[0] . '.*';
+                if( in_array($this_code, $arr) ){
+                    return $level;
+                }
             }
         }
+
+        return 'undefined';
     }
 
     /**
@@ -668,7 +677,7 @@ class Validator{
                 if(!in_array($vice_name, $this->rrange['vice'][$rule])) return $this->mkSysErr('1005', $this_rule);
 
                 #检查数据值
-                if( $this->ckIntGo($vice_name, $vice_val) ) return $this->mkErr('2003', $rule, $vice_arr);
+                if( $code=$this->ckIntGo($vice_name, $vice_val) ) return $this->mkErr($code, $rule, $vice_arr);
             }
         }
     }
